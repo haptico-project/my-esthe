@@ -1,0 +1,43 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Google Fonts（必要ウェイトだけに調整OK） */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;600;700&display=swap');
+
+html, body, #svelte {
+    height: 100%;
+}
+
+@layer utilities {
+    /* 触れる感のある“押せる”カード/バッジ用 */
+    .pressable {
+        @apply relative inline-block transition duration-150 ease-out;
+        transform: translateZ(0); /* GPUヒント */
+    }
+    /* うっすら外枠（hoverでフェードイン） */
+    .pressable::after {
+        content: "";
+        @apply absolute inset-0 rounded-full ring-1 ring-black/10 opacity-0 transition-opacity;
+    }
+    .pressable:hover::after { @apply opacity-100; }
+
+    /* ふわっと拡大 */
+    .pressable:hover { transform: scale(1.02) translateZ(0); }
+    /* 押し込み感 */
+    .pressable:active { transform: scale(0.98) translateZ(0); }
+
+    /* キーボード操作のフォーカス可視化 */
+    .pressable:focus-visible {
+        @apply outline-none ring-2 ring-offset-2 ring-pink-300;
+    }
+
+    /* ぼんやり光るグロー（任意） */
+    .pressable-glow::before {
+        content: "";
+        @apply absolute -inset-1 rounded-full blur-md opacity-0 transition-opacity;
+        background: radial-gradient(closest-side, rgba(255,145,192,.35), transparent);
+        z-index: -1;
+    }
+    .pressable-glow:hover::before { @apply opacity-100; }
+}
