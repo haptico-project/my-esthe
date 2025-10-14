@@ -41,7 +41,7 @@
 
 		<!-- 見出し（盤面比で固定位置に） -->
 		<div class="absolute right-1" style="top: 85%;">
-			<span class="-translate-x-1/2 text-[30px] font-bold">一緒に、エステ。</span>
+			<span class="-translate-x-1/2 text-[30px] font-bold">わたしのエステ。</span>
 		</div>
 
 	</HeroBoard>
