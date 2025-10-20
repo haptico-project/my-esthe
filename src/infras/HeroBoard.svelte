@@ -4,7 +4,7 @@
 	export let designH = 926;        // デザイン想定の縦幅
 </script>
 
-<div class="relative w-full overflow-hidden" style={`aspect-ratio:${designW}/${designH};`}>
+<div class="relative w-full overflow-hidden" style={`aspect-ratio:${designW}/${designH}; max-height: ${designH}%`}>
 	<img src={src} alt="" class="absolute inset-0 w-full h-full object-cover" />
 	<slot />
 </div>

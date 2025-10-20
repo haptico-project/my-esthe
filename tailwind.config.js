@@ -14,7 +14,7 @@ export default {
 				cta: '#FFDFED' // 購入ボタン
 			},
 			maxWidth: {
-				phone: '480px' // 中央“スマホ幅”（任意で390/414等へ）
+				phone: '680px' // 中央“スマホ幅”（任意で390/414等へ）
 			}
 		}
 	},
