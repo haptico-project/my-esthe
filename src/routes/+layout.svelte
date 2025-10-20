@@ -1,6 +1,13 @@
 <script lang="ts">
 	import '../app.css';
 	import { base } from '$app/paths';
+
+	import { initAgencyCode } from '$lib/agency/agencyCode';
+	import { onMount } from 'svelte';
+
+	onMount(() => {
+		initAgencyCode();
+	});
 </script>
 
 <!-- 下地色（任意） -->

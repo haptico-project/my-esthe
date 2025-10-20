@@ -1,5 +1,9 @@
 <script lang="ts">
 	import { base } from '$app/paths';
+	import ModalFlow from '../infras/ModalFlow.svelte';
+	import { agencyCode } from '$lib/agency/agencyCode';
+	import { get } from 'svelte/store';
+	let showModal = false;
 </script>
 
 <div class="relative flex items-center justify-center w-screen h-[100dvh] overflow-hidden">
@@ -60,7 +64,7 @@
 				<!-- ✅ ボタンだけクリック可にする -->
 				<button
 					class="relative z-30 w-[38%] px-3 py-3 rounded-lg shadow hover:bg-[#F242] transition mt-2 pointer-events-auto"
-					on:click={() => alert('準備中です。')}
+					on:click={() => (showModal = true)}
 				>
           <span
 						class="font-bold"
@@ -69,14 +73,19 @@
             今すぐ始める
           </span>
 				</button>
+
 			</div>
 		</div>
 
 		<!-- フッター：全面を覆わない or 触らせない -->
 		<footer class="absolute right-4 bottom-2 text-white z-0 pointer-events-none">
       <span style="color: #434343; font-size: 12px; font-family: 'hiragino-mincho-pro';">
-        Facetherapie, Inc.
+        {$agencyCode} | Facetherapie, Inc.
       </span>
 		</footer>
 	</div>
 </div>
+
+{#if showModal}
+	<ModalFlow on:close={() => (showModal = false)} />
+{/if}
