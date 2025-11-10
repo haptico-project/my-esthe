@@ -1,7 +1,7 @@
+<!-- src/routes/+layout.svelte -->
 <script lang="ts">
 	import '../app.css';
 	import { base } from '$app/paths';
-
 	import { initAgencyCode } from '$lib/agency/agencyCode';
 	import { onMount } from 'svelte';
 
@@ -10,17 +10,32 @@
 	});
 </script>
 
-<!-- 下地色（任意） -->
-<div class="fixed inset-0 -z-20" aria-hidden="true" />
+<div class="relative min-h-dvh font-sans text-ink">
+	<!-- 背景（固定） -->
+	<div
+		class="fixed inset-0 -z-10 pointer-events-none bg-cover bg-center blur-md brightness-90"
+		style={`background-image: url('${base}/images/bg.jpg');`}
+	/>
+	<div class="fixed inset-0 -z-10 bg-white/40 pointer-events-none" />
 
-<!-- “画面全体”に敷くブラー背景（切り抜きOK＝cover） -->
-<img
-	src={`${base}/images/my-main.png`}
-	alt=""
-	class="fixed inset-0 -z-20 w-screen h-[100dvh] object-cover object-center blur-lg brightness-90 select-none pointer-events-none"
-/>
+	<!-- コンテンツ -->
+	<div
+		class="
+      /* ✅ モバイル: 幅制限なし・グリッドなし（＝フル幅） */
+      /* ✅ PC: md以上でだけグリッド化＋最大幅制御 */
+      md:mx-auto md:max-w-[1200px] md:px-6
+      md:grid md:grid-cols-[1fr_min(100%,theme(maxWidth.phone))_1fr]
+    "
+	>
+		<!-- 左右は md 未満で非表示 -->
+		<aside class="hidden md:block"><slot name="left" /></aside>
 
-<!-- ここにページごとの中身を載せる -->
-<div class="relative z-0 h-[100dvh] overflow-hidden">
-	<slot />
+		<!-- 中央。モバイルはフル幅、PCはスマホ幅に制限 -->
+		<main class="w-full md:mx-auto md:max-w-phone">
+			<slot />
+		</main>
+
+		<aside class="hidden md:block"><slot name="right" /></aside>
+	</div>
 </div>
+
