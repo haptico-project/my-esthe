@@ -49,7 +49,7 @@
 
 		<div class="absolute top-[65%] left-4">
 			<span class="inline-block text-white leading-tight text-left"
-						style="font-size: 48pt;">
+						style="font-size: 42pt;">
 				エステの<br>ある暮らし。
 			</span>
 		</div>
@@ -81,8 +81,8 @@
 	<section class="relative pt-8" style="margin-top: 2rem; background-color: #FFF0; font-family: 'Hiragino Mincho Pro', serif;">
 		<div class="text-right" style="font-size: 24px;">
 			<div style="line-height: 2.0em; color: #FF62A5">
-				<span style="font-size: 1.4em;">１日の終わりに、</span><br />
-				<span style="font-size: 1.4em;">自分へのご褒美タイム</span>
+				<span style="font-size: 1.3em;">１日の終わりに、</span><br />
+				<span style="font-size: 1.3em;">自分へのご褒美タイム</span>
 			</div>
 
 			<img
