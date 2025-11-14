@@ -117,9 +117,13 @@
 </script>
 
 <!-- モーダル全体 -->
-<div class="fixed inset-0 z-20 bg-black/60 backdrop-blur-sm flex items-center justify-center "
+<div class="fixed inset-0 z-20 bg-black/60 backdrop-blur-sm flex items-center justify-center"
 		 style="font-family: 'hiragino-mincho-pro';">
-	<div class="bg-[#FFFE] rounded-md shadow-lg w-[90%] max-w-md p-6 relative">
+
+	<div
+		class="bg-[#FFFE] rounded-md shadow-lg w-[90%] max-w-md p-6 relative
+		       max-h-[90vh] overflow-y-auto"
+	>
 		<!-- 閉じるボタン -->
 		<button class="absolute top-3 right-3 text-gray-500" on:click={close}>✕</button>
 
