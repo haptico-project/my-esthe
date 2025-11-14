@@ -2,7 +2,6 @@
 	import { base } from '$app/paths';
 	import HeroBoard from '../infras/HeroBoard.svelte';
 	import ModalFlow from '../infras/ModalFlow.svelte';
-	import { agencyCode } from '$lib/agency/agencyCode';
 
 	// const shops = [
 	// 	{
@@ -33,17 +32,6 @@
 
 <section class="text-center relative" style="background-color: #FFFFFF; font-family: 'Hiragino Mincho Pro', serif;">
 
-	<header style="background-color: #FFFFFF;">
-		<div class="flex justify-between items-center w-full px-5 py-3">
-			<button on:click={() => window.location.href = '/'}>
-				<img src="{`${base}/images/logo.png`}" alt="logo" class="max-w-[68px]" />
-			</button>
-			<button on:click={() => (showModal = true)}>
-				<img src="{`${base}/images/request.png`}" alt="logo" class="max-w-[140px]" />
-			</button>
-		</div>
-	</header>
-
 	<!-- 固定アスペクトの盤面にヒーロー画像とオーバーレイを重ねる -->
 	<HeroBoard src={`${base}/images/main.png`} designW={420} designH={620}>
 
@@ -57,7 +45,6 @@
 	</HeroBoard>
 
 	<!-- 受賞マーク -->
-<!--z-->
 
 	<!-- 下部テキスト（ヒーローの下に続く） -->
 	<section class="relative px-6 pt-8" style="margin-top: 6rem; font-family: 'Hiragino Mincho Pro', serif;">
@@ -106,6 +93,20 @@
 				alt="line"
 				class=" ml-auto w-[40%] pb-8 pt-4"
 			/>
+
+			<div class="max-w-[800px] mx-auto pt-12 pb-24 px-4">
+				<div class="relative w-full pt-[56.25%]">
+					<iframe
+						class="absolute top-0 left-0 w-full h-full rounded-lg"
+						src="https://www.youtube.com/embed/irmZgfw1CzQ?si=ok31EkunFMwryn__"
+						title="YouTube video player"
+						frameborder="0"
+						allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+						referrerpolicy="strict-origin-when-cross-origin"
+						allowfullscreen
+					></iframe>
+				</div>
+			</div>
 		</div>
 	</section>
 
@@ -222,15 +223,12 @@
 		</button>
 	</section>
 	<div class="h-10"></div>
-
-	<footer style="margin-top: 10rem; padding-bottom: 1rem;">
-		{$agencyCode} | Facetherapie, Inc.
-	</footer>
 </section>
 
 {#if showModal}
 	<ModalFlow on:close={() => (showModal = false)} />
 {/if}
+
 
 <style type="text/css">
 
