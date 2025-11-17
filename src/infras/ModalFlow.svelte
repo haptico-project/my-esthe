@@ -7,18 +7,20 @@
 	import { agencyCode } from '$lib/agency/agencyCode';
 
 	const dispatch = createEventDispatcher();
+
+	// ▼ 「続きを読む」フラグを plan ごとに持つ
+	let expanded: Record<string, boolean> = {};
+
+	const toggleExpand = (id: string) => {
+		expanded[id] = !expanded[id];
+	};
+
 	const plans = [
 		{
 			id: 'price_1SKNFVPo9yD7PttVkBbUpi3C',
 			name: '基本のエステ（¥3,300/月）',
 			img: `${base}/images/plans/basic.jpg`,
 			description: '自然の森で採取した微細な振動データを基に設計された「小型振動器」で、顔全体に心地よいリズム刺激を与えるベーシックコースです。電気モーターを使わないため、皮膚負担が少なく、短時間で「めぐり」「こわばり緩和」「むくみケア」をサポートします。肌表面に均一に触覚刺激が伝わり、顔のこわばりをほぐす、自然なリフト感、血行促進による顔色サポートを手軽にご体感いただけます。',
-			recommend: [
-				'忙しく、短時間でリフレッシュしたい方',
-				'ナチュラルなケアを好む方',
-				'デスクワークで顔のこわばりやむくみが気になる方',
-				'毎日のセルフケアに軽く取り入れたい方',
-			],
 			contents: [
 				'小型振動器（ポータブルタイプ）',
 				'振動ヘッドキャップ',
@@ -32,15 +34,6 @@
 			img: `${base}/images/plans/special.jpg`,
 			description:
 				'普段お使いのフェイスシートの上から専用の「顔型マスク」を重ねることで、自然由来の振動が顔全体へ均一に伝わるプレミアムケアです。マスク全体に微細振動が行き渡る構造で、わずか10分でも高級エステのような仕上がりを再現できます。フェイスラインの立体的なケア、深部のこわばりアプローチ、シートマスク成分の浸透サポートなど、ワンランク上の自宅エステ体験をご提供します。',
-
-			recommend: [
-				'自宅でエステ級の仕上がりを手に入れたい方',
-				'シートマスクの効果を最大限に引き出したい方',
-				'フェイスラインの引き締まりを求める方',
-				'短時間でしっかり整えたい方',
-				'特別な日の前に集中ケアをしたい方'
-			],
-
 			contents: [
 				'小型振動器（ポータブルタイプ）',
 				'専用顔型バイブレーションマスク',
@@ -53,7 +46,6 @@
 	let step = 1;
 	let agreed = false;
 	let selectedPlan = '';
-	let includeInsurance = false;
 	let isProcessing = false;
 
 	const next = () => {
@@ -69,21 +61,9 @@
 		isProcessing = true;
 
 		const code = get(agencyCode);
-		const orderProducts = [
-			{
-				productId: selectedPlan,
-				quantity: 1
-			}
-		];
-		// TODO 保険の商品を追加する
-		if (includeInsurance) {
-			orderProducts.push({
-				productId: '',
-				quantity: 1
-			});
-		}
+		const orderProducts = [{ productId: selectedPlan, quantity: 1 }];
 
-		if (!code || orderProducts.length === 0) {
+		if (!code || !selectedPlan) {
 			alert('カートまたは代理店コードが未設定です。');
 			isProcessing = false;
 			return;
@@ -100,12 +80,8 @@
 				orderProducts
 			});
 
-			// ✅ window.location.hrefで外部リダイレクト
-			if (res) {
-				window.location.href = res as string;
-			} else {
-				alert('リダイレクト先が取得できませんでした。');
-			}
+			if (res) window.location.href = res as string;
+			else alert('リダイレクト先が取得できませんでした。');
 		} catch (err) {
 			console.error(err);
 			alert('決済処理中にエラーが発生しました。');
@@ -116,19 +92,21 @@
 	};
 </script>
 
-<!-- モーダル全体 -->
-<div class="fixed inset-0 z-20 bg-black/60 backdrop-blur-sm flex items-center justify-center"
-		 style="font-family: 'hiragino-mincho-pro';">
-
+<!-- ============================================== -->
+<!--  モーダル全体 -->
+<!-- ============================================== -->
+<div
+	class="fixed inset-0 z-20 bg-black/60 backdrop-blur-sm flex items-center justify-center"
+	style="font-family: 'hiragino-mincho-pro';"
+>
 	<div
 		class="bg-[#FFFE] rounded-md shadow-lg w-[90%] max-w-md p-6 relative
 		       max-h-[90vh] overflow-y-auto"
 	>
-		<!-- 閉じるボタン -->
 		<button class="absolute top-3 right-3 text-gray-500" on:click={close}>✕</button>
 
+		<!-- STEP 1 : 利用規約 --------------------------------------------------- -->
 		{#if step === 1}
-			<!-- Step 1: 利用規約 -->
 			<h2 class="text-lg font-bold mb-3">利用規約</h2>
 			<div class="border rounded-lg h-48 overflow-y-auto p-2 text-sm text-gray-700">
 				<p>
@@ -274,117 +252,90 @@
 				</button>
 			</div>
 
+			<!-- STEP 2 : プラン選択 --------------------------------------------------- -->
 		{:else if step === 2}
-			<h2 class="text-lg font-bold mb-3">商品を選択</h2>
+			<h2 class="text-lg font-bold mb-4">プランを選択してください</h2>
 
 			<div class="space-y-4">
 				{#each plans as plan}
-					<label class="block rounded-lg overflow-hidden shadow cursor-pointer">
+					<div
+						class="border rounded-lg shadow cursor-pointer hover:shadow-lg transition overflow-hidden"
+						on:click={() => {
+							selectedPlan = plan.id;
+							next();
+						}}
+					>
+						<!-- 画像 -->
+						<div class="w-full h-48 bg-black/5 flex items-center justify-center overflow-hidden">
+							<img src="{plan.img}" alt="{plan.name}" class="w-full h-full object-cover" />
+						</div>
 
-						<div class="relative">
-							<!-- プラン画像 -->
-							<div class="relative w-full h-[512px] bg-black flex items-center justify-center">
-								<img
-									src="{plan.img}"
-									alt="{plan.name}"
-									class="max-h-full max-w-full object-contain"
-								/>
-							</div>
+						<!-- 本文 -->
+						<div class="p-4">
+							<div class="font-bold text-base">{plan.name}</div>
 
-							<!-- 半透明オーバーレイ（説明 + contents）-->
-							<div
-								class="absolute bottom-0 left-0 w-full bg-black/40 text-white p-4 backdrop-blur-sm"
-							>
-								<div class="font-bold text-lg">{plan.name}</div>
-
-								<p class="text-sm mt-2 leading-relaxed">
+							<!-- description（続きを読む対応） -->
+							<p class="text-sm text-gray-700 mt-2 leading-relaxed">
+								{#if plan.description.length <= 58}
 									{plan.description}
-								</p>
+								{:else}
+									{expanded[plan.id]
+										? plan.description
+										: plan.description.slice(0, 58) + '...'}
+								{/if}
+							</p>
 
-								<div class="mt-4">付属品</div>
-								<ul class="list-disc pl-5 mt-2 space-y-1 text-sm">
-									{#each plan.contents as c}
-										<li>{c}</li>
+							{#if plan.description.length > 58}
+								<button
+									class="text-xs text-pink-500 mt-1 underline"
+									on:click|stopPropagation={() => toggleExpand(plan.id)}
+								>
+									{expanded[plan.id] ? '閉じる ▲' : '続きを読む ▼'}
+								</button>
+							{/if}
+
+							<!-- contents -->
+							<div class="mt-3 text-sm text-gray-800">
+								<strong>付属品：</strong>
+								<ul class="list-disc pl-5 mt-1">
+									{#each plan.contents as item}
+										<li>{item}</li>
 									{/each}
 								</ul>
 							</div>
 						</div>
-
-						<!-- ラジオボタン行 -->
-						<div class="flex items-center p-3 bg-white">
-							<input
-								type="radio"
-								name="plan"
-								value="{plan.id}"
-								bind:group={selectedPlan}
-								class="mr-2"
-							/>
-							<span class="text-gray-800 font-medium">{plan.name}</span>
-						</div>
-
-					</label>
+					</div>
 				{/each}
-
 			</div>
 
-			<div class="flex justify-between mt-6">
-				<button class="text-gray-600" on:click={back}>戻る</button>
-				<button
-					class="bg-gray-800 text-white px-4 py-2 rounded disabled:opacity-50"
-					on:click={next}
-					disabled={!selectedPlan}
-				>
-					次へ
-				</button>
-			</div>
-
+			<!-- STEP 3 : 確認画面 --------------------------------------------------- -->
 		{:else if step === 3}
 			<h2 class="text-lg font-bold mb-3">ご注文内容の確認</h2>
 
-			<div class="border rounded-lg p-3 text-sm text-gray-700 space-y-3 bg-white">
-				<!-- 商品名 -->
-				<div>
-					<div class="text-gray-500 text-xs">選択プラン</div>
-					<div class="font-bold text-gray-800">
-						{plans.find(p => p.id === selectedPlan)?.name}
+			{#if selectedPlan}
+				{#each plans.filter(pl => pl.id === selectedPlan) as p (p.id)}
+					<div class="border rounded-lg p-3 bg-white space-y-3">
+						<div class="font-bold text-base">{p.name}</div>
+						<img src="{p.img}" class="w-full rounded" alt="選択プラン" />
+
+						<p class="text-sm leading-relaxed">{p.description}</p>
+
+						<div>
+							<div class="text-xs text-gray-500 mt-1">付属品</div>
+							<ul class="list-disc pl-5 text-sm">
+								{#each p.contents as item}
+									<li>{item}</li>
+								{/each}
+							</ul>
+						</div>
 					</div>
-				</div>
+				{/each}
+			{/if}
 
-				<!-- 商品イメージ -->
-				{#if plans.find(p => p.id === selectedPlan)?.img}
-					<img
-						src="{plans.find(p => p.id === selectedPlan)?.img}"
-						alt="選択プラン画像"
-						class="w-full rounded"
-					/>
-				{/if}
-
-				<!-- 説明と内容 -->
-				<div>
-					<div class="text-gray-500 text-xs">サービス内容</div>
-					<p class="text-sm mt-2 leading-relaxed">
-						{plans.find(p => p.id === selectedPlan)?.description}
-					</p>
-					<div class="text-gray-500 text-xs mt-2">付属品</div>
-					<ul class="list-disc pl-5 mt-1">
-						{#each plans.find(p => p.id === selectedPlan)?.contents || [] as item}
-							<li>{item}</li>
-						{/each}
-					</ul>
-				</div>
-
-				<!-- 保険 -->
-				<div>
-					<div class="text-gray-500 text-xs">オプション</div>
-					<div>{includeInsurance ? '保険加入（＋330円/月）' : 'なし'}</div>
-				</div>
-			</div>
-
-			<!-- ボタン -->
 			<div class="flex justify-between mt-6">
 				<button class="text-gray-600" on:click={back}>戻る</button>
 				<button
-					class="bg-pink-500 hover:bg-pink-600 text-white px-4 py-2 rounded"
+					class="bg-pink-500 text-white px-4 py-2 rounded hover:bg-pink-600"
 					on:click={goToCheckout}
 				>
 					決済に進む
@@ -393,4 +344,3 @@
 		{/if}
 	</div>
 </div>
-
