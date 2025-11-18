@@ -8,41 +8,76 @@
 
 	const dispatch = createEventDispatcher();
 
-	// ▼ 「続きを読む」フラグを plan ごとに持つ
+	/* ---------------------------------------------------
+	   1. Read more
+	--------------------------------------------------- */
 	let expanded: Record<string, boolean> = {};
+	const toggleExpand = (id: string) => (expanded[id] = !expanded[id]);
 
-	const toggleExpand = (id: string) => {
-		expanded[id] = !expanded[id];
+	/* ---------------------------------------------------
+	   2. Options
+	--------------------------------------------------- */
+	let selectedOptions: Record<string, boolean> = {};
+
+	const toggleOption = (optionId: string, plan: any) => {
+		selectedOptions[optionId] = !selectedOptions[optionId];
+
+		const opt = plan.options.find((o: any) => o.id === optionId);
+
+		// overwrite ON
+		if (opt && opt.overwrite && selectedOptions[optionId]) {
+			selectedPlan = opt.id;
+		}
+
+		// overwrite OFF
+		if (opt && opt.overwrite && !selectedOptions[optionId]) {
+			const otherOverwrite = plan.options.find(
+				(o: any) => o.overwrite && selectedOptions[o.id]
+			);
+
+			if (otherOverwrite) {
+				selectedPlan = otherOverwrite.id;
+			} else {
+				selectedPlan = plan.id;
+			}
+		}
 	};
 
+	/* ---------------------------------------------------
+	   3. Plans
+	--------------------------------------------------- */
 	const plans = [
 		{
-			id: 'price_1SKNFVPo9yD7PttVkBbUpi3C',
+			id: 'price_1SUdstPo9yD7PttV1EclsBsi',
 			name: '基本のエステ（¥3,300/月）',
+			price: 3300,
+			subscription: true,
 			img: `${base}/images/plans/basic.jpg`,
-			description: '自然の森で採取した微細な振動データを基に設計された「小型振動器」で、顔全体に心地よいリズム刺激を与えるベーシックコースです。電気モーターを使わないため、皮膚負担が少なく、短時間で「めぐり」「こわばり緩和」「むくみケア」をサポートします。肌表面に均一に触覚刺激が伝わり、顔のこわばりをほぐす、自然なリフト感、血行促進による顔色サポートを手軽にご体感いただけます。',
+			description:
+				'自然の森で採取した微細な振動データを基に設計された「小型振動器」で、顔全体に心地よいリズム刺激を与えるベーシックコースです。',
 			contents: [
 				'小型振動器（ポータブルタイプ）',
 				'振動ヘッドキャップ',
 				'充電用USBケーブル',
 				'携帯用ポーチ'
-			]
-		},
-		{
-			id: 'price_1SKNHzPo9yD7PttVJQPTcvIR',
-			name: 'スペシャルエステ（¥5,500/月）',
-			img: `${base}/images/plans/special.jpg`,
-			description:
-				'普段お使いのフェイスシートの上から専用の「顔型マスク」を重ねることで、自然由来の振動が顔全体へ均一に伝わるプレミアムケアです。マスク全体に微細振動が行き渡る構造で、わずか10分でも高級エステのような仕上がりを再現できます。フェイスラインの立体的なケア、深部のこわばりアプローチ、シートマスク成分の浸透サポートなど、ワンランク上の自宅エステ体験をご提供します。',
-			contents: [
-				'小型振動器（ポータブルタイプ）',
-				'専用顔型バイブレーションマスク',
-				'振動器セット用ホルダー',
-				'充電用USBケーブル'
+			],
+			options: [
+				{
+					id: 'price_1SUdvUPo9yD7PttVITtHasG5',
+					name: '顔型マスク（初回のみ + ¥22,000）',
+					img: `${base}/images/plans/option/kaomask.png`,
+					description: 'フェイスシートの上から重ねて振動を伝えるプレミアムケアです。',
+					price: 22000,
+					subscription: false,
+					overwrite: true
+				}
 			]
 		}
 	];
 
+	/* ---------------------------------------------------
+	   4. Steps
+	--------------------------------------------------- */
 	let step = 1;
 	let agreed = false;
 	let selectedPlan = '';
@@ -54,17 +89,19 @@
 	};
 
 	const back = () => step > 1 && step--;
-
 	const close = () => dispatch('close');
 
+	/* ---------------------------------------------------
+	   5. Checkout
+	--------------------------------------------------- */
 	const goToCheckout = async () => {
 		isProcessing = true;
-
 		const code = get(agencyCode);
+
 		const orderProducts = [{ productId: selectedPlan, quantity: 1 }];
 
 		if (!code || !selectedPlan) {
-			alert('カートまたは代理店コードが未設定です。');
+			alert('代理店コードまたは選択プランが未設定です。');
 			isProcessing = false;
 			return;
 		}
@@ -90,24 +127,34 @@
 			close();
 		}
 	};
+
+	/* ---------------------------------------------------
+	   6. select plan
+	--------------------------------------------------- */
+	const selectPlan = (plan: any) => {
+		selectedPlan = plan.id;
+		step = 3;
+
+		// overwrite の場合は優先
+		const ow = plan.options?.find(o => o.overwrite && selectedOptions[o.id]);
+		if (ow) selectedPlan = ow.id;
+	};
 </script>
 
-<!-- ============================================== -->
-<!--  モーダル全体 -->
-<!-- ============================================== -->
+<!-- ===================================================== -->
+<!-- モーダル -->
+<!-- ===================================================== -->
 <div
 	class="fixed inset-0 z-20 bg-black/60 backdrop-blur-sm flex items-center justify-center"
 	style="font-family: 'hiragino-mincho-pro';"
 >
-	<div
-		class="bg-[#FFFE] rounded-md shadow-lg w-[90%] max-w-md p-6 relative
-		       max-h-[90vh] overflow-y-auto"
-	>
+	<div class="bg-[#FFFE] rounded-md shadow-lg w-[90%] max-w-md p-6 relative max-h-[90vh] overflow-y-auto">
 		<button class="absolute top-3 right-3 text-gray-500" on:click={close}>✕</button>
 
-		<!-- STEP 1 : 利用規約 --------------------------------------------------- -->
+		<!-- STEP 1 -->
 		{#if step === 1}
 			<h2 class="text-lg font-bold mb-3">利用規約</h2>
+
 			<div class="border rounded-lg h-48 overflow-y-auto p-2 text-sm text-gray-700">
 				<p>
 
@@ -243,38 +290,28 @@
 			</div>
 
 			<div class="flex justify-end mt-6">
-				<button
-					class="bg-gray-400 text-white px-4 py-2 rounded disabled:opacity-50"
-					on:click={next}
-					disabled={!agreed}
-				>
+				<button class="bg-gray-400 text-white px-4 py-2 rounded disabled:opacity-50" on:click={next} disabled={!agreed}>
 					次へ
 				</button>
 			</div>
 
-			<!-- STEP 2 : プラン選択 --------------------------------------------------- -->
+			<!-- STEP 2 -->
 		{:else if step === 2}
 			<h2 class="text-lg font-bold mb-4">プランを選択してください</h2>
 
 			<div class="space-y-4">
 				{#each plans as plan}
-					<div
-						class="border rounded-lg shadow cursor-pointer hover:shadow-lg transition overflow-hidden"
-						on:click={() => {
-							selectedPlan = plan.id;
-							next();
-						}}
+					<div class="border rounded-lg shadow hover:shadow-lg transition overflow-hidden cursor-pointer"
+							 on:click={() => selectPlan(plan)}
 					>
 						<!-- 画像 -->
-						<div class="w-full h-48 bg-black/5 flex items-center justify-center overflow-hidden">
+						<div class="w-full h-48 bg-black/5 overflow-hidden">
 							<img src="{plan.img}" alt="{plan.name}" class="w-full h-full object-cover" />
 						</div>
 
-						<!-- 本文 -->
 						<div class="p-4">
 							<div class="font-bold text-base">{plan.name}</div>
 
-							<!-- description（続きを読む対応） -->
 							<p class="text-sm text-gray-700 mt-2 leading-relaxed">
 								{#if plan.description.length <= 58}
 									{plan.description}
@@ -294,53 +331,166 @@
 								</button>
 							{/if}
 
-							<!-- contents -->
-							<div class="mt-3 text-sm text-gray-800">
-								<strong>付属品：</strong>
-								<ul class="list-disc pl-5 mt-1">
-									{#each plan.contents as item}
-										<li>{item}</li>
+							<!-- オプション -->
+							{#if plan.options?.length}
+								<div class="mt-4">
+									<div class="text-sm font-semibold">オプション（任意）</div>
+
+									{#each plan.options as opt}
+										<div
+											class="mt-2 p-2 border rounded flex space-x-3 items-start cursor-pointer"
+											on:click|stopPropagation={() => toggleOption(opt.id, plan)}
+										>
+											<input
+												type="checkbox"
+												checked={selectedOptions[opt.id]}
+												on:click|stopPropagation
+												on:change={() => toggleOption(opt.id, plan)}
+											/>
+
+											<img src="{opt.img}" class="w-16 h-16 object-cover rounded" />
+
+											<div class="flex-1">
+												<div class="font-medium text-sm">{opt.name}</div>
+												<p class="text-xs text-gray-600 mt-1">{opt.description}</p>
+											</div>
+										</div>
 									{/each}
-								</ul>
-							</div>
+								</div>
+							{/if}
+
+							<button
+								class="mt-3 w-full bg-gray-800 text-white rounded py-2 text-sm"
+								on:click|stopPropagation={() => selectPlan(plan)}
+							>
+								このプランを選択
+							</button>
 						</div>
 					</div>
 				{/each}
 			</div>
 
-			<!-- STEP 3 : 確認画面 --------------------------------------------------- -->
+			<!-- STEP 3 -->
 		{:else if step === 3}
 			<h2 class="text-lg font-bold mb-3">ご注文内容の確認</h2>
 
-			{#if selectedPlan}
-				{#each plans.filter(pl => pl.id === selectedPlan) as p (p.id)}
-					<div class="border rounded-lg p-3 bg-white space-y-3">
-						<div class="font-bold text-base">{p.name}</div>
-						<img src="{p.img}" class="w-full rounded" alt="選択プラン" />
+			<button
+				class="mb-4 w-full bg-pink-500 text-white px-4 py-2 rounded hover:bg-pink-600"
+				on:click={goToCheckout}
+			>
+				決済に進む
+			</button>
 
-						<p class="text-sm leading-relaxed">{p.description}</p>
+			<!-- ▼ selectedPlan がオプションIDの場合にも対応して親プランを取得 -->
+			{@const parentPlan =
+				plans.find(pl => pl.id === selectedPlan) ??
+				plans.find(pl => pl.options?.some(o => o.id === selectedPlan))
+			}
 
+			<!-- 念のため parentPlan が存在しない場合の fallback -->
+			{#if parentPlan === undefined}
+				<p class="text-red-500 text-sm">プラン情報の取得に失敗しました。</p>
+				<button class="mt-4 text-gray-600 underline" on:click={() => (step = 2)}>
+					プラン選択に戻る
+				</button>
+			{:else}
+
+				<!-- 親プラン基準でオプション取得 -->
+				{@const appliedOptions =
+					(parentPlan.options || []).filter(o => selectedOptions[o.id])
+				}
+
+				{@const baseFirst = parentPlan.price}
+				{@const baseMonthly = parentPlan.subscription ? parentPlan.price : 0}
+
+				{@const optionFirst = appliedOptions
+					.filter(o => !o.subscription)
+					.reduce((sum, o) => sum + o.price, 0)
+				}
+
+				{@const optionMonthly = appliedOptions
+					.filter(o => o.subscription)
+					.reduce((sum, o) => sum + o.price, 0)
+				}
+
+				{@const totalFirst = baseFirst + optionFirst + optionMonthly}
+				{@const totalMonthly = baseMonthly + optionMonthly}
+
+				<!-- 画像は普通の img で表示 -->
+				<img src="{parentPlan.img}" class="w-full rounded mb-3" alt="選択プラン" />
+
+				<div class="border rounded-lg p-3 bg-white space-y-3">
+					<div class="font-bold text-base">{parentPlan.name}</div>
+
+					<p class="text-sm leading-relaxed">{parentPlan.description}</p>
+
+					<div>
+						<div class="text-xs text-gray-500 mt-1">付属品</div>
+						<ul class="list-disc pl-5 text-sm">
+							{#each parentPlan.contents as item}
+								<li>{item}</li>
+							{/each}
+						</ul>
+					</div>
+
+					{#if appliedOptions.length > 0}
 						<div>
-							<div class="text-xs text-gray-500 mt-1">付属品</div>
+							<div class="text-xs text-gray-500">オプション</div>
 							<ul class="list-disc pl-5 text-sm">
-								{#each p.contents as item}
-									<li>{item}</li>
+								{#each appliedOptions as opt}
+									<li>
+										{opt.name}
+										{#if !opt.subscription}
+											（+ ¥{opt.price.toLocaleString()} ※初回のみ）
+										{:else}
+											（+ ¥{opt.price.toLocaleString()}/月）
+										{/if}
+									</li>
 								{/each}
 							</ul>
 						</div>
+					{/if}
+
+					<div class="mt-4 p-3 bg-pink-50 rounded">
+						<div class="font-bold text-sm text-pink-700">今回のご請求金額</div>
+
+						<div class="text-2xl font-extrabold text-pink-600 mt-1">
+							¥{totalFirst.toLocaleString()}
+						</div>
+
+						<div class="mt-3 text-sm text-gray-700">
+							内訳：
+							<ul class="list-disc pl-5 mt-1 space-y-1">
+								<li>プラン料金：¥{baseFirst.toLocaleString()}</li>
+
+								{#if optionFirst > 0}
+									<li>オプション（初回のみ）：¥{optionFirst.toLocaleString()}</li>
+								{/if}
+
+								{#if optionMonthly > 0}
+									<li>オプション（月額分）：¥{optionMonthly.toLocaleString()}</li>
+								{/if}
+							</ul>
+						</div>
+
+						<div class="mt-4 text-sm text-gray-600 border-t pt-3">
+							翌月以降：
+							<span class="font-bold text-gray-800">
+						¥{totalMonthly.toLocaleString()}/月
+					</span>
+						</div>
 					</div>
-				{/each}
+				</div>
+
 			{/if}
 
 			<div class="flex justify-between mt-6">
 				<button class="text-gray-600" on:click={back}>戻る</button>
-				<button
-					class="bg-pink-500 text-white px-4 py-2 rounded hover:bg-pink-600"
-					on:click={goToCheckout}
-				>
+				<button class="bg-pink-500 text-white px-4 py-2 rounded hover:bg-pink-600" on:click={goToCheckout}>
 					決済に進む
 				</button>
 			</div>
 		{/if}
+
 	</div>
 </div>
