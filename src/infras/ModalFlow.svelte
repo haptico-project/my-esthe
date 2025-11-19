@@ -49,7 +49,7 @@
 	const plans = [
 		{
 			id: 'price_1SUdstPo9yD7PttV1EclsBsi',
-			name: '基本のエステ（¥3,300/月）',
+			name: 'エステのサブスク（¥3,300/月）',
 			price: 3300,
 			subscription: true,
 			img: `${base}/images/plans/basic.jpg`,
@@ -64,9 +64,9 @@
 			options: [
 				{
 					id: 'price_1SUdvUPo9yD7PttVITtHasG5',
-					name: '顔型マスク（初回のみ + ¥22,000）',
+					name: '顔型マスク',
 					img: `${base}/images/plans/option/kaomask.png`,
-					description: 'フェイスシートの上から重ねて振動を伝えるプレミアムケアです。',
+					description: '買い切りの顔型マスクです。フェイスシートの上から重ねて振動を伝えるプレミアムケアができます。（初回のみ + ¥22,000）',
 					price: 22000,
 					subscription: false,
 					overwrite: true
