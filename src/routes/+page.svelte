@@ -362,4 +362,16 @@
         }
     }
 
+    :global(.swiper-pagination) {
+        bottom: -28px; /* 画像の下に少し余白 */
+    }
+
+    :global(.swiper-pagination-bullet) {
+        background: #ccc;
+        opacity: 1;
+    }
+
+    :global(.swiper-pagination-bullet-active) {
+        background: #555;
+    }
 </style>
