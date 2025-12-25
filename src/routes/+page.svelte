@@ -57,7 +57,7 @@
 
 			<Swiper
 				slidesPerView={1}
-				spaceBetween={24}
+				spaceBetween={1}
 				centeredSlides={true}
 				grabCursor={true}
 				modules={[Pagination]}
