@@ -476,7 +476,7 @@
 						<div class="mt-4 text-sm text-gray-600 border-t pt-3">
 							翌月以降：
 							<span class="font-bold text-gray-800">
-						¥{totalMonthly.toLocaleString()}/月
+						¥{totalMonthly.toLocaleString()}/月<br />
 					</span>
 						</div>
 					</div>

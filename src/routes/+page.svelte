@@ -1,114 +1,158 @@
-<script>
+<script lang="ts">
 	import { base } from '$app/paths';
 	import HeroBoard from '../infras/HeroBoard.svelte';
 	import ModalFlow from '../infras/ModalFlow.svelte';
 
-	// const shops = [
-	// 	{
-	// 		name: '加賀スポーツ株式会社',
-	// 		addr: '〒101-0023 東京都千代田区神田松永町20番地 加賀電子本社ビル 4F',
-	// 		tel: '03-5657-0148',
-	// 		mail: 't_ikeda@fyt.co.jp'
-	// 	},
-	// 	{
-	// 		name: '株式会社ラビータ',
-	// 		addr: '171-8569 東京都豊島区南池袋 株式会社 西武百貨店 池袋店',
-	// 		tel: '03-6812-1717'
-	// 	},
-	// 	{
-	// 		name: 'アクティブAKIBA',
-	// 		addr: '〒101-0028 東京都千代田区神田花岡町1-1 ヨドバシAKIBA9階',
-	// 		tel: '03-5209-1701'
-	// 	},
-	// 	{
-	// 		name: '株式会社ファセテラピー',
-	// 		addr: '112-0002 東京都文京区小石川2-3-4 第一川田ビル2階',
-	// 		tel: '03-3818-0408'
-	// 	}
-	// ];
+	import { Swiper, SwiperSlide } from 'swiper/svelte';
+	import 'swiper/css';
+	import { Pagination } from 'swiper';
+	import 'swiper/css/pagination';
 
 	let showModal = false;
 </script>
 
-<section class="text-center relative" style="background-color: #FFFFFF; font-family: 'Hiragino Mincho Pro', serif;">
+<section
+	class="text-center relative"
+	style="background-color:#fff;font-family:'Hiragino Mincho Pro',serif;"
+>
 
-	<!-- 固定アスペクトの盤面にヒーロー画像とオーバーレイを重ねる -->
+	<!-- ================= HERO ================= -->
 	<HeroBoard src={`${base}/images/main.png`} designW={420} designH={620}>
-
 		<div class="absolute top-[65%] left-4">
-			<span class="inline-block text-white leading-tight text-left"
-						style="font-size: 42pt;">
-				エステの<br>ある暮らし。
+			<span
+				class="inline-block text-white leading-tight text-left"
+				style="font-size:42pt;"
+			>
+				エステの<br />ある暮らし。
 			</span>
 		</div>
-
 	</HeroBoard>
 
-	<!-- 受賞マーク -->
-
-	<!-- 下部テキスト（ヒーローの下に続く） -->
-	<section class="relative px-6 pt-8" style="margin-top: 6rem; font-family: 'Hiragino Mincho Pro', serif;">
+	<!-- ================= INTRO ================= -->
+	<section class="relative px-6 pt-8" style="margin-top:12rem;">
 		<div class="text-center">
-			<span style="font-size: 20px;">頑張る美容から、感じる美容へ</span><br /><br /><br /><br />
+			<span style="font-size:20px;">頑張る美容から、感じる美容へ</span>
+			<br /><br /><br /><br />
 			<div class="leading-9">
 				気持ちいいから、<br />
 				気づけば毎日続けてしまう。<br />
 				続けるから、<br />
 				きれいになる。<br />
-				<br />
 			</div>
 		</div>
 	</section>
 
-	<div class="text-center" style="margin-top: 6rem; margin-bottom: 6rem;">
+	<!-- ================= 水たまり：カルーセル ================= -->
+	<section
+		class="relative"
+		style="margin-top:12rem;"
+	>
+		<div class="max-w-[420px] mx-auto px-4">
+
+			<Swiper
+				slidesPerView={1}
+				spaceBetween={24}
+				centeredSlides={true}
+				grabCursor={true}
+				modules={[Pagination]}
+				pagination={{ clickable: true }}
+			>
+
+				<!-- ===== Slide 1 ===== -->
+				<SwiperSlide>
+					<div class="panel-inner">
+						<img
+							src={`${base}/images/section/water_vibrated.png`}
+							alt="自然由来の振動"
+						/>
+
+						<div class="panel-text left-bottom text-left">
+							<h3>自然由来の振動</h3>
+							<p>
+								森などから抽出した自然由来の<br />
+								微細な振動で揺れることで、<br />
+								肌への摩擦を抑えながら、<br />
+								負担をかけず本来の美しさを引き出します。
+							</p>
+						</div>
+					</div>
+				</SwiperSlide>
+
+				<!-- ===== Slide 2 ===== -->
+				<SwiperSlide>
+					<div class="panel-inner">
+						<img
+							src={`${base}/images/section/esthe.png`}
+							alt="振動 × エステティシャンの手技"
+						/>
+
+						<div class="panel-text right-top">
+							<h3>
+								振動 ×<br />
+								エステティシャンの<br />
+								手技リズム
+							</h3>
+							<p>
+								エステティシャン監修で、<br />
+								人の手のリズムを振動で再現。<br />
+								心地よいケアをご自宅で体験できます。
+							</p>
+						</div>
+					</div>
+				</SwiperSlide>
+
+			</Swiper>
+		</div>
+	</section>
+
+	<!-- ================= MAIN IMAGE ================= -->
+	<div class="text-center" style="margin-top:12rem;margin-bottom:6rem;">
 		<img src={`${base}/images/main2.png`} alt="main2" class="w-[75%]" />
 	</div>
 
-	<!-- 使い方 -->
-	<section class="relative pt-8" style="margin-top: 2rem; background-color: #FFF0; font-family: 'Hiragino Mincho Pro', serif;">
-		<div class="text-right" style="font-size: 24px;">
-			<div style="line-height: 2.0em; color: #FF62A5">
-				<span style="font-size: 1.3em;">１日の終わりに、</span><br />
-				<span style="font-size: 1.3em;">自分へのご褒美タイム</span>
+	<!-- ================= USAGE ================= -->
+	<section class="relative pt-8" style="margin-top:2rem;">
+		<div class="text-right" style="font-size:24px;">
+			<div style="line-height:2em;color:#FF62A5">
+				<span style="font-size:1.3em;">１日の終わりに、</span><br />
+				<span style="font-size:1.3em;">自分へのご褒美タイム</span>
 			</div>
 
 			<img
 				src={`${base}/images/line.png`}
-				alt="line"
-				class=" ml-auto w-[75%] pb-8 pt-2"
+				class="ml-auto w-[75%] pb-8 pt-2"
 			/>
 
 			<div class="text-right pb-4 text-black">
-				<div class="leading-8" style="font-size: 18px;">
+				<div class="leading-8" style="font-size:18px;">
 					使い方は簡単、顔に載せるだけ。<br />
 					だから忙しい毎日でも続けられる。<br />
 					お手持ちのパックと合わせてご利用いただくと、<br />
 					10分でエステ1回分の効果が得られます。<br />
-					<br />
 				</div>
 			</div>
 
 			<img
 				src={`${base}/images/gohoubi_time.png`}
-				alt="line"
-				class=" ml-auto w-[40%] pb-8 pt-4"
+				class="ml-auto w-[40%] pb-8 pt-4"
 			/>
+		</div>
 
-			<div class="max-w-[800px] mx-auto pt-12 pb-24 px-4">
-				<div class="relative w-full pt-[56.25%]">
-					<iframe
-						class="absolute top-0 left-0 w-full h-full rounded-lg"
-						src="https://www.youtube.com/embed/irmZgfw1CzQ?si=ok31EkunFMwryn__"
-						title="YouTube video player"
-						frameborder="0"
-						allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-						referrerpolicy="strict-origin-when-cross-origin"
-						allowfullscreen
-					></iframe>
-				</div>
+		<div class="max-w-[800px] mx-auto pt-12 pb-24 px-4">
+			<div class="relative w-full pt-[56.25%]">
+				<iframe
+					class="absolute top-0 left-0 w-full h-full rounded-lg"
+					src="https://www.youtube.com/embed/irmZgfw1CzQ?si=ok31EkunFMwryn__"
+					title="YouTube video player"
+					frameborder="0"
+					allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+					referrerpolicy="strict-origin-when-cross-origin"
+					allowfullscreen
+				></iframe>
 			</div>
 		</div>
 	</section>
+
 
 	<!-- エビデンス -->
 	<section class="relative" style="padding-top: 6rem; margin-top: -4rem; background-color: #FFF;">
@@ -153,7 +197,8 @@
 		</div>
 	</section>
 
-	<section class="relative pt-8" style="margin-top: 2rem; background-color: #FFF0; font-family: 'Hiragino Mincho Pro', serif;">
+	<section class="relative pt-8"
+					 style="margin-top: 2rem; background-color: #FFF0; font-family: 'Hiragino Mincho Pro', serif;">
 		<div class="text-right" style="font-size: 24px; padding-bottom: 24px;">
 			<div style="line-height: 2.0em; color: #FF62A5">
 				<span style="font-size: 1.4em;">顔以外にも、</span><br />
@@ -229,7 +274,69 @@
 	<ModalFlow on:close={() => (showModal = false)} />
 {/if}
 
+<style>
+    /* ===== カルーセル共通 ===== */
 
-<style type="text/css">
+    .panel-inner {
+        position: relative;
+        height: 70vh; /* ← 高さ固定 */
+        max-height: 520px;
+        aspect-ratio: 396 / 679; /* Figma比率 */
+        margin: 0 auto;
+    }
+
+    .panel-inner img {
+        height: 100%;
+        width: auto;
+        object-fit: contain;
+        display: block;
+        margin: 0 auto;
+    }
+
+    /* テキスト */
+    .panel-text {
+        position: absolute;
+        color: #fff;
+        text-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
+        max-width: 80%;
+    }
+
+    .panel-text h3 {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 6px;
+        line-height: 1.4;
+    }
+
+    .panel-text p {
+        font-size: 13px;
+        line-height: 1.7;
+        opacity: 0.95;
+    }
+
+    /* 配置 */
+    .left-bottom {
+        left: 12px;
+        bottom: 16px;
+    }
+
+    .right-top {
+        right: 12px;
+        top: 16px;
+        text-align: right;
+    }
+
+    :global(.swiper-pagination) {
+        bottom: -28px; /* 画像の下に少し余白 */
+    }
+
+    :global(.swiper-pagination-bullet) {
+        background: #ccc;
+        opacity: 1;
+    }
+
+    :global(.swiper-pagination-bullet-active) {
+        background: #555;
+    }
 
 </style>
