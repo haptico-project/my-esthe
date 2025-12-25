@@ -18,13 +18,19 @@
 
 	<!-- ================= HERO ================= -->
 	<HeroBoard src={`${base}/images/main.png`} designW={420} designH={620}>
-		<div class="absolute top-[65%] left-4">
-			<span
+		<div class="absolute top-[52%] left-4">
+			<div
 				class="inline-block text-white leading-tight text-left"
 				style="font-size:42pt;"
 			>
 				エステの<br />ある暮らし。
-			</span>
+			</div>
+		</div>
+
+		<!-- ===== Awards ===== -->
+		<div class="hero-awards">
+			<img src={`${base}/images/awards/c1.png`} alt="award 1" />
+			<img src={`${base}/images/awards/c2.png`} alt="award 2" />
 		</div>
 	</HeroBoard>
 
@@ -326,17 +332,34 @@
         text-align: right;
     }
 
-    :global(.swiper-pagination) {
-        bottom: -28px; /* 画像の下に少し余白 */
+    .hero-awards {
+        position: absolute;
+        bottom: 8%;
+        left: 26%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 4px;
+        align-items: center;
+        justify-content: center;
+        z-index: 2;
     }
 
-    :global(.swiper-pagination-bullet) {
-        background: #ccc;
+    .hero-awards img {
+        height: 8vh;
+        width: auto;
         opacity: 1;
     }
 
-    :global(.swiper-pagination-bullet-active) {
-        background: #555;
+    /* スマホ微調整 */
+    @media (max-width: 480px) {
+        .hero-awards {
+            bottom: 3%;
+            gap: 2px;
+        }
+
+        .hero-awards img {
+            height: 80px;
+        }
     }
 
 </style>
