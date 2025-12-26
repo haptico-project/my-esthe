@@ -53,7 +53,7 @@
 		class="relative"
 		style="margin-top:12rem;"
 	>
-		<div class="max-w-[100%]">
+		<div class="max-w-[100%] mx-auto">
 
 			<Swiper
 				slidesPerView={1}
