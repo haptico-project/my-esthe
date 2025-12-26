@@ -53,7 +53,7 @@
 		class="relative"
 		style="margin-top:12rem;"
 	>
-		<div class="max-w-[420px] mx-auto px-4">
+		<div class="max-w-[100%]">
 
 			<Swiper
 				slidesPerView={1}
@@ -285,8 +285,7 @@
 
     .panel-inner {
         position: relative;
-        height: 70vh; /* ← 高さ固定 */
-        max-height: 520px;
+        height: 80vh; /* ← 高さ固定 */
         aspect-ratio: 396 / 679; /* Figma比率 */
         margin: 0 auto;
     }
