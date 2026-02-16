@@ -25,3 +25,20 @@ export async function postCheckout<TRequest extends object, TResponse = any>(
 		throw new Error(`Checkoutリクエスト失敗: ${msg}`);
 	}
 }
+
+export async function getCheckout<TResponse = any>(
+	path: string,
+	config?: AxiosRequestConfig
+): Promise<TResponse> {
+	try {
+		const response = await axiosInstance.get<TResponse>(path, {
+			...config,
+			validateStatus: (status) => status < 400
+		});
+
+		return response.data;
+	} catch (error: any) {
+		const msg = error?.response?.data?.message || error.message || 'Unknown error';
+		throw new Error(`Checkoutリクエスト失敗: ${msg}`);
+	}
+}
