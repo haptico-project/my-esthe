@@ -44,7 +44,7 @@
 			options: [
 				{
 					id: 'face-mask',
-					checkoutPriceId: 'price_1T1iPoPo9yD7PttVSn4hphY3',
+					checkoutPriceId: 'price_1T1jAjPo9yD7PttVDjCCMGep',
 					name: '顔型マスク',
 					img: `${base}/images/plans/option/kaomask.png`,
 					description: '買い切りの顔型マスクです。フェイスシートの上から重ねて振動を伝えるプレミアムケアができます。（初回のみ + ¥22,000）',
