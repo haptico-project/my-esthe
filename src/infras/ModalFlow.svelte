@@ -19,28 +19,8 @@
 	--------------------------------------------------- */
 	let selectedOptions: Record<string, boolean> = {};
 
-	const toggleOption = (optionId: string, plan: any) => {
+	const toggleOption = (optionId: string) => {
 		selectedOptions[optionId] = !selectedOptions[optionId];
-
-		const opt = plan.options.find((o: any) => o.id === optionId);
-
-		// overwrite ON
-		if (opt && opt.overwrite && selectedOptions[optionId]) {
-			selectedPlan = opt.id;
-		}
-
-		// overwrite OFF
-		if (opt && opt.overwrite && !selectedOptions[optionId]) {
-			const otherOverwrite = plan.options.find(
-				(o: any) => o.overwrite && selectedOptions[o.id]
-			);
-
-			if (otherOverwrite) {
-				selectedPlan = otherOverwrite.id;
-			} else {
-				selectedPlan = plan.id;
-			}
-		}
 	};
 
 	/* ---------------------------------------------------
@@ -63,13 +43,13 @@
 			],
 			options: [
 				{
-					id: 'price_1SUdvUPo9yD7PttVITtHasG5',
+					id: 'face-mask',
+					checkoutPriceId: 'price_1T1iPoPo9yD7PttVSn4hphY3',
 					name: '顔型マスク',
 					img: `${base}/images/plans/option/kaomask.png`,
 					description: '買い切りの顔型マスクです。フェイスシートの上から重ねて振動を伝えるプレミアムケアができます。（初回のみ + ¥22,000）',
 					price: 22000,
-					subscription: false,
-					overwrite: true
+					subscription: false
 				}
 			]
 		}
@@ -99,6 +79,10 @@
 		const code = get(agencyCode);
 
 		const orderProducts = [{ productId: selectedPlan, quantity: 1 }];
+		const selectedOneTimePriceIds = plans
+			.flatMap(plan => plan.options || [])
+			.filter(opt => selectedOptions[opt.id] && opt.checkoutPriceId)
+			.map(opt => opt.checkoutPriceId);
 
 		if (!code || !selectedPlan) {
 			alert('代理店コードまたは選択プランが未設定です。');
@@ -114,7 +98,8 @@
 				checkoutSuccessUrl: baseUrl,
 				checkoutCancelUrl: baseUrl,
 				agencyCode: code,
-				orderProducts
+				orderProducts,
+				oneTimePriceIds: selectedOneTimePriceIds
 			});
 
 			if (res) window.location.href = res as string;
@@ -135,9 +120,6 @@
 		selectedPlan = plan.id;
 		step = 3;
 
-		// overwrite の場合は優先
-		const ow = plan.options?.find(o => o.overwrite && selectedOptions[o.id]);
-		if (ow) selectedPlan = ow.id;
 	};
 </script>
 
@@ -339,13 +321,13 @@
 									{#each plan.options as opt}
 										<div
 											class="mt-2 p-2 border rounded flex space-x-3 items-start cursor-pointer"
-											on:click|stopPropagation={() => toggleOption(opt.id, plan)}
+											on:click|stopPropagation={() => toggleOption(opt.id)}
 										>
 											<input
 												type="checkbox"
 												checked={selectedOptions[opt.id]}
 												on:click|stopPropagation
-												on:change={() => toggleOption(opt.id, plan)}
+												on:change={() => toggleOption(opt.id)}
 											/>
 
 											<img src="{opt.img}" class="w-16 h-16 object-cover rounded" />
