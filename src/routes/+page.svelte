@@ -168,6 +168,7 @@
 
 			<img
 				src={`${base}/images/line.png`}
+				alt=""
 				class="ml-auto w-[75%] pb-8 pt-2"
 			/>
 
@@ -182,6 +183,7 @@
 
 			<img
 				src={`${base}/images/gohoubi_time.png`}
+				alt="ご褒美タイム"
 				class="ml-auto w-[40%] pb-8 pt-4"
 			/>
 		</div>

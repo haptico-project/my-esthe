@@ -6,6 +6,7 @@
 
 	onMount(() => {
 		const id = $page.params.id;
+		if (!id) return;
 		goto(`/?agencyCode=${encodeURIComponent(id)}`);
 	});
 </script>
