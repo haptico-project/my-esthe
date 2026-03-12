@@ -38,6 +38,8 @@
 		contents: string[];
 		orderProducts: CheckoutProduct[];
 		includedBenefits: string[];
+		imageAlt: string;
+		contentSummary: string;
 	};
 
 	const dispatch = createEventDispatcher();
@@ -86,7 +88,9 @@
 				'月額3,300円でスタート',
 				'ご自宅で続けやすい基本セット',
 				'必要に応じて買い切りオプション追加可能'
-			]
+			],
+			imageAlt: '通常プランの美容機器セット',
+			contentSummary: '毎日のケアを始めやすい基本セットです。'
 		},
 		{
 			id: 'special-plan',
@@ -96,7 +100,7 @@
 			price: 5500,
 			priceLabel: '1〜12ヶ月目 月額 5,500円',
 			afterPriceLabel: '13ヶ月目以降 月額 3,300円',
-			img: `${base}/images/plans/basic.jpg`,
+			img: `${base}/images/plans/special.jpg`,
 			accent: 'from-[#efe3e7] via-[#faf6f7] to-[#eadfe6]',
 			highlight: '12回完了後に顔マスクをプレゼント',
 			contents: [
@@ -108,13 +112,15 @@
 				{ productId: 'price_1SUdstPo9yD7PttV1EclsBsi', quantity: 1 },
 				{ productId: 'price_1T94CTPo9yD7PttVbiyOrzT2', quantity: 1 }
 			],
-				includedBenefits: [
-					'1〜12ヶ月目は月額5,500円',
-					'13ヶ月目以降は月額3,300円',
-					'12回完了後は顔マスクをプレゼント'
-				]
-			}
-		];
+			includedBenefits: [
+				'1〜12ヶ月目は月額5,500円',
+				'13ヶ月目以降は月額3,300円',
+				'12回完了後は顔マスクをプレゼント'
+			],
+			imageAlt: 'スペシャルプランの美容機器セットと顔マスク',
+			contentSummary: '基本セットに顔マスク特典が付く充実プランです。'
+		}
+	];
 
 	const sharedOptions: PlanOption[] = [batteryOption];
 
@@ -188,10 +194,10 @@
 </script>
 
 <div
-	class="fixed inset-0 z-20 flex items-center justify-center bg-[radial-gradient(circle_at_top,rgba(255,205,224,0.42),rgba(19,12,18,0.88))] p-4 backdrop-blur-sm"
+	class="fixed inset-0 z-20 flex items-center justify-center bg-[radial-gradient(circle_at_top,rgba(255,205,224,0.42),rgba(19,12,18,0.88))] p-2 sm:p-4 backdrop-blur-sm"
 	style="font-family: 'hiragino-mincho-pro';"
 >
-	<div class="relative max-h-[90vh] w-[94%] max-w-3xl overflow-y-auto rounded-[28px] border border-white/50 bg-[linear-gradient(180deg,rgba(255,255,255,0.96),rgba(255,247,250,0.94))] p-5 shadow-[0_28px_80px_rgba(38,16,31,0.28)] sm:p-8">
+	<div class="relative max-h-[92vh] w-full max-w-3xl overflow-y-auto rounded-[22px] border border-white/20 bg-[linear-gradient(180deg,rgba(255,255,255,0.96),rgba(255,247,250,0.94))] p-3 shadow-[0_28px_80px_rgba(38,16,31,0.28)] sm:max-h-[90vh] sm:w-[94%] sm:rounded-[28px] sm:border-white/50 sm:p-8">
 		<button class="absolute right-4 top-4 rounded-full border border-black/10 bg-white/80 px-3 py-1 text-sm text-gray-600 transition hover:bg-white" on:click={close}>閉じる</button>
 
 		<div class="mb-6 border-b border-[#f0d6df] pb-4">
@@ -338,21 +344,25 @@
 				</button>
 			</div>
 		{:else if step === 2}
-				<div class="mb-6 overflow-hidden rounded-[28px] border border-[#f0dde5] bg-white shadow-[0_18px_40px_rgba(65,29,45,0.08)]">
+				<div class="mb-4 overflow-hidden bg-transparent sm:mb-6 sm:rounded-[28px] sm:border sm:border-[#f0dde5] sm:bg-white sm:shadow-[0_18px_40px_rgba(65,29,45,0.08)]">
 				<div class="relative h-[220px] overflow-hidden">
 					<img src={`${base}/images/plans/special.jpg`} alt="プラン比較イメージ" class="h-full w-full object-cover" />
 					<div class="absolute inset-0 bg-[linear-gradient(180deg,rgba(40,24,31,0.12),rgba(40,24,31,0.58))]" />
-					<div class="absolute inset-x-0 bottom-0 p-6 text-white">
-						<h3 class="text-2xl">プランを比べて選ぶ</h3>
+					<div class="absolute inset-x-0 bottom-0 p-4 text-white sm:p-6">
+						<h3 class="text-xl sm:text-2xl">プランを比べて選ぶ</h3>
 						<p class="mt-2 text-sm leading-6 text-white/85">通常プランとスペシャルプランの違いを見比べながら選べます。バッテリーはどちらにも追加できます。</p>
 					</div>
 				</div>
-				<div class="bg-[linear-gradient(135deg,#fff7f9,#fffdfa)] p-5">
+				<div class="bg-transparent p-0 sm:bg-[linear-gradient(135deg,#fff7f9,#fffdfa)] sm:p-5">
 					<div class="grid gap-4 md:grid-cols-2">
 						{#each plans as plan}
-							<div class="rounded-[24px] border border-[#edd9e2] bg-white p-5 shadow-[0_12px_28px_rgba(65,29,45,0.06)]">
-								<div class="border-b border-[#f3e4ea] pb-4">
-									<h4 class="text-2xl text-[#2e1d24]">{plan.name}</h4>
+							<div class="rounded-[18px] border border-[#edd9e2]/60 bg-white p-3 shadow-[0_10px_22px_rgba(65,29,45,0.05)] sm:rounded-[24px] sm:border-[#edd9e2] sm:p-5 sm:shadow-[0_12px_28px_rgba(65,29,45,0.06)]">
+								<div class="overflow-hidden rounded-[16px] bg-[#f8eef2] sm:rounded-[20px]">
+									<img src={plan.img} alt={plan.imageAlt} class="h-40 w-full object-cover sm:h-48" />
+								</div>
+
+								<div class="border-b border-[#f3e4ea]/70 pb-3 sm:pb-4">
+									<h4 class="mt-3 text-xl text-[#2e1d24] sm:mt-4 sm:text-2xl">{plan.name}</h4>
 									<div class="mt-3 space-y-1">
 										<div class="text-sm font-semibold text-[#8f6c7a]">{plan.priceLabel}</div>
 										{#if plan.afterPriceLabel}
@@ -361,10 +371,10 @@
 									</div>
 								</div>
 
-								<div class="mt-4">
-									<p class="rounded-[18px] bg-[#fff5f8] px-4 py-3 text-sm leading-6 text-[#6f5861]">{plan.highlight}</p>
+								<div class="mt-3 sm:mt-4">
+									<p class="rounded-[14px] bg-[#fff5f8] px-3 py-2.5 text-sm leading-6 text-[#6f5861] sm:rounded-[18px] sm:px-4 sm:py-3">{plan.highlight}</p>
 
-									<p class="mt-4 text-sm leading-7 text-[#5f4b53]">
+									<p class="mt-3 text-sm leading-7 text-[#5f4b53] sm:mt-4">
 										{#if plan.description.length <= 104}
 											{plan.description}
 										{:else}
@@ -379,8 +389,8 @@
 									{/if}
 								</div>
 
-								<div class="mt-5 space-y-3">
-									<div class="rounded-[18px] bg-[#fcfafb] p-4">
+								<div class="mt-4 space-y-2.5 sm:mt-5 sm:space-y-3">
+									<div class="rounded-[14px] bg-[#fcfafb] p-3 sm:rounded-[18px] sm:p-4">
 										<div class="text-xs text-[#8d6f79]">料金</div>
 										<ul class="mt-3 space-y-2 text-sm text-[#4d3b43]">
 											{#each plan.includedBenefits as item}
@@ -392,23 +402,26 @@
 										</ul>
 									</div>
 
-									<div class="rounded-[18px] bg-[#fcfafb] p-4">
+									<div class="rounded-[14px] bg-[#fcfafb] p-3 sm:rounded-[18px] sm:p-4">
 										<div class="text-xs text-[#8d6f79]">セット内容</div>
-										<ul class="mt-3 space-y-2 text-sm text-[#4d3b43]">
+										<p class="mt-2 text-xs leading-6 text-[#7d6670]">{plan.contentSummary}</p>
+										<div class="mt-3 grid gap-2 sm:grid-cols-2">
 											{#each plan.contents as item}
-												<li class="flex gap-2">
-													<span class="mt-[2px] text-[#d56f97]">●</span>
-													<span>{item}</span>
-												</li>
+												<div class="rounded-[12px] border border-[#f0dde5]/70 bg-white px-2.5 py-2.5 text-sm text-[#4d3b43] sm:rounded-[16px] sm:border-[#f0dde5] sm:px-3 sm:py-3">
+													<div class="flex gap-2">
+														<span class="mt-[2px] text-[#d56f97]">●</span>
+														<span>{item}</span>
+													</div>
+												</div>
 											{/each}
-										</ul>
+										</div>
 									</div>
 
-									<div class="rounded-[18px] bg-[#fcfafb] p-4">
+									<div class="rounded-[14px] bg-[#fcfafb] p-3 sm:rounded-[18px] sm:p-4">
 										<div class="text-xs text-[#8d6f79]">追加オプション</div>
 										<div class="mt-3 space-y-3">
 											{#each sharedOptions as opt}
-												<label class="flex cursor-pointer items-start gap-4 rounded-[18px] border border-[#efdbe3] bg-[#fff9fb] p-4 transition hover:border-[#d99ab3]">
+												<label class="flex cursor-pointer items-start gap-3 rounded-[14px] border border-[#efdbe3]/70 bg-[#fff9fb] p-3 transition hover:border-[#d99ab3] sm:gap-4 sm:rounded-[18px] sm:border-[#efdbe3] sm:p-4">
 													<input
 														type="checkbox"
 														class="mt-1 h-4 w-4 accent-pink-500"
@@ -448,32 +461,35 @@
 				{@const totalFirst = planInitialAmount(currentPlan) + recurringOptionTotal(appliedOptions) + oneTimeOptionTotal(appliedOptions)}
 				{@const totalMonthly = planRecurringAmount(currentPlan) + recurringOptionTotal(appliedOptions)}
 
-					<div class="grid gap-5 md:grid-cols-[1.05fr_0.95fr]">
-						<div class="overflow-hidden rounded-[28px] border border-[#efdbe3] bg-white shadow-[0_18px_40px_rgba(65,29,45,0.08)]">
+					<div class="grid gap-4 md:grid-cols-[1.05fr_0.95fr] sm:gap-5">
+						<div class="overflow-hidden rounded-[20px] border border-[#efdbe3]/60 bg-white shadow-[0_12px_28px_rgba(65,29,45,0.06)] sm:rounded-[28px] sm:border-[#efdbe3] sm:shadow-[0_18px_40px_rgba(65,29,45,0.08)]">
 							<div class={`relative min-h-[250px] overflow-hidden bg-gradient-to-br ${currentPlan.accent}`}>
-								<img src={currentPlan.img} class="h-full w-full object-cover mix-blend-multiply opacity-90" alt={currentPlan.name} />
+								<img src={currentPlan.img} class="h-full w-full object-cover mix-blend-multiply opacity-90" alt={currentPlan.imageAlt} />
 								<div class="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.02),rgba(0,0,0,0.42))]" />
-								<div class="absolute bottom-0 left-0 right-0 p-5 text-white">
-									<h3 class="mt-2 text-2xl">{currentPlan.name}</h3>
+								<div class="absolute bottom-0 left-0 right-0 p-4 text-white sm:p-5">
+									<h3 class="mt-2 text-xl sm:text-2xl">{currentPlan.name}</h3>
 									<p class="mt-2 text-sm text-white/80">{currentPlan.highlight}</p>
 								</div>
 						</div>
 
-							<div class="space-y-5 p-5">
+							<div class="space-y-4 p-3 sm:space-y-5 sm:p-5">
 								<div>
 									<p class="text-sm leading-7 text-[#5f4b53]">{currentPlan.description}</p>
 								</div>
 
 								<div>
 									<div class="text-xs text-[#8d6f79]">セット内容</div>
-								<ul class="mt-3 space-y-2 text-sm text-[#4d3b43]">
+								<p class="mt-2 text-xs leading-6 text-[#7d6670]">{currentPlan.contentSummary}</p>
+								<div class="mt-3 grid gap-2 sm:grid-cols-2">
 									{#each currentPlan.contents as item}
-										<li class="flex gap-2">
-											<span class="mt-[2px] text-[#d56f97]">●</span>
-											<span>{item}</span>
-										</li>
+										<div class="rounded-[12px] border border-[#f0dde5]/70 bg-[#fffafc] px-2.5 py-2.5 text-sm text-[#4d3b43] sm:rounded-[16px] sm:border-[#f0dde5] sm:px-3 sm:py-3">
+											<div class="flex gap-2">
+												<span class="mt-[2px] text-[#d56f97]">●</span>
+												<span>{item}</span>
+											</div>
+										</div>
 									{/each}
-								</ul>
+								</div>
 							</div>
 
 								{#if appliedOptions.length > 0}
@@ -481,7 +497,7 @@
 										<div class="text-xs text-[#8d6f79]">追加オプション</div>
 									<div class="mt-3 space-y-3">
 										{#each appliedOptions as opt}
-											<div class="rounded-[18px] bg-[#fff5f8] p-4">
+												<div class="rounded-[14px] bg-[#fff5f8] p-3 sm:rounded-[18px] sm:p-4">
 												<div class="flex items-center justify-between gap-3">
 													<div>
 														<div class="text-sm font-semibold text-[#2e1d24]">{opt.name}</div>
@@ -497,8 +513,8 @@
 						</div>
 					</div>
 
-						<div class="rounded-[28px] border border-[#efdbe3] bg-[linear-gradient(180deg,#fffdfd,#fff2f6)] p-5 shadow-[0_18px_40px_rgba(65,29,45,0.08)]">
-							<h3 class="mt-2 text-2xl text-[#2e1d24]">ご注文内容の確認</h3>
+						<div class="rounded-[20px] border border-[#efdbe3]/60 bg-[linear-gradient(180deg,#fffdfd,#fff2f6)] p-3 shadow-[0_12px_28px_rgba(65,29,45,0.06)] sm:rounded-[28px] sm:border-[#efdbe3] sm:p-5 sm:shadow-[0_18px_40px_rgba(65,29,45,0.08)]">
+							<h3 class="mt-2 text-xl text-[#2e1d24] sm:text-2xl">ご注文内容の確認</h3>
 
 							<div class="mt-4 flex flex-col gap-3">
 								<button class="w-full rounded-full bg-[#d45588] px-5 py-3 text-sm text-white transition hover:bg-[#be3d72] disabled:opacity-50" on:click={goToCheckout} disabled={isProcessing}>
@@ -509,7 +525,7 @@
 								</button>
 							</div>
 
-							<div class="mt-5 rounded-[22px] bg-[#2c1d25] p-5 text-white">
+							<div class="mt-4 rounded-[18px] bg-[#2c1d25] p-4 text-white sm:mt-5 sm:rounded-[22px] sm:p-5">
 								<div class="text-sm text-white/70">初回のお支払い</div>
 								<div class="mt-2 text-4xl">{formatCurrency(totalFirst)}</div>
 								{#if currentPlan.id === 'special-plan'}
@@ -522,22 +538,22 @@
 								{/if}
 							</div>
 
-							<div class="mt-5 space-y-4 text-sm text-[#4d3b43]">
-								<div class="rounded-[18px] bg-white/80 p-4">
+							<div class="mt-4 space-y-3 text-sm text-[#4d3b43] sm:mt-5 sm:space-y-4">
+								<div class="rounded-[14px] bg-white/80 p-3 sm:rounded-[18px] sm:p-4">
 									<div class="flex items-center justify-between">
 										<span>選択プラン</span>
 										<span>{currentPlan.id === 'special-plan' ? '月額 5,500円' : `${formatCurrency(currentPlan.price)}/月`}</span>
 									</div>
 									<div class="mt-2 text-xs leading-6 text-[#7a626c]">{currentPlan.name}</div>
 									{#if currentPlan.id === 'special-plan'}
-										<div class="mt-2 rounded-[14px] bg-[#fff4f7] p-3 text-xs leading-6 text-[#7a626c]">
+										<div class="mt-2 rounded-[12px] bg-[#fff4f7] p-3 text-xs leading-6 text-[#7a626c] sm:rounded-[14px]">
 											1〜12ヶ月目は月額5,500円、13ヶ月目以降は月額3,300円です。12回のお支払い完了後、顔マスクをプレゼントします。
 										</div>
 									{/if}
 								</div>
 
 							{#if appliedOptions.length > 0}
-								<div class="rounded-[18px] bg-white/80 p-4">
+									<div class="rounded-[14px] bg-white/80 p-3 sm:rounded-[18px] sm:p-4">
 									<div class="mb-2">追加オプション</div>
 									{#each appliedOptions as opt}
 										<div class="flex items-center justify-between py-1 text-xs text-[#6f5861]">
@@ -549,7 +565,7 @@
 							{/if}
 
 							{#if currentPlan.id === 'special-plan'}
-								<div class="rounded-[18px] border border-dashed border-[#dfb2c3] p-4 text-xs leading-6 text-[#7a626c]">
+								<div class="rounded-[14px] border border-dashed border-[#dfb2c3] p-3 text-xs leading-6 text-[#7a626c] sm:rounded-[18px] sm:p-4">
 									スペシャルプランは「基本プラン 3,300円/月 + 顔マスクオプション 2,200円/月」の構成です。顔マスクオプションのお支払いは12回で終了し、その後は通常プランと同じ月額3,300円になります。
 								</div>
 							{/if}
