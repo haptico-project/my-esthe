@@ -40,6 +40,7 @@
 		includedBenefits: string[];
 		imageAlt: string;
 		contentSummary: string;
+		availableOptionIds: string[];
 	};
 
 	const dispatch = createEventDispatcher();
@@ -66,6 +67,20 @@
 		eyebrow: ''
 	};
 
+	const faceMaskSetOption: PlanOption = {
+		id: 'face-mask-set',
+		name: '顔マスクセット',
+		description:
+			'顔マスクを月額2,200円で12ヶ月お支払いいただく追加オプションです。通常プランに追加して申し込めます。',
+		priceLabel: '＋2,200円 / 月 × 12ヶ月',
+		amount: 2200,
+		img: `${base}/images/plans/option/kaomask.png`,
+		kind: 'installment',
+		orderProduct: { productId: 'price_1T94CTPo9yD7PttVbiyOrzT2', quantity: 1 },
+		badge: '12回払い',
+		eyebrow: ''
+	};
+
 	const plans: Plan[] = [
 		{
 			id: 'standard-plan',
@@ -87,62 +102,36 @@
 			includedBenefits: [
 				'月額3,300円でスタート',
 				'ご自宅で続けやすい基本セット',
-				'必要に応じて買い切りオプション追加可能'
+				'顔マスクセットやバッテリーを追加可能'
 			],
 			imageAlt: '通常プランの美容機器セット',
-			contentSummary: '毎日のケアを始めやすい基本セットです。'
+			contentSummary: '毎日のケアを始めやすい基本セットです。',
+			availableOptionIds: ['mobile-battery', 'face-mask-set']
 		},
 		{
-			id: 'special-plan',
-			name: 'スペシャルプラン',
-			description:
-				'顔マスクオプションを月額2,200円で12回お支払いいただくプランです。1〜12ヶ月目は月額5,500円、13ヶ月目以降は月額3,300円になり、12回完了後は顔マスクをプレゼントとしてお受け取りいただけます。',
-			price: 5500,
-			priceLabel: '1〜12ヶ月目 月額 5,500円',
-			afterPriceLabel: '13ヶ月目以降 月額 3,300円',
-			img: `${base}/images/plans/special.jpg`,
-			accent: 'from-[#efe3e7] via-[#faf6f7] to-[#eadfe6]',
-			highlight: '12回完了後に顔マスクをプレゼント',
-			contents: [
-				'通常プランのセット内容一式',
-				'顔マスクオプション（月額2,200円 × 12回）',
-				'12回完了後に顔マスクをプレゼント'
-			],
-			orderProducts: [
-				{ productId: 'price_1SUdstPo9yD7PttV1EclsBsi', quantity: 1 },
-				{ productId: 'price_1T94CTPo9yD7PttVbiyOrzT2', quantity: 1 }
-			],
-			includedBenefits: [
-				'1〜12ヶ月目は月額5,500円',
-				'13ヶ月目以降は月額3,300円',
-				'12回完了後は顔マスクをプレゼント'
-			],
-			imageAlt: 'スペシャルプランの美容機器セットと顔マスク',
-			contentSummary: '基本セットに顔マスク特典が付く充実プランです。'
-		},
-		{
-			id: 'mask-battery-plan',
+			id: 'face-mask-plan',
 			name: '顔マスクプラン',
 			description:
-				'顔マスクを月額2,200円でご利用いただけるプランです。必要に応じて、バッテリーオプションを追加してお申し込みいただけます。',
+				'顔マスクのみを月額2,200円で12ヶ月お支払いいただくプランです。顔マスクだけを使いたい方向に向いています。',
 			price: 2200,
-			priceLabel: '月額 2,200円',
+			priceLabel: '月額 2,200円 × 12ヶ月',
 			img: `${base}/images/plans/special.jpg`,
 			accent: 'from-[#f1e5e9] via-[#fff7f7] to-[#efe7e2]',
-			highlight: '顔マスクだけをシンプルに申し込み',
-			contents: ['顔マスクオプション（月額2,200円）'],
+			highlight: '顔マスクのみを12ヶ月で申し込み',
+			contents: ['顔マスク（月額2,200円 × 12ヶ月）'],
 			orderProducts: [{ productId: 'price_1T94CTPo9yD7PttVbiyOrzT2', quantity: 1 }],
 			includedBenefits: [
-				'月額2,200円で顔マスクを継続利用',
-				'必要に応じてバッテリーを追加可能',
-				'本体セットなしで必要なものだけ申し込み可能'
+				'月額2,200円を12ヶ月お支払い',
+				'顔マスクのみを申し込める単独プラン',
+				'通常プラン本体セットは含まれません'
 			],
 			imageAlt: '顔マスクプランのイメージ',
-			contentSummary: '顔マスクだけを使いたい方向けのシンプルなプランです。'
+			contentSummary: '顔マスクだけを使いたい方向けのシンプルな12ヶ月プランです。',
+			availableOptionIds: []
 		}
 	];
 
-	const sharedOptions: PlanOption[] = [batteryOption];
+	const sharedOptions: PlanOption[] = [batteryOption, faceMaskSetOption];
 
 	let step = 1;
 	let agreed = false;
@@ -159,7 +148,10 @@
 
 	const formatCurrency = (value: number) => `¥${value.toLocaleString()}`;
 	const selectedPlan = () => plans.find((plan) => plan.id === selectedPlanId);
-	const selectedOptionList = (plan: Plan) => sharedOptions.filter((option) => selectedOptions[option.id]);
+	const availableOptions = (plan: Plan) =>
+		sharedOptions.filter((option) => plan.availableOptionIds.includes(option.id));
+	const selectedOptionList = (plan: Plan) =>
+		availableOptions(plan).filter((option) => selectedOptions[option.id]);
 
 	const planInitialAmount = (plan: Plan) => plan.price;
 	const planRecurringAmount = (plan: Plan) => plan.price;
@@ -186,16 +178,23 @@
 
 		const currentUrl = get(page).url;
 		const baseUrl = `${window.location.origin}${currentUrl.pathname}${currentUrl.search}`;
+		const selectedOptionsForPlan = selectedOptionList(currentPlan);
 		const oneTimePriceIds = selectedOptionList(currentPlan)
 			.filter((option) => option.checkoutPriceId)
 			.map((option) => option.checkoutPriceId as string);
+		const orderProducts = [
+			...currentPlan.orderProducts,
+			...selectedOptionsForPlan
+				.filter((option) => option.orderProduct)
+				.map((option) => option.orderProduct as CheckoutProduct)
+		];
 
 		try {
 			const res = await postCheckout('/api/v1/checkout/subscription-url', {
 				checkoutSuccessUrl: baseUrl,
 				checkoutCancelUrl: baseUrl,
 				agencyCode: code,
-				orderProducts: currentPlan.orderProducts,
+				orderProducts,
 				oneTimePriceIds
 			});
 
@@ -217,7 +216,7 @@
 	class="fixed inset-0 z-20 flex items-center justify-center bg-[radial-gradient(circle_at_top,rgba(255,205,224,0.42),rgba(19,12,18,0.88))] p-2 sm:p-4 backdrop-blur-sm"
 	style="font-family: 'hiragino-mincho-pro';"
 >
-	<div class="relative max-h-[92vh] w-full max-w-3xl overflow-y-auto rounded-[22px] border border-white/20 bg-[linear-gradient(180deg,rgba(255,255,255,0.96),rgba(255,247,250,0.94))] p-3 shadow-[0_28px_80px_rgba(38,16,31,0.28)] sm:max-h-[90vh] sm:w-[94%] sm:rounded-[28px] sm:border-white/50 sm:p-8">
+	<div class="relative max-h-[92vh] w-full max-w-7xl overflow-y-auto rounded-[22px] border border-white/20 bg-[linear-gradient(180deg,rgba(255,255,255,0.96),rgba(255,247,250,0.94))] p-3 shadow-[0_28px_80px_rgba(38,16,31,0.28)] sm:max-h-[90vh] sm:w-[96%] sm:rounded-[28px] sm:border-white/50 sm:p-6 lg:w-[94%] lg:p-8">
 		<button class="absolute right-4 top-4 rounded-full border border-black/10 bg-white/80 px-3 py-1 text-sm text-gray-600 transition hover:bg-white" on:click={close}>閉じる</button>
 
 		<div class="mb-6 border-b border-[#f0d6df] pb-4">
@@ -364,26 +363,26 @@
 				</button>
 			</div>
 		{:else if step === 2}
-				<div class="mb-4 overflow-hidden bg-transparent sm:mb-6 sm:rounded-[28px] sm:border sm:border-[#f0dde5] sm:bg-white sm:shadow-[0_18px_40px_rgba(65,29,45,0.08)]">
+				<div class="mb-4 overflow-hidden bg-transparent sm:mb-6">
 				<div class="relative h-[220px] overflow-hidden">
 					<img src={`${base}/images/plans/special.jpg`} alt="プラン比較イメージ" class="h-full w-full object-cover" />
 					<div class="absolute inset-0 bg-[linear-gradient(180deg,rgba(40,24,31,0.12),rgba(40,24,31,0.58))]" />
 					<div class="absolute inset-x-0 bottom-0 p-4 text-white sm:p-6">
 						<h3 class="text-xl sm:text-2xl">プランを比べて選ぶ</h3>
-						<p class="mt-2 text-sm leading-6 text-white/85">通常プラン、スペシャルプラン、顔マスクプランを見比べながら選べます。</p>
+						<p class="mt-2 text-sm leading-6 text-white/85">通常プランと顔マスクプランを見比べながら選べます。通常プランには顔マスクセットを追加できます。</p>
 					</div>
 				</div>
-				<div class="bg-transparent p-0 sm:bg-[linear-gradient(135deg,#fff7f9,#fffdfa)] sm:p-5">
-					<div class="grid gap-4 md:grid-cols-2">
+				<div class="bg-transparent p-0">
+					<div class="grid gap-3 md:grid-cols-2 md:gap-4">
 						{#each plans as plan}
-							<div class="rounded-[18px] border border-[#edd9e2]/60 bg-white p-3 shadow-[0_10px_22px_rgba(65,29,45,0.05)] sm:rounded-[24px] sm:border-[#edd9e2] sm:p-5 sm:shadow-[0_12px_28px_rgba(65,29,45,0.06)]">
+							<div class="rounded-[18px] border border-[#edd9e2]/45 bg-white/92 p-3 shadow-[0_8px_20px_rgba(65,29,45,0.04)] sm:rounded-[20px] sm:p-4 md:shadow-none">
 								<div class="overflow-hidden rounded-[16px] bg-[#f8eef2] sm:rounded-[20px]">
-									<img src={plan.img} alt={plan.imageAlt} class="h-40 w-full object-cover sm:h-48" />
+									<img src={plan.img} alt={plan.imageAlt} class="h-32 w-full object-cover sm:h-40 md:h-32 lg:h-40" />
 								</div>
 
-								<div class="border-b border-[#f3e4ea]/70 pb-3 sm:pb-4">
-									<h4 class="mt-3 text-xl text-[#2e1d24] sm:mt-4 sm:text-2xl">{plan.name}</h4>
-									<div class="mt-3 space-y-1">
+								<div class="pb-2">
+									<h4 class="mt-3 text-lg text-[#2e1d24] sm:mt-4 sm:text-xl lg:text-2xl">{plan.name}</h4>
+									<div class="mt-2 space-y-1">
 										<div class="text-sm font-semibold text-[#8f6c7a]">{plan.priceLabel}</div>
 										{#if plan.afterPriceLabel}
 											<div class="text-sm font-semibold text-[#c15582]">{plan.afterPriceLabel}</div>
@@ -391,10 +390,10 @@
 									</div>
 								</div>
 
-								<div class="mt-3 sm:mt-4">
-									<p class="rounded-[14px] bg-[#fff5f8] px-3 py-2.5 text-sm leading-6 text-[#6f5861] sm:rounded-[18px] sm:px-4 sm:py-3">{plan.highlight}</p>
+								<div class="mt-3">
+									<p class="rounded-[12px] bg-[#fff5f8] px-3 py-2 text-sm leading-6 text-[#6f5861]">{plan.highlight}</p>
 
-									<p class="mt-3 text-sm leading-7 text-[#5f4b53] sm:mt-4">
+									<p class="mt-3 text-sm leading-6 text-[#5f4b53]">
 										{#if plan.description.length <= 104}
 											{plan.description}
 										{:else}
@@ -409,10 +408,10 @@
 									{/if}
 								</div>
 
-								<div class="mt-4 space-y-2.5 sm:mt-5 sm:space-y-3">
-									<div class="rounded-[14px] bg-[#fcfafb] p-3 sm:rounded-[18px] sm:p-4">
+								<div class="mt-4 space-y-3">
+									<div class="border-t border-[#f0dde5]/70 pt-3">
 										<div class="text-xs text-[#8d6f79]">料金</div>
-										<ul class="mt-3 space-y-2 text-sm text-[#4d3b43]">
+										<ul class="mt-2 space-y-1.5 text-sm text-[#4d3b43]">
 											{#each plan.includedBenefits as item}
 												<li class="flex gap-2">
 													<span class="mt-[2px] text-[#d56f97]">●</span>
@@ -422,12 +421,12 @@
 										</ul>
 									</div>
 
-									<div class="rounded-[14px] bg-[#fcfafb] p-3 sm:rounded-[18px] sm:p-4">
+									<div class="border-t border-[#f0dde5]/70 pt-3">
 										<div class="text-xs text-[#8d6f79]">セット内容</div>
 										<p class="mt-2 text-xs leading-6 text-[#7d6670]">{plan.contentSummary}</p>
-										<div class="mt-3 grid gap-2 sm:grid-cols-2">
+										<div class="mt-2 grid gap-2">
 											{#each plan.contents as item}
-												<div class="rounded-[12px] border border-[#f0dde5]/70 bg-white px-2.5 py-2.5 text-sm text-[#4d3b43] sm:rounded-[16px] sm:border-[#f0dde5] sm:px-3 sm:py-3">
+												<div class="rounded-[10px] bg-[#fffafc] px-2.5 py-2 text-sm text-[#4d3b43]">
 													<div class="flex gap-2">
 														<span class="mt-[2px] text-[#d56f97]">●</span>
 														<span>{item}</span>
@@ -437,32 +436,34 @@
 										</div>
 									</div>
 
-									<div class="rounded-[14px] bg-[#fcfafb] p-3 sm:rounded-[18px] sm:p-4">
-										<div class="text-xs text-[#8d6f79]">追加オプション</div>
-										<div class="mt-3 space-y-3">
-											{#each sharedOptions as opt}
-												<label class="flex cursor-pointer items-start gap-3 rounded-[14px] border border-[#efdbe3]/70 bg-[#fff9fb] p-3 transition hover:border-[#d99ab3] sm:gap-4 sm:rounded-[18px] sm:border-[#efdbe3] sm:p-4">
+									{#if availableOptions(plan).length > 0}
+										<div class="border-t border-[#f0dde5]/70 pt-3">
+											<div class="text-xs text-[#8d6f79]">追加オプション</div>
+											<div class="mt-2 space-y-2">
+												{#each availableOptions(plan) as opt}
+												<label class="flex cursor-pointer items-start gap-2.5 rounded-[10px] bg-[#fff9fb] p-2.5 transition hover:bg-[#fff2f6]">
 													<input
 														type="checkbox"
 														class="mt-1 h-4 w-4 accent-pink-500"
 														checked={selectedOptions[opt.id]}
 														on:change={() => toggleOption(opt.id)}
 													/>
-													<div class="flex-1">
-														<div class="flex flex-wrap items-center gap-2">
-															<span class="rounded-full bg-[#2e1d24] px-2 py-1 text-[10px] tracking-[0.18em] text-white">{opt.badge}</span>
-														</div>
-														<div class="mt-2 text-sm font-semibold text-[#2e1d24]">{opt.name}</div>
-														<p class="mt-1 text-xs leading-6 text-[#65515a]">{opt.description}</p>
-														<div class="mt-2 text-sm text-[#c15582]">{opt.priceLabel}</div>
+														<div class="flex-1">
+															<div class="flex flex-wrap items-center gap-2">
+																<span class="rounded-full bg-[#2e1d24] px-2 py-1 text-[10px] tracking-[0.18em] text-white">{opt.badge}</span>
+															</div>
+														<div class="mt-1 text-sm font-semibold text-[#2e1d24]">{opt.name}</div>
+														<p class="mt-1 text-xs leading-5 text-[#65515a]">{opt.description}</p>
+														<div class="mt-1 text-sm text-[#c15582]">{opt.priceLabel}</div>
 													</div>
 												</label>
-											{/each}
+												{/each}
+											</div>
 										</div>
-									</div>
+									{/if}
 								</div>
 
-								<button class="mt-5 w-full rounded-full bg-[#26202a] px-5 py-3 text-sm text-white transition hover:bg-[#171317]" on:click={() => selectPlan(plan)}>
+								<button class="mt-4 w-full rounded-full bg-[#26202a] px-4 py-2.5 text-sm text-white transition hover:bg-[#171317]" on:click={() => selectPlan(plan)}>
 									このプランで申し込む
 								</button>
 							</div>
@@ -548,10 +549,12 @@
 							<div class="mt-4 rounded-[18px] bg-[#2c1d25] p-4 text-white sm:mt-5 sm:rounded-[22px] sm:p-5">
 								<div class="text-sm text-white/70">初回のお支払い</div>
 								<div class="mt-2 text-4xl">{formatCurrency(totalFirst)}</div>
-								{#if currentPlan.id === 'special-plan'}
+								{#if currentPlan.id === 'face-mask-plan' || appliedOptions.some((opt) => opt.id === 'face-mask-set')}
 									<div class="mt-3 space-y-1 text-sm text-white/70">
-										<div>1〜12ヶ月目 {formatCurrency(5500)}/月</div>
-										<div>13ヶ月目以降 {formatCurrency(3300)}/月</div>
+										<div>12ヶ月間 {formatCurrency(totalMonthly)}/月</div>
+										{#if currentPlan.id === 'standard-plan'}
+											<div>13ヶ月目以降 {formatCurrency(currentPlan.price)}/月</div>
+										{/if}
 									</div>
 								{:else}
 									<div class="mt-3 text-sm text-white/70">翌月以降 {formatCurrency(totalMonthly)}/月</div>
@@ -562,12 +565,12 @@
 								<div class="rounded-[14px] bg-white/80 p-3 sm:rounded-[18px] sm:p-4">
 									<div class="flex items-center justify-between">
 										<span>選択プラン</span>
-										<span>{currentPlan.id === 'special-plan' ? '月額 5,500円' : `${formatCurrency(currentPlan.price)}/月`}</span>
+										<span>{currentPlan.id === 'face-mask-plan' ? '月額 2,200円 × 12ヶ月' : `${formatCurrency(currentPlan.price)}/月`}</span>
 									</div>
 									<div class="mt-2 text-xs leading-6 text-[#7a626c]">{currentPlan.name}</div>
-									{#if currentPlan.id === 'special-plan'}
+									{#if currentPlan.id === 'face-mask-plan'}
 										<div class="mt-2 rounded-[12px] bg-[#fff4f7] p-3 text-xs leading-6 text-[#7a626c] sm:rounded-[14px]">
-											1〜12ヶ月目は月額5,500円、13ヶ月目以降は月額3,300円です。12回のお支払い完了後、顔マスクをプレゼントします。
+											顔マスクプランは月額2,200円を12ヶ月お支払いいただくプランです。通常プラン本体セットは含まれません。
 										</div>
 									{/if}
 								</div>
@@ -584,9 +587,9 @@
 								</div>
 							{/if}
 
-							{#if currentPlan.id === 'special-plan'}
+							{#if currentPlan.id === 'standard-plan' && appliedOptions.some((opt) => opt.id === 'face-mask-set')}
 								<div class="rounded-[14px] border border-dashed border-[#dfb2c3] p-3 text-xs leading-6 text-[#7a626c] sm:rounded-[18px] sm:p-4">
-									スペシャルプランは「基本プラン 3,300円/月 + 顔マスクオプション 2,200円/月」の構成です。顔マスクオプションのお支払いは12回で終了し、その後は通常プランと同じ月額3,300円になります。
+									通常プランに顔マスクセットを追加した場合は「基本プラン 3,300円/月 + 顔マスクセット 2,200円/月」の構成です。顔マスクセットのお支払いは12ヶ月で終了し、その後は通常プランの月額3,300円のみになります。
 								</div>
 							{/if}
 						</div>
