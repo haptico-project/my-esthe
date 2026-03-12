@@ -112,21 +112,21 @@
 			id: 'face-mask-plan',
 			name: '顔マスクプラン',
 			description:
-				'顔マスクのみを月額2,200円で12ヶ月お支払いいただくプランです。顔マスクだけを使いたい方向に向いています。',
+				'通常プランをすでにご利用中の方が、顔マスクのみを追加したい場合のプランです。月額2,200円を12ヶ月お支払いいただきます。',
 			price: 2200,
 			priceLabel: '月額 2,200円 × 12ヶ月',
 			img: `${base}/images/plans/special.jpg`,
 			accent: 'from-[#f1e5e9] via-[#fff7f7] to-[#efe7e2]',
-			highlight: '顔マスクのみを12ヶ月で申し込み',
+			highlight: '通常プランご利用中の方向けの顔マスク追加プラン',
 			contents: ['顔マスク（月額2,200円 × 12ヶ月）'],
 			orderProducts: [{ productId: 'price_1T94CTPo9yD7PttVbiyOrzT2', quantity: 1 }],
 			includedBenefits: [
 				'月額2,200円を12ヶ月お支払い',
-				'顔マスクのみを申し込める単独プラン',
-				'通常プラン本体セットは含まれません'
+				'通常プランご利用中の方向け',
+				'通常プランにご加入いただいていない場合はご利用いただけません'
 			],
 			imageAlt: '顔マスクプランのイメージ',
-			contentSummary: '顔マスクだけを使いたい方向けのシンプルな12ヶ月プランです。',
+			contentSummary: '通常プランご利用中の方が顔マスクのみを追加したい場合の12ヶ月プランです。',
 			availableOptionIds: []
 		}
 	];
@@ -570,7 +570,7 @@
 									<div class="mt-2 text-xs leading-6 text-[#7a626c]">{currentPlan.name}</div>
 									{#if currentPlan.id === 'face-mask-plan'}
 										<div class="mt-2 rounded-[12px] bg-[#fff4f7] p-3 text-xs leading-6 text-[#7a626c] sm:rounded-[14px]">
-											顔マスクプランは月額2,200円を12ヶ月お支払いいただくプランです。通常プラン本体セットは含まれません。
+											顔マスクプランは、通常プランをすでにご利用中の方が顔マスクのみを追加するためのプランです。通常プランにご加入いただいていない場合はご利用いただけません。
 										</div>
 									{/if}
 								</div>
