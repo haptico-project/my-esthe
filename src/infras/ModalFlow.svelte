@@ -40,6 +40,7 @@
 		includedBenefits: string[];
 		imageAlt: string;
 		contentSummary: string;
+		includedOptionIds: string[];
 	};
 
 	const dispatch = createEventDispatcher();
@@ -90,7 +91,8 @@
 				'必要に応じて買い切りオプション追加可能'
 			],
 			imageAlt: '通常プランの美容機器セット',
-			contentSummary: '毎日のケアを始めやすい基本セットです。'
+			contentSummary: '毎日のケアを始めやすい基本セットです。',
+			includedOptionIds: []
 		},
 		{
 			id: 'special-plan',
@@ -118,7 +120,29 @@
 				'12回完了後は顔マスクをプレゼント'
 			],
 			imageAlt: 'スペシャルプランの美容機器セットと顔マスク',
-			contentSummary: '基本セットに顔マスク特典が付く充実プランです。'
+			contentSummary: '基本セットに顔マスク特典が付く充実プランです。',
+			includedOptionIds: []
+		},
+		{
+			id: 'mask-battery-plan',
+			name: '顔マスク＋バッテリープラン',
+			description:
+				'顔マスクを月額2,200円でご利用いただけるプランです。初回にバッテリーオプション3,300円をあわせてお届けするため、必要なものだけをまとめて申し込めます。',
+			price: 2200,
+			priceLabel: '月額 2,200円',
+			img: `${base}/images/plans/special.jpg`,
+			accent: 'from-[#f1e5e9] via-[#fff7f7] to-[#efe7e2]',
+			highlight: '顔マスクとバッテリーだけをまとめて申し込み',
+			contents: ['顔マスクオプション（月額2,200円）', 'モバイルバッテリー（初回3,300円）'],
+			orderProducts: [{ productId: 'price_1T94CTPo9yD7PttVbiyOrzT2', quantity: 1 }],
+			includedBenefits: [
+				'月額2,200円で顔マスクを継続利用',
+				'初回にバッテリーを一緒にお届け',
+				'本体セットなしで必要なものだけ申し込み可能'
+			],
+			imageAlt: '顔マスクとバッテリーのプランイメージ',
+			contentSummary: '顔マスク利用に必要な構成だけをまとめたプランです。',
+			includedOptionIds: ['mobile-battery']
 		}
 	];
 
@@ -139,7 +163,14 @@
 
 	const formatCurrency = (value: number) => `¥${value.toLocaleString()}`;
 	const selectedPlan = () => plans.find((plan) => plan.id === selectedPlanId);
-	const selectedOptionList = () => sharedOptions.filter((option) => selectedOptions[option.id]);
+	const includedOptionList = (plan: Plan) =>
+		sharedOptions.filter((option) => plan.includedOptionIds.includes(option.id));
+	const selectableOptions = (plan: Plan) =>
+		sharedOptions.filter((option) => !plan.includedOptionIds.includes(option.id));
+	const selectedOptionList = (plan: Plan) => [
+		...includedOptionList(plan),
+		...selectableOptions(plan).filter((option) => selectedOptions[option.id])
+	];
 
 	const planInitialAmount = (plan: Plan) => plan.price;
 	const planRecurringAmount = (plan: Plan) => plan.price;
@@ -166,7 +197,7 @@
 
 		const currentUrl = get(page).url;
 		const baseUrl = `${window.location.origin}${currentUrl.pathname}${currentUrl.search}`;
-		const oneTimePriceIds = selectedOptionList()
+		const oneTimePriceIds = selectedOptionList(currentPlan)
 			.filter((option) => option.checkoutPriceId)
 			.map((option) => option.checkoutPriceId as string);
 
@@ -350,7 +381,7 @@
 					<div class="absolute inset-0 bg-[linear-gradient(180deg,rgba(40,24,31,0.12),rgba(40,24,31,0.58))]" />
 					<div class="absolute inset-x-0 bottom-0 p-4 text-white sm:p-6">
 						<h3 class="text-xl sm:text-2xl">プランを比べて選ぶ</h3>
-						<p class="mt-2 text-sm leading-6 text-white/85">通常プランとスペシャルプランの違いを見比べながら選べます。バッテリーはどちらにも追加できます。</p>
+						<p class="mt-2 text-sm leading-6 text-white/85">通常プラン、スペシャルプラン、顔マスク＋バッテリープランを見比べながら選べます。</p>
 					</div>
 				</div>
 				<div class="bg-transparent p-0 sm:bg-[linear-gradient(135deg,#fff7f9,#fffdfa)] sm:p-5">
@@ -417,29 +448,52 @@
 										</div>
 									</div>
 
-									<div class="rounded-[14px] bg-[#fcfafb] p-3 sm:rounded-[18px] sm:p-4">
-										<div class="text-xs text-[#8d6f79]">追加オプション</div>
-										<div class="mt-3 space-y-3">
-											{#each sharedOptions as opt}
-												<label class="flex cursor-pointer items-start gap-3 rounded-[14px] border border-[#efdbe3]/70 bg-[#fff9fb] p-3 transition hover:border-[#d99ab3] sm:gap-4 sm:rounded-[18px] sm:border-[#efdbe3] sm:p-4">
-													<input
-														type="checkbox"
-														class="mt-1 h-4 w-4 accent-pink-500"
-														checked={selectedOptions[opt.id]}
-														on:change={() => toggleOption(opt.id)}
-													/>
-													<div class="flex-1">
-														<div class="flex flex-wrap items-center gap-2">
-															<span class="rounded-full bg-[#2e1d24] px-2 py-1 text-[10px] tracking-[0.18em] text-white">{opt.badge}</span>
+									{#if includedOptionList(plan).length > 0}
+										<div class="rounded-[14px] bg-[#fcfafb] p-3 sm:rounded-[18px] sm:p-4">
+											<div class="text-xs text-[#8d6f79]">このプランに含まれるオプション</div>
+											<div class="mt-3 space-y-3">
+												{#each includedOptionList(plan) as opt}
+													<div class="flex items-start gap-3 rounded-[14px] border border-[#efdbe3]/70 bg-[#fff9fb] p-3 sm:rounded-[18px] sm:border-[#efdbe3] sm:p-4">
+														<div class="flex-1">
+															<div class="flex flex-wrap items-center gap-2">
+																<span class="rounded-full bg-[#2e1d24] px-2 py-1 text-[10px] tracking-[0.18em] text-white">プラン込み</span>
+																<span class="rounded-full bg-[#f5d8e4] px-2 py-1 text-[10px] tracking-[0.14em] text-[#7a4558]">{opt.badge}</span>
+															</div>
+															<div class="mt-2 text-sm font-semibold text-[#2e1d24]">{opt.name}</div>
+															<p class="mt-1 text-xs leading-6 text-[#65515a]">{opt.description}</p>
+															<div class="mt-2 text-sm text-[#c15582]">{opt.priceLabel}</div>
 														</div>
-														<div class="mt-2 text-sm font-semibold text-[#2e1d24]">{opt.name}</div>
-														<p class="mt-1 text-xs leading-6 text-[#65515a]">{opt.description}</p>
-														<div class="mt-2 text-sm text-[#c15582]">{opt.priceLabel}</div>
 													</div>
-												</label>
-											{/each}
+												{/each}
+											</div>
 										</div>
-									</div>
+									{/if}
+
+									{#if selectableOptions(plan).length > 0}
+										<div class="rounded-[14px] bg-[#fcfafb] p-3 sm:rounded-[18px] sm:p-4">
+											<div class="text-xs text-[#8d6f79]">追加オプション</div>
+											<div class="mt-3 space-y-3">
+												{#each selectableOptions(plan) as opt}
+													<label class="flex cursor-pointer items-start gap-3 rounded-[14px] border border-[#efdbe3]/70 bg-[#fff9fb] p-3 transition hover:border-[#d99ab3] sm:gap-4 sm:rounded-[18px] sm:border-[#efdbe3] sm:p-4">
+														<input
+															type="checkbox"
+															class="mt-1 h-4 w-4 accent-pink-500"
+															checked={selectedOptions[opt.id]}
+															on:change={() => toggleOption(opt.id)}
+														/>
+														<div class="flex-1">
+															<div class="flex flex-wrap items-center gap-2">
+																<span class="rounded-full bg-[#2e1d24] px-2 py-1 text-[10px] tracking-[0.18em] text-white">{opt.badge}</span>
+															</div>
+															<div class="mt-2 text-sm font-semibold text-[#2e1d24]">{opt.name}</div>
+															<p class="mt-1 text-xs leading-6 text-[#65515a]">{opt.description}</p>
+															<div class="mt-2 text-sm text-[#c15582]">{opt.priceLabel}</div>
+														</div>
+													</label>
+												{/each}
+											</div>
+										</div>
+									{/if}
 								</div>
 
 								<button class="mt-5 w-full rounded-full bg-[#26202a] px-5 py-3 text-sm text-white transition hover:bg-[#171317]" on:click={() => selectPlan(plan)}>
@@ -453,11 +507,11 @@
 				</div>
 		{:else if step === 3}
 			{@const currentPlan = selectedPlan()}
-			{@const appliedOptions = selectedOptionList()}
 			{#if currentPlan === undefined}
 				<p class="text-sm text-red-500">プラン情報の取得に失敗しました。</p>
 				<button class="mt-4 text-gray-600 underline" on:click={() => (step = 2)}>プラン選択に戻る</button>
 			{:else}
+				{@const appliedOptions = selectedOptionList(currentPlan)}
 				{@const totalFirst = planInitialAmount(currentPlan) + recurringOptionTotal(appliedOptions) + oneTimeOptionTotal(appliedOptions)}
 				{@const totalMonthly = planRecurringAmount(currentPlan) + recurringOptionTotal(appliedOptions)}
 
@@ -494,7 +548,7 @@
 
 								{#if appliedOptions.length > 0}
 									<div>
-										<div class="text-xs text-[#8d6f79]">追加オプション</div>
+										<div class="text-xs text-[#8d6f79]">{currentPlan.includedOptionIds.length > 0 ? '含まれるオプション' : '追加オプション'}</div>
 									<div class="mt-3 space-y-3">
 										{#each appliedOptions as opt}
 												<div class="rounded-[14px] bg-[#fff5f8] p-3 sm:rounded-[18px] sm:p-4">
