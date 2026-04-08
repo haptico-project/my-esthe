@@ -89,7 +89,7 @@
 				'まずはシンプルに始めたい方向けのベーシックプランです。自宅で気軽に、毎日のフェイスケア習慣を作れます。',
 			price: 3300,
 			priceLabel: '月額 3,300円',
-			img: `${base}/images/plans/basic.jpg`,
+			img: `${base}/images/plans/basic_2.jpg`,
 			accent: 'from-[#f4e8ec] via-[#fffaf8] to-[#f3ece8]',
 			highlight: '本体セットのみで気軽にスタート',
 			contents: [
