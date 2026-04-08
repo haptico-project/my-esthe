@@ -356,8 +356,8 @@
 			</div>
 		{:else if step === 2}
 				<div class="mb-4 overflow-hidden bg-transparent sm:mb-6">
-				<div class="relative h-[220px] overflow-hidden">
-					<img src={`${base}/images/plans/special.jpg`} alt="プラン比較イメージ" class="h-full w-full object-cover" />
+				<div class="relative flex h-[220px] items-center justify-center overflow-hidden rounded-[24px] bg-[radial-gradient(circle_at_top,#fff6f8,#f3dfe7_58%,#ead1db)] px-4 sm:px-6">
+					<img src={`${base}/images/plans/special.jpg`} alt="プラン比較イメージ" class="max-h-full w-full object-contain" />
 					<div class="absolute inset-0 bg-[linear-gradient(180deg,rgba(40,24,31,0.12),rgba(40,24,31,0.58))]" />
 					<div class="absolute inset-x-0 bottom-0 p-4 text-white sm:p-6">
 						<h3 class="text-xl sm:text-2xl">プランを比べて選ぶ</h3>
@@ -368,8 +368,8 @@
 					<div class="grid gap-3 md:grid-cols-2 md:gap-4">
 						{#each plans as plan}
 							<div class="rounded-[18px] border border-[#edd9e2]/45 bg-white/92 p-3 shadow-[0_8px_20px_rgba(65,29,45,0.04)] sm:rounded-[20px] sm:p-4 md:shadow-none">
-								<div class="overflow-hidden rounded-[16px] bg-[#f8eef2] sm:rounded-[20px]">
-									<img src={plan.img} alt={plan.imageAlt} class="h-32 w-full object-cover sm:h-40 md:h-32 lg:h-40" />
+								<div class="flex h-32 items-center justify-center overflow-hidden rounded-[16px] bg-[linear-gradient(180deg,#fff8fa,#f8eef2)] px-3 sm:h-40 sm:rounded-[20px] sm:px-4 md:h-32 lg:h-40">
+									<img src={plan.img} alt={plan.imageAlt} class="max-h-full w-full object-contain" />
 								</div>
 
 								<div class="pb-2">
@@ -476,8 +476,8 @@
 
 					<div class="grid gap-4 md:grid-cols-[1.05fr_0.95fr] sm:gap-5">
 						<div class="overflow-hidden rounded-[20px] border border-[#efdbe3]/60 bg-white shadow-[0_12px_28px_rgba(65,29,45,0.06)] sm:rounded-[28px] sm:border-[#efdbe3] sm:shadow-[0_18px_40px_rgba(65,29,45,0.08)]">
-							<div class={`relative min-h-[250px] overflow-hidden bg-gradient-to-br ${currentPlan.accent}`}>
-								<img src={currentPlan.img} class="h-full w-full object-cover mix-blend-multiply opacity-90" alt={currentPlan.imageAlt} />
+							<div class={`relative flex min-h-[250px] items-center justify-center overflow-hidden bg-gradient-to-br ${currentPlan.accent} px-4 py-6 sm:min-h-[300px] sm:px-6`}>
+								<img src={currentPlan.img} class="max-h-[220px] w-full object-contain sm:max-h-[260px]" alt={currentPlan.imageAlt} />
 								<div class="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.02),rgba(0,0,0,0.42))]" />
 								<div class="absolute bottom-0 left-0 right-0 p-4 text-white sm:p-5">
 									<h3 class="mt-2 text-xl sm:text-2xl">{currentPlan.name}</h3>
