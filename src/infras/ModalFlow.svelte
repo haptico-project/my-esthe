@@ -140,8 +140,8 @@
 	const sharedOptions: PlanOption[] = [batteryOption];
 
 	// 顔マスク付きプランは、12回で顔マスクを終了させる payflow 側のスケジュール登録が
-	// 本番反映されるまで一時的に非表示にする（本番反映後に true へ戻す）。
-	const SHOW_FACE_MASK_PLAN = false;
+	// 本番反映済みのため公開する。問題時は false に戻せば即時に非表示へ戻せる。
+	const SHOW_FACE_MASK_PLAN = true;
 	const visiblePlans = plans.filter((plan) => SHOW_FACE_MASK_PLAN || plan.id !== 'face-mask-plan');
 
 	// キャンペーンクーポン（特定URL ?coupon=）適用時、顔マスク付きプランの顔マスク代(2,200円)が
