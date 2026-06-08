@@ -41,24 +41,28 @@
 		imageAlt: string;
 		contentSummary: string;
 		availableOptionIds: string[];
+		popular?: boolean;
+		eyebrow?: string;
+		/** 顔マスク代の支払い月数（支払い完了後は ongoingPrice に下がる） */
+		commitmentMonths?: number;
+		/** 支払い完了後の月額（commitmentMonths 経過後） */
+		ongoingPrice?: number;
 	};
 
 	const dispatch = createEventDispatcher();
 
-	let expanded: Record<string, boolean> = {};
 	let selectedOptions: Record<string, boolean> = {};
 
-	const toggleExpand = (id: string) => (expanded[id] = !expanded[id]);
 	const toggleOption = (optionId: string) => {
 		selectedOptions[optionId] = !selectedOptions[optionId];
 	};
 
 	const batteryOption: PlanOption = {
 		id: 'mobile-battery',
-		name: 'オプションバッテリー',
+		name: 'モバイルバッテリー',
 		description:
-			'外出先でも使いやすいモバイルバッテリーを買い切りで追加できます。どのプランでも同時に申し込めます。',
-		priceLabel: '＋3,300円 / 初回のみ',
+			'外出先でも使いやすいモバイルバッテリーを買い切りで追加できます。どちらのプランでも追加できます。',
+		priceLabel: '＋3,300円（初回のみ）',
 		amount: 3300,
 		img: `${base}/images/plans/option/kaomask.png`,
 		kind: 'one_time',
@@ -67,31 +71,53 @@
 		eyebrow: ''
 	};
 
-	const faceMaskSetOption: PlanOption = {
-		id: 'face-mask-set',
-		name: '顔マスクセット',
-		description:
-			'顔マスクを月額2,200円で12ヶ月お支払いいただく追加オプションです。通常プランに追加して申し込めます。',
-		priceLabel: '＋2,200円 / 月 × 12ヶ月',
-		amount: 2200,
-		img: `${base}/images/plans/option/kaomask.png`,
-		kind: 'installment',
-		orderProduct: { productId: 'price_1T94CTPo9yD7PttVbiyOrzT2', quantity: 1 },
-		badge: '12回払い',
-		eyebrow: ''
-	};
-
 	const plans: Plan[] = [
+		{
+			id: 'face-mask-plan',
+			name: '顔マスク付きプラン',
+			description:
+				'振動器と顔マスクがセットになった一番人気のプランです。顔マスク代は12ヶ月のお支払いで完了し、その後は顔マスクをそのままお使いいただけます。',
+			price: 5500,
+			priceLabel: '月額 5,500円（税込）',
+			afterPriceLabel: '12ヶ月後、顔マスクはお客様のもの',
+			img: `${base}/images/plans/special.jpg`,
+			accent: 'from-[#f1e5e9] via-[#fff7f7] to-[#efe7e2]',
+			highlight: '振動器＋顔マスクのフルセット',
+			contents: [
+				'小型振動器（ポータブルタイプ）',
+				'振動ヘッドキャップ',
+				'顔マスク',
+				'充電用USBケーブル',
+				'携帯用ポーチ'
+			],
+			orderProducts: [
+				{ productId: 'price_1SUdstPo9yD7PttV1EclsBsi', quantity: 1 },
+				{ productId: 'price_1T94CTPo9yD7PttVbiyOrzT2', quantity: 1 }
+			],
+			includedBenefits: [
+				'今は月額5,500円（税込）',
+				'12ヶ月後、顔マスク代のお支払いが完了',
+				'13ヶ月目以降は月額3,300円に',
+				'ご家族やペットにも使える'
+			],
+			imageAlt: '顔マスク付きプランのセット',
+			contentSummary: '振動器と顔マスクがそろった、一番人気のフルセットです。',
+			availableOptionIds: ['mobile-battery'],
+			popular: true,
+			eyebrow: '人気No.1',
+			commitmentMonths: 12,
+			ongoingPrice: 3300
+		},
 		{
 			id: 'standard-plan',
 			name: '通常プラン',
 			description:
-				'まずはシンプルに始めたい方向けのベーシックプランです。自宅で気軽に、毎日のフェイスケア習慣を作れます。',
+				'まずはシンプルに始めたい方向けのプランです。自宅で気軽に、毎日のフェイスケア習慣を作れます。',
 			price: 3300,
-			priceLabel: '月額 3,300円',
+			priceLabel: '月額 3,300円（税込）',
 			img: `${base}/images/plans/basic_2.jpg`,
 			accent: 'from-[#f4e8ec] via-[#fffaf8] to-[#f3ece8]',
-			highlight: '本体セットのみで気軽にスタート',
+			highlight: '本体セットで気軽にスタート',
 			contents: [
 				'小型振動器（ポータブルタイプ）',
 				'振動ヘッドキャップ',
@@ -100,39 +126,17 @@
 			],
 			orderProducts: [{ productId: 'price_1SUdstPo9yD7PttV1EclsBsi', quantity: 1 }],
 			includedBenefits: [
-				'月額3,300円でスタート',
+				'月額3,300円（税込）でスタート',
 				'ご自宅で続けやすい基本セット',
-				'顔マスクセットやバッテリーを追加可能'
+				'ご家族やペットにも使える'
 			],
 			imageAlt: '通常プランの美容機器セット',
 			contentSummary: '毎日のケアを始めやすい基本セットです。',
-			availableOptionIds: ['mobile-battery', 'face-mask-set']
-		},
-		{
-			id: 'face-mask-plan',
-			name: '顔マスクプラン',
-			description:
-				'通常プランをすでにご利用中の方が、顔マスクのみを追加したい場合のプランです。月額2,200円を12ヶ月お支払いいただきます。',
-			price: 2200,
-			priceLabel: '月額 2,200円 × 12ヶ月',
-			img: `${base}/images/plans/special.jpg`,
-			accent: 'from-[#f1e5e9] via-[#fff7f7] to-[#efe7e2]',
-			highlight: '通常プランご利用中の方向けの顔マスク追加プラン',
-			contents: ['顔マスク（月額2,200円 × 12ヶ月）'],
-			orderProducts: [{ productId: 'price_1T94CTPo9yD7PttVbiyOrzT2', quantity: 1 }],
-			includedBenefits: [
-				'月額2,200円を12ヶ月お支払い',
-				'通常プランご利用中の方向け',
-				'通常プランにご加入いただいていない場合はご利用いただけません',
-				'モバイルバッテリーの追加も可能'
-			],
-			imageAlt: '顔マスクプランのイメージ',
-			contentSummary: '通常プランご利用中の方が顔マスクのみを追加したい場合の12ヶ月プランです。',
 			availableOptionIds: ['mobile-battery']
 		}
 	];
 
-	const sharedOptions: PlanOption[] = [batteryOption, faceMaskSetOption];
+	const sharedOptions: PlanOption[] = [batteryOption];
 
 	let step = 1;
 	let agreed = false;
@@ -217,16 +221,16 @@
 	class="fixed inset-0 z-20 flex items-center justify-center bg-[radial-gradient(circle_at_top,rgba(255,205,224,0.42),rgba(19,12,18,0.88))] p-2 sm:p-4 backdrop-blur-sm"
 	style="font-family: 'hiragino-mincho-pro';"
 >
-	<div class="relative max-h-[92vh] w-full max-w-7xl overflow-y-auto rounded-[22px] border border-white/20 bg-[linear-gradient(180deg,rgba(255,255,255,0.96),rgba(255,247,250,0.94))] p-3 shadow-[0_28px_80px_rgba(38,16,31,0.28)] sm:max-h-[90vh] sm:w-[96%] sm:rounded-[28px] sm:border-white/50 sm:p-6 lg:w-[94%] lg:p-8">
-		<button class="absolute right-4 top-4 rounded-full border border-black/10 bg-white/80 px-3 py-1 text-sm text-gray-600 transition hover:bg-white" on:click={close}>閉じる</button>
+	<div class="relative max-h-[92vh] w-full max-w-5xl overflow-y-auto rounded-3xl border border-[#f0dbe3] bg-white p-5 shadow-[0_24px_60px_rgba(38,16,31,0.22)] sm:max-h-[90vh] sm:w-[94%] sm:p-8 lg:w-[88%]">
+		<button class="absolute right-4 top-4 rounded-full border border-[#ead7df] bg-white px-3 py-1 text-sm text-[#7a626c] transition hover:bg-[#fbf2f6]" on:click={close}>閉じる</button>
 
-		<div class="mb-6 border-b border-[#f0d6df] pb-4">
-			<h2 class="mt-2 text-2xl text-[#2e1d24]">お申し込み</h2>
+		<div class="mb-7 border-b border-[#f0d6df] pb-4">
+			<h2 class="text-2xl text-[#2e1d24]">お申し込み</h2>
 		</div>
 
 		{#if step === 1}
-			<h3 class="mb-3 text-lg font-bold text-[#2e1d24]">ご利用規約の確認</h3>
-			<div class="h-56 overflow-y-auto rounded-[20px] border border-[#efdae2] bg-white/80 p-4 text-sm leading-7 text-gray-700">
+			<h3 class="mb-4 text-lg font-bold text-[#2e1d24]">ご利用規約の確認</h3>
+			<div class="h-56 overflow-y-auto rounded-2xl border border-[#efdae2] bg-[#fffafc] p-5 text-sm leading-7 text-gray-700">
 				<p>
 
 					「わたしのエステ」美容機器サブスク利用規約<br />
@@ -345,117 +349,93 @@
 					ファセテラピー京都 宛<br />
 				</p><br />
 			</div>
-			<div class="mt-5 flex items-center rounded-2xl bg-[#fff2f6] px-4 py-3">
-				<input id="agree" type="checkbox" bind:checked={agreed} class="mr-3 h-4 w-4 accent-pink-500" />
-				<label for="agree" class="text-sm text-gray-700">利用規約に同意してプラン選択へ進みます</label>
-			</div>
+			<label for="agree" class="mt-5 flex cursor-pointer items-center rounded-2xl bg-[#fff2f6] px-5 py-4">
+				<input id="agree" type="checkbox" bind:checked={agreed} class="mr-3 h-4 w-4 accent-[#d45588]" />
+				<span class="text-sm text-[#5f4b53]">利用規約に同意してプラン選択へ進みます</span>
+			</label>
 			<div class="mt-6 flex justify-end">
-				<button class="rounded-full bg-[#26202a] px-6 py-3 text-sm text-white disabled:opacity-40" on:click={next} disabled={!agreed}>
+				<button class="rounded-full bg-[#26202a] px-7 py-3 text-sm text-white transition hover:bg-[#171317] disabled:opacity-40" on:click={next} disabled={!agreed}>
 					プラン選択へ進む
 				</button>
 			</div>
 		{:else if step === 2}
-				<div class="mb-4 overflow-hidden bg-transparent sm:mb-6">
-				<div class="relative flex h-[220px] items-center justify-center overflow-hidden rounded-[24px] bg-[radial-gradient(circle_at_top,#fff6f8,#f3dfe7_58%,#ead1db)] px-4 sm:px-6">
-					<img src={`${base}/images/plans/special.jpg`} alt="プラン比較イメージ" class="max-h-full w-full object-contain" />
-					<div class="absolute inset-0 bg-[linear-gradient(180deg,rgba(40,24,31,0.12),rgba(40,24,31,0.58))]" />
-					<div class="absolute inset-x-0 bottom-0 p-4 text-white sm:p-6">
-						<h3 class="text-xl sm:text-2xl">プランを比べて選ぶ</h3>
-						<p class="mt-2 text-sm leading-6 text-white/85">通常プランと顔マスクプランを見比べながら選べます。通常プランには顔マスクセットを追加できます。</p>
-					</div>
+				<div class="mb-6">
+				<div class="mb-6">
+					<h3 class="text-xl text-[#2e1d24] sm:text-2xl">どちらにしますか？</h3>
+					<p class="mt-2 text-sm leading-7 text-[#6f5861]">「顔マスク付きプラン」と「通常プラン」の2つから選ぶだけ。モバイルバッテリーはどちらにも追加できます。</p>
 				</div>
-				<div class="bg-transparent p-0">
-					<div class="grid gap-3 md:grid-cols-2 md:gap-4">
+				<div>
+					<div class="grid gap-5 md:grid-cols-2">
 						{#each plans as plan}
-							<div class="rounded-[18px] border border-[#edd9e2]/45 bg-white/92 p-3 shadow-[0_8px_20px_rgba(65,29,45,0.04)] sm:rounded-[20px] sm:p-4 md:shadow-none">
-								<div class="flex h-32 items-center justify-center overflow-hidden rounded-[16px] bg-[linear-gradient(180deg,#fff8fa,#f8eef2)] px-3 sm:h-40 sm:rounded-[20px] sm:px-4 md:h-32 lg:h-40">
+							<div class={`relative flex flex-col rounded-2xl p-5 ${plan.popular ? 'border border-[#d45588] bg-[#fffafc] shadow-[0_8px_24px_rgba(212,85,136,0.12)]' : 'border border-[#edd9e2] bg-white'}`}>
+								{#if plan.eyebrow}
+									<span class="absolute -top-3 left-5 rounded-full bg-[#d45588] px-3 py-1 text-xs font-semibold text-white">{plan.eyebrow}</span>
+								{/if}
+
+								<div class="flex h-40 items-center justify-center overflow-hidden rounded-xl bg-[#faf2f5] px-4">
 									<img src={plan.img} alt={plan.imageAlt} class="max-h-full w-full object-contain" />
 								</div>
 
-								<div class="pb-2">
-									<h4 class="mt-3 text-lg text-[#2e1d24] sm:mt-4 sm:text-xl lg:text-2xl">{plan.name}</h4>
-									<div class="mt-2 space-y-1">
-										<div class="text-sm font-semibold text-[#8f6c7a]">{plan.priceLabel}</div>
-										{#if plan.afterPriceLabel}
-											<div class="text-sm font-semibold text-[#c15582]">{plan.afterPriceLabel}</div>
-										{/if}
-									</div>
-								</div>
-
-								<div class="mt-3">
-									<p class="rounded-[12px] bg-[#fff5f8] px-3 py-2 text-sm leading-6 text-[#6f5861]">{plan.highlight}</p>
-
-									<p class="mt-3 text-sm leading-6 text-[#5f4b53]">
-										{#if plan.description.length <= 104}
-											{plan.description}
-										{:else}
-											{expanded[plan.id] ? plan.description : `${plan.description.slice(0, 104)}...`}
-										{/if}
-									</p>
-
-									{#if plan.description.length > 104}
-										<button class="mt-2 text-xs text-[#c15582] underline" on:click|stopPropagation={() => toggleExpand(plan.id)}>
-											{expanded[plan.id] ? '説明を閉じる' : '詳しく見る'}
-										</button>
+								<h4 class="mt-5 text-xl text-[#2e1d24] sm:text-2xl">{plan.name}</h4>
+								<div class="mt-3 flex flex-wrap items-baseline gap-x-3 gap-y-2">
+									<span class="text-3xl font-bold text-[#c15582]">{plan.priceLabel}</span>
+									{#if plan.afterPriceLabel}
+										<span class="rounded-full bg-[#fff0f5] px-3 py-1 text-xs font-semibold text-[#c15582]">{plan.afterPriceLabel}</span>
 									{/if}
 								</div>
 
-								<div class="mt-4 space-y-3">
-									<div class="border-t border-[#f0dde5]/70 pt-3">
-										<div class="text-xs text-[#8d6f79]">料金</div>
-										<ul class="mt-2 space-y-1.5 text-sm text-[#4d3b43]">
-											{#each plan.includedBenefits as item}
-												<li class="flex gap-2">
-													<span class="mt-[2px] text-[#d56f97]">●</span>
-													<span>{item}</span>
-												</li>
-											{/each}
-										</ul>
-									</div>
+								<p class="mt-4 text-sm leading-7 text-[#5f4b53]">{plan.description}</p>
 
-									<div class="border-t border-[#f0dde5]/70 pt-3">
-										<div class="text-xs text-[#8d6f79]">セット内容</div>
-										<p class="mt-2 text-xs leading-6 text-[#7d6670]">{plan.contentSummary}</p>
-										<div class="mt-2 grid gap-2">
-											{#each plan.contents as item}
-												<div class="rounded-[10px] bg-[#fffafc] px-2.5 py-2 text-sm text-[#4d3b43]">
-													<div class="flex gap-2">
-														<span class="mt-[2px] text-[#d56f97]">●</span>
-														<span>{item}</span>
-													</div>
-												</div>
-											{/each}
-										</div>
-									</div>
+								<div class="mt-5 border-t border-[#f0dde5] pt-5">
+									<div class="text-xs font-semibold tracking-wide text-[#8d6f79]">料金のポイント</div>
+									<ul class="mt-3 space-y-2 text-sm text-[#4d3b43]">
+										{#each plan.includedBenefits as item}
+											<li class="flex gap-2.5">
+												<span class="mt-[3px] text-[#d56f97]">✓</span>
+												<span class="leading-6">{item}</span>
+											</li>
+										{/each}
+									</ul>
+								</div>
 
-									{#if availableOptions(plan).length > 0}
-										<div class="border-t border-[#f0dde5]/70 pt-3">
-											<div class="text-xs text-[#8d6f79]">追加オプション</div>
-											<div class="mt-2 space-y-2">
-												{#each availableOptions(plan) as opt}
-												<label class="flex cursor-pointer items-start gap-2.5 rounded-[10px] bg-[#fff9fb] p-2.5 transition hover:bg-[#fff2f6]">
+								<div class="mt-5 border-t border-[#f0dde5] pt-5">
+									<div class="text-xs font-semibold tracking-wide text-[#8d6f79]">セット内容</div>
+									<ul class="mt-3 space-y-2 text-sm text-[#4d3b43]">
+										{#each plan.contents as item}
+											<li class="flex gap-2.5">
+												<span class="mt-[3px] text-[#d56f97]">✓</span>
+												<span class="leading-6">{item}</span>
+											</li>
+										{/each}
+									</ul>
+								</div>
+
+								{#if availableOptions(plan).length > 0}
+									<div class="mt-5 border-t border-[#f0dde5] pt-5">
+										<div class="text-xs font-semibold tracking-wide text-[#8d6f79]">追加オプション</div>
+										<div class="mt-3 space-y-3">
+											{#each availableOptions(plan) as opt}
+												<label class="flex cursor-pointer items-start gap-3 rounded-xl border border-[#f0dde5] p-4 transition hover:border-[#e2bccb] hover:bg-[#fff7fa]">
 													<input
 														type="checkbox"
-														class="mt-1 h-4 w-4 accent-pink-500"
+														class="mt-1 h-4 w-4 accent-[#d45588]"
 														checked={selectedOptions[opt.id]}
 														on:change={() => toggleOption(opt.id)}
 													/>
-														<div class="flex-1">
-															<div class="flex flex-wrap items-center gap-2">
-																<span class="rounded-full bg-[#2e1d24] px-2 py-1 text-[10px] tracking-[0.18em] text-white">{opt.badge}</span>
-															</div>
-														<div class="mt-1 text-sm font-semibold text-[#2e1d24]">{opt.name}</div>
-														<p class="mt-1 text-xs leading-5 text-[#65515a]">{opt.description}</p>
-														<div class="mt-1 text-sm text-[#c15582]">{opt.priceLabel}</div>
+													<div class="flex-1">
+														<div class="flex items-center justify-between gap-2">
+															<span class="text-sm font-semibold text-[#2e1d24]">{opt.name}</span>
+															<span class="shrink-0 text-sm font-semibold text-[#c15582]">{opt.priceLabel}</span>
+														</div>
+														<p class="mt-1.5 text-xs leading-6 text-[#65515a]">{opt.description}</p>
 													</div>
 												</label>
-												{/each}
-											</div>
+											{/each}
 										</div>
-									{/if}
-								</div>
+									</div>
+								{/if}
 
-								<button class="mt-4 w-full rounded-full bg-[#26202a] px-4 py-2.5 text-sm text-white transition hover:bg-[#171317]" on:click={() => selectPlan(plan)}>
+								<button class="mt-6 w-full rounded-full bg-[#26202a] px-4 py-3 text-sm text-white transition hover:bg-[#171317]" on:click={() => selectPlan(plan)}>
 									このプランで申し込む
 								</button>
 							</div>
@@ -474,120 +454,103 @@
 				{@const totalFirst = planInitialAmount(currentPlan) + recurringOptionTotal(appliedOptions) + oneTimeOptionTotal(appliedOptions)}
 				{@const totalMonthly = planRecurringAmount(currentPlan) + recurringOptionTotal(appliedOptions)}
 
-					<div class="grid gap-4 md:grid-cols-[1.05fr_0.95fr] sm:gap-5">
-						<div class="overflow-hidden rounded-[20px] border border-[#efdbe3]/60 bg-white shadow-[0_12px_28px_rgba(65,29,45,0.06)] sm:rounded-[28px] sm:border-[#efdbe3] sm:shadow-[0_18px_40px_rgba(65,29,45,0.08)]">
-							<div class={`relative flex min-h-[250px] items-center justify-center overflow-hidden bg-gradient-to-br ${currentPlan.accent} px-4 py-6 sm:min-h-[300px] sm:px-6`}>
-								<img src={currentPlan.img} class="max-h-[220px] w-full object-contain sm:max-h-[260px]" alt={currentPlan.imageAlt} />
-								<div class="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.02),rgba(0,0,0,0.42))]" />
-								<div class="absolute bottom-0 left-0 right-0 p-4 text-white sm:p-5">
-									<h3 class="mt-2 text-xl sm:text-2xl">{currentPlan.name}</h3>
-									<p class="mt-2 text-sm text-white/80">{currentPlan.highlight}</p>
-								</div>
-						</div>
-
-							<div class="space-y-4 p-3 sm:space-y-5 sm:p-5">
-								<div>
-									<p class="text-sm leading-7 text-[#5f4b53]">{currentPlan.description}</p>
-								</div>
-
-								<div>
-									<div class="text-xs text-[#8d6f79]">セット内容</div>
-								<p class="mt-2 text-xs leading-6 text-[#7d6670]">{currentPlan.contentSummary}</p>
-								<div class="mt-3 grid gap-2 sm:grid-cols-2">
-									{#each currentPlan.contents as item}
-										<div class="rounded-[12px] border border-[#f0dde5]/70 bg-[#fffafc] px-2.5 py-2.5 text-sm text-[#4d3b43] sm:rounded-[16px] sm:border-[#f0dde5] sm:px-3 sm:py-3">
-											<div class="flex gap-2">
-												<span class="mt-[2px] text-[#d56f97]">●</span>
-												<span>{item}</span>
-											</div>
-										</div>
-									{/each}
-								</div>
+					<div class="grid gap-5 md:grid-cols-[1.05fr_0.95fr]">
+						<div class="rounded-2xl border border-[#efdbe3] bg-white p-5">
+							<div class="flex h-48 items-center justify-center overflow-hidden rounded-xl bg-[#faf2f5] px-4 sm:h-56">
+								<img src={currentPlan.img} class="max-h-full w-full object-contain" alt={currentPlan.imageAlt} />
 							</div>
 
-								{#if appliedOptions.length > 0}
-									<div>
-										<div class="text-xs text-[#8d6f79]">追加オプション</div>
+							<h3 class="mt-5 text-xl text-[#2e1d24] sm:text-2xl">{currentPlan.name}</h3>
+							<p class="mt-1 text-sm text-[#8f6c7a]">{currentPlan.highlight}</p>
+							<p class="mt-4 text-sm leading-7 text-[#5f4b53]">{currentPlan.description}</p>
+
+							<div class="mt-5 border-t border-[#f0dde5] pt-5">
+								<div class="text-xs font-semibold tracking-wide text-[#8d6f79]">セット内容</div>
+								<ul class="mt-3 space-y-2 text-sm text-[#4d3b43]">
+									{#each currentPlan.contents as item}
+										<li class="flex gap-2.5">
+											<span class="mt-[3px] text-[#d56f97]">✓</span>
+											<span class="leading-6">{item}</span>
+										</li>
+									{/each}
+								</ul>
+							</div>
+
+							{#if appliedOptions.length > 0}
+								<div class="mt-5 border-t border-[#f0dde5] pt-5">
+									<div class="text-xs font-semibold tracking-wide text-[#8d6f79]">追加オプション</div>
 									<div class="mt-3 space-y-3">
 										{#each appliedOptions as opt}
-												<div class="rounded-[14px] bg-[#fff5f8] p-3 sm:rounded-[18px] sm:p-4">
+											<div class="rounded-xl bg-[#fff7fa] p-4">
 												<div class="flex items-center justify-between gap-3">
-													<div>
-														<div class="text-sm font-semibold text-[#2e1d24]">{opt.name}</div>
-														<div class="mt-1 text-xs leading-6 text-[#65515a]">{opt.description}</div>
-													</div>
-													<div class="shrink-0 text-sm text-[#c15582]">{opt.priceLabel}</div>
+													<span class="text-sm font-semibold text-[#2e1d24]">{opt.name}</span>
+													<span class="shrink-0 text-sm font-semibold text-[#c15582]">{opt.priceLabel}</span>
 												</div>
+												<p class="mt-1.5 text-xs leading-6 text-[#65515a]">{opt.description}</p>
 											</div>
 										{/each}
 									</div>
 								</div>
 							{/if}
 						</div>
-					</div>
 
-						<div class="rounded-[20px] border border-[#efdbe3]/60 bg-[linear-gradient(180deg,#fffdfd,#fff2f6)] p-3 shadow-[0_12px_28px_rgba(65,29,45,0.06)] sm:rounded-[28px] sm:border-[#efdbe3] sm:p-5 sm:shadow-[0_18px_40px_rgba(65,29,45,0.08)]">
-							<h3 class="mt-2 text-xl text-[#2e1d24] sm:text-2xl">ご注文内容の確認</h3>
+						<div class="rounded-2xl border border-[#efdbe3] bg-[#fff7fa] p-5">
+							<h3 class="text-xl text-[#2e1d24] sm:text-2xl">ご注文内容の確認</h3>
 
-							<div class="mt-4 flex flex-col gap-3">
-								<button class="w-full rounded-full bg-[#d45588] px-5 py-3 text-sm text-white transition hover:bg-[#be3d72] disabled:opacity-50" on:click={goToCheckout} disabled={isProcessing}>
-									{isProcessing ? '処理中...' : '決済に進む'}
-								</button>
-								<button class="w-full rounded-full border border-[#d7b0c1] px-5 py-3 text-sm text-[#5f4b53]" on:click={back} disabled={isProcessing}>
-									プラン選択に戻る
-								</button>
-							</div>
-
-							<div class="mt-4 rounded-[18px] bg-[#2c1d25] p-4 text-white sm:mt-5 sm:rounded-[22px] sm:p-5">
+							<div class="mt-5 rounded-2xl bg-[#2c1d25] p-5 text-white">
 								<div class="text-sm text-white/70">初回のお支払い</div>
-								<div class="mt-2 text-4xl">{formatCurrency(totalFirst)}</div>
-								{#if currentPlan.id === 'face-mask-plan' || appliedOptions.some((opt) => opt.id === 'face-mask-set')}
-									<div class="mt-3 space-y-1 text-sm text-white/70">
-										<div>12ヶ月間 {formatCurrency(totalMonthly)}/月</div>
-										{#if currentPlan.id === 'standard-plan'}
-											<div>13ヶ月目以降 {formatCurrency(currentPlan.price)}/月</div>
-										{/if}
+								<div class="mt-2 text-4xl font-bold">{formatCurrency(totalFirst)}</div>
+								{#if currentPlan.commitmentMonths}
+									<div class="mt-4 space-y-1.5 text-sm text-white/80">
+										<div>今は<span class="font-semibold text-white">月額 {formatCurrency(totalMonthly)}</span>（{currentPlan.commitmentMonths}ヶ月間）</div>
+										<div>{currentPlan.commitmentMonths + 1}ヶ月目以降は<span class="font-semibold text-white">月額 {formatCurrency(currentPlan.ongoingPrice ?? currentPlan.price)}</span></div>
 									</div>
 								{:else}
-									<div class="mt-3 text-sm text-white/70">翌月以降 {formatCurrency(totalMonthly)}/月</div>
+									<div class="mt-4 text-sm text-white/80">翌月以降 <span class="font-semibold text-white">月額 {formatCurrency(totalMonthly)}</span></div>
+								{/if}
+								{#if appliedOptions.some((opt) => opt.kind === 'one_time')}
+									<div class="mt-3 text-xs text-white/55">※モバイルバッテリーは初回のみのお支払いです。</div>
 								{/if}
 							</div>
 
-							<div class="mt-4 space-y-3 text-sm text-[#4d3b43] sm:mt-5 sm:space-y-4">
-								<div class="rounded-[14px] bg-white/80 p-3 sm:rounded-[18px] sm:p-4">
+							<div class="mt-5 space-y-3 text-sm text-[#4d3b43]">
+								<div class="rounded-xl bg-white p-4">
 									<div class="flex items-center justify-between">
 										<span>選択プラン</span>
-										<span>{currentPlan.id === 'face-mask-plan' ? '月額 2,200円 × 12ヶ月' : `${formatCurrency(currentPlan.price)}/月`}</span>
+										<span class="font-semibold">月額 {formatCurrency(currentPlan.price)}</span>
 									</div>
-									<div class="mt-2 text-xs leading-6 text-[#7a626c]">{currentPlan.name}</div>
-									{#if currentPlan.id === 'face-mask-plan'}
-										<div class="mt-2 rounded-[12px] bg-[#fff4f7] p-3 text-xs leading-6 text-[#7a626c] sm:rounded-[14px]">
-											顔マスクプランは、通常プランをすでにご利用中の方が顔マスクのみを追加するためのプランです。通常プランにご加入いただいていない場合はご利用いただけません。
-										</div>
-									{/if}
+									<div class="mt-1.5 text-xs leading-6 text-[#7a626c]">{currentPlan.name}</div>
 								</div>
 
-							{#if appliedOptions.length > 0}
-									<div class="rounded-[14px] bg-white/80 p-3 sm:rounded-[18px] sm:p-4">
-									<div class="mb-2">追加オプション</div>
-									{#each appliedOptions as opt}
-										<div class="flex items-center justify-between py-1 text-xs text-[#6f5861]">
-											<span>{opt.name}</span>
-											<span>{formatCurrency(opt.amount)}</span>
-										</div>
-									{/each}
-								</div>
-							{/if}
+								{#if appliedOptions.length > 0}
+									<div class="rounded-xl bg-white p-4">
+										<div class="mb-2 text-xs font-semibold tracking-wide text-[#8d6f79]">追加オプション</div>
+										{#each appliedOptions as opt}
+											<div class="flex items-center justify-between py-1 text-sm text-[#6f5861]">
+												<span>{opt.name}</span>
+												<span>{formatCurrency(opt.amount)}</span>
+											</div>
+										{/each}
+									</div>
+								{/if}
 
-							{#if currentPlan.id === 'standard-plan' && appliedOptions.some((opt) => opt.id === 'face-mask-set')}
-								<div class="rounded-[14px] border border-dashed border-[#dfb2c3] p-3 text-xs leading-6 text-[#7a626c] sm:rounded-[18px] sm:p-4">
-									通常プランに顔マスクセットを追加した場合は「基本プラン 3,300円/月 + 顔マスクセット 2,200円/月」の構成です。顔マスクセットのお支払いは12ヶ月で終了し、その後は通常プランの月額3,300円のみになります。
-								</div>
-							{/if}
+								{#if currentPlan.commitmentMonths}
+									<div class="rounded-xl border border-dashed border-[#dfb2c3] p-4 text-xs leading-6 text-[#7a626c]">
+										顔マスク付きプランは「振動器 月額3,300円 ＋ 顔マスク代」の構成です。顔マスク代のお支払いは{currentPlan.commitmentMonths}ヶ月で完了し、その後は顔マスクをそのままお使いいただきながら、月額{formatCurrency(currentPlan.ongoingPrice ?? currentPlan.price)}になります。
+									</div>
+								{/if}
+							</div>
+
+							<div class="mt-6 flex flex-col gap-3">
+								<button class="w-full rounded-full bg-[#d45588] px-5 py-3.5 text-sm font-semibold text-white transition hover:bg-[#be3d72] disabled:opacity-50" on:click={goToCheckout} disabled={isProcessing}>
+									{isProcessing ? '処理中...' : '決済に進む'}
+								</button>
+								<button class="w-full rounded-full border border-[#d7b0c1] px-5 py-3 text-sm text-[#5f4b53] transition hover:bg-white" on:click={back} disabled={isProcessing}>
+									プラン選択に戻る
+								</button>
+							</div>
 						</div>
-
 					</div>
-				</div>
 			{/if}
 		{/if}
 	</div>
