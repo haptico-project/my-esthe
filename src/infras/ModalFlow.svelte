@@ -215,7 +215,9 @@
 				agencyCode: code,
 				orderProducts,
 				oneTimePriceIds,
-				...(couponId ? { couponId } : {})
+				// クーポンは顔マスク付きプランにのみ渡す。FACEMASK3300 は全体割引(applies_to無)のため、
+				// 通常プランに渡すと 3,300→1,100 と誤割引になる。対象プラン限定で防ぐ。
+				...(couponId && currentPlan.id === CAMPAIGN_PLAN_ID ? { couponId } : {})
 			});
 
 			if (res) {
