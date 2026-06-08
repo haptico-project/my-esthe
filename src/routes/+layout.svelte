@@ -6,9 +6,11 @@
 	import { onMount } from 'svelte';
 	import ModalFlow from '../infras/ModalFlow.svelte';
 	import { agencyCode } from '$lib/agency/agencyCode';
+	import { initCoupon } from '$lib/coupon';
 
 	onMount(() => {
 		initAgencyCode();
+		initCoupon();
 	});
 
 	let showModal = false;

@@ -4,6 +4,7 @@
 	import { createEventDispatcher } from 'svelte';
 	import { get } from 'svelte/store';
 	import { agencyCode } from '$lib/agency/agencyCode';
+	import { coupon } from '$lib/coupon';
 	import { postCheckout } from '$lib/checkoutAccessor';
 
 	type CheckoutProduct = {
@@ -143,6 +144,13 @@
 	const SHOW_FACE_MASK_PLAN = false;
 	const visiblePlans = plans.filter((plan) => SHOW_FACE_MASK_PLAN || plan.id !== 'face-mask-plan');
 
+	// キャンペーンクーポン（特定URL ?coupon=）適用時、顔マスク付きプランの顔マスク代(2,200円)が
+	// 毎月割引される＝実質ずっと月3,300円。Stripeクーポンは顔マスク商品限定なので通常プランには効かない。
+	const CAMPAIGN_PLAN_ID = 'face-mask-plan';
+	const CAMPAIGN_MONTHLY_DISCOUNT = 2200;
+	const campaignDiscount = (plan: Plan) =>
+		$coupon && plan.id === CAMPAIGN_PLAN_ID ? CAMPAIGN_MONTHLY_DISCOUNT : 0;
+
 	let step = 1;
 	let agreed = false;
 	let selectedPlanId = '';
@@ -178,6 +186,7 @@
 	const goToCheckout = async () => {
 		const currentPlan = selectedPlan();
 		const code = get(agencyCode);
+		const couponId = get(coupon);
 
 		if (!code || !currentPlan) {
 			alert('代理店コードまたは選択プランが未設定です。');
@@ -205,7 +214,8 @@
 				checkoutCancelUrl: baseUrl,
 				agencyCode: code,
 				orderProducts,
-				oneTimePriceIds
+				oneTimePriceIds,
+				...(couponId ? { couponId } : {})
 			});
 
 			if (res) {
@@ -388,9 +398,15 @@
 
 								<h4 class="mt-5 text-xl text-[#2e1d24] sm:text-2xl">{plan.name}</h4>
 								<div class="mt-3 flex flex-wrap items-baseline gap-x-3 gap-y-2">
-									<span class="text-3xl font-bold text-[#c15582]">{plan.priceLabel}</span>
-									{#if plan.afterPriceLabel}
-										<span class="rounded-full bg-[#fff0f5] px-3 py-1 text-xs font-semibold text-[#c15582]">{plan.afterPriceLabel}</span>
+									{#if campaignDiscount(plan) > 0}
+										<span class="text-lg font-semibold text-[#b8a3ac] line-through">{formatCurrency(plan.price)}</span>
+										<span class="text-3xl font-bold text-[#c15582]">月額 {formatCurrency(plan.price - campaignDiscount(plan))}（税込）</span>
+										<span class="rounded-full bg-[#d45588] px-2.5 py-1 text-xs font-semibold text-white">キャンペーン適用中</span>
+									{:else}
+										<span class="text-3xl font-bold text-[#c15582]">{plan.priceLabel}</span>
+										{#if plan.afterPriceLabel}
+											<span class="rounded-full bg-[#fff0f5] px-3 py-1 text-xs font-semibold text-[#c15582]">{plan.afterPriceLabel}</span>
+										{/if}
 									{/if}
 								</div>
 
@@ -461,8 +477,9 @@
 				<button class="mt-4 text-gray-600 underline" on:click={() => (step = 2)}>プラン選択に戻る</button>
 			{:else}
 				{@const appliedOptions = selectedOptionList(currentPlan)}
-				{@const totalFirst = planInitialAmount(currentPlan) + recurringOptionTotal(appliedOptions) + oneTimeOptionTotal(appliedOptions)}
-				{@const totalMonthly = planRecurringAmount(currentPlan) + recurringOptionTotal(appliedOptions)}
+				{@const planDiscount = campaignDiscount(currentPlan)}
+				{@const totalFirst = planInitialAmount(currentPlan) + recurringOptionTotal(appliedOptions) + oneTimeOptionTotal(appliedOptions) - planDiscount}
+				{@const totalMonthly = planRecurringAmount(currentPlan) + recurringOptionTotal(appliedOptions) - planDiscount}
 
 					<div class="grid gap-5 md:grid-cols-[1.05fr_0.95fr]">
 						<div class="rounded-2xl border border-[#efdbe3] bg-white p-5">
@@ -510,7 +527,11 @@
 							<div class="mt-5 rounded-2xl bg-[#2c1d25] p-5 text-white">
 								<div class="text-sm text-white/70">初回のお支払い</div>
 								<div class="mt-2 text-4xl font-bold">{formatCurrency(totalFirst)}</div>
-								{#if currentPlan.commitmentMonths}
+								{#if planDiscount > 0}
+									<div class="mt-4 space-y-1.5 text-sm text-white/80">
+										<div>キャンペーン適用で<span class="font-semibold text-white">ずっと月額 {formatCurrency(totalMonthly)}</span></div>
+									</div>
+								{:else if currentPlan.commitmentMonths}
 									<div class="mt-4 space-y-1.5 text-sm text-white/80">
 										<div>今は<span class="font-semibold text-white">月額 {formatCurrency(totalMonthly)}</span>（{currentPlan.commitmentMonths}ヶ月間）</div>
 										<div>{currentPlan.commitmentMonths + 1}ヶ月目以降は<span class="font-semibold text-white">月額 {formatCurrency(currentPlan.ongoingPrice ?? currentPlan.price)}</span></div>
@@ -527,9 +548,16 @@
 								<div class="rounded-xl bg-white p-4">
 									<div class="flex items-center justify-between">
 										<span>選択プラン</span>
-										<span class="font-semibold">月額 {formatCurrency(currentPlan.price)}</span>
+										{#if planDiscount > 0}
+											<span class="flex items-baseline gap-2">
+												<span class="text-xs text-[#b8a3ac] line-through">{formatCurrency(currentPlan.price)}</span>
+												<span class="font-semibold text-[#c15582]">月額 {formatCurrency(currentPlan.price - planDiscount)}</span>
+											</span>
+										{:else}
+											<span class="font-semibold">月額 {formatCurrency(currentPlan.price)}</span>
+										{/if}
 									</div>
-									<div class="mt-1.5 text-xs leading-6 text-[#7a626c]">{currentPlan.name}</div>
+									<div class="mt-1.5 text-xs leading-6 text-[#7a626c]">{currentPlan.name}{#if planDiscount > 0}（キャンペーン適用）{/if}</div>
 								</div>
 
 								{#if appliedOptions.length > 0}
@@ -544,7 +572,11 @@
 									</div>
 								{/if}
 
-								{#if currentPlan.commitmentMonths}
+								{#if planDiscount > 0}
+									<div class="rounded-xl border border-dashed border-[#dfb2c3] p-4 text-xs leading-6 text-[#7a626c]">
+										キャンペーン適用中につき、顔マスク代が割引され、ご契約中はずっと月額{formatCurrency(currentPlan.price - planDiscount)}（税込）です。顔マスクは{currentPlan.commitmentMonths}ヶ月後にそのままお客様のものになります。
+									</div>
+								{:else if currentPlan.commitmentMonths}
 									<div class="rounded-xl border border-dashed border-[#dfb2c3] p-4 text-xs leading-6 text-[#7a626c]">
 										顔マスク付きプランは「振動器 月額3,300円 ＋ 顔マスク代」の構成です。顔マスク代のお支払いは{currentPlan.commitmentMonths}ヶ月で完了し、その後は顔マスクをそのままお使いいただきながら、月額{formatCurrency(currentPlan.ongoingPrice ?? currentPlan.price)}になります。
 									</div>
