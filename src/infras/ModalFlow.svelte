@@ -138,6 +138,11 @@
 
 	const sharedOptions: PlanOption[] = [batteryOption];
 
+	// 顔マスク付きプランは、12回で顔マスクを終了させる payflow 側のスケジュール登録が
+	// 本番反映されるまで一時的に非表示にする（本番反映後に true へ戻す）。
+	const SHOW_FACE_MASK_PLAN = false;
+	const visiblePlans = plans.filter((plan) => SHOW_FACE_MASK_PLAN || plan.id !== 'face-mask-plan');
+
 	let step = 1;
 	let agreed = false;
 	let selectedPlanId = '';
@@ -361,12 +366,17 @@
 		{:else if step === 2}
 				<div class="mb-6">
 				<div class="mb-6">
-					<h3 class="text-xl text-[#2e1d24] sm:text-2xl">どちらにしますか？</h3>
-					<p class="mt-2 text-sm leading-7 text-[#6f5861]">「顔マスク付きプラン」と「通常プラン」の2つから選ぶだけ。モバイルバッテリーはどちらにも追加できます。</p>
+					{#if visiblePlans.length === 1}
+						<h3 class="text-xl text-[#2e1d24] sm:text-2xl">プランのご案内</h3>
+						<p class="mt-2 text-sm leading-7 text-[#6f5861]">毎日のフェイスケアを始めやすい通常プランです。モバイルバッテリーも追加できます。</p>
+					{:else}
+						<h3 class="text-xl text-[#2e1d24] sm:text-2xl">どちらにしますか？</h3>
+						<p class="mt-2 text-sm leading-7 text-[#6f5861]">「顔マスク付きプラン」と「通常プラン」の2つから選ぶだけ。モバイルバッテリーはどちらにも追加できます。</p>
+					{/if}
 				</div>
 				<div>
-					<div class="grid gap-5 md:grid-cols-2">
-						{#each plans as plan}
+					<div class={visiblePlans.length === 1 ? 'mx-auto max-w-md' : 'grid gap-5 md:grid-cols-2'}>
+						{#each visiblePlans as plan}
 							<div class={`relative flex flex-col rounded-2xl p-5 ${plan.popular ? 'border border-[#d45588] bg-[#fffafc] shadow-[0_8px_24px_rgba(212,85,136,0.12)]' : 'border border-[#edd9e2] bg-white'}`}>
 								{#if plan.eyebrow}
 									<span class="absolute -top-3 left-5 rounded-full bg-[#d45588] px-3 py-1 text-xs font-semibold text-white">{plan.eyebrow}</span>
