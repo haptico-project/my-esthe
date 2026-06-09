@@ -39,6 +39,15 @@
 	style="background-color:#fff;font-family:'Hiragino Mincho Pro',serif;"
 >
 
+	<!-- ================= ペット導線（最上部・告知バー） ================= -->
+	<a
+		href={petPageUrl}
+		class="flex w-full items-center justify-center gap-2 bg-[#C45A8A] px-4 py-2.5 text-xs font-semibold text-white transition hover:bg-[#b14d7b] sm:text-sm"
+	>
+		🐾 ペットと一緒に使いたい方はこちら
+		<span aria-hidden="true">→</span>
+	</a>
+
 	<!-- ================= HERO ================= -->
 	<HeroBoard src={`${base}/images/main.png`} designW={420} designH={620}>
 		<div class="absolute top-[52%] left-4">

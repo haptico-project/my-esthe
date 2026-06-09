@@ -151,6 +151,9 @@
 	const campaignDiscount = (plan: Plan) =>
 		$coupon && plan.id === CAMPAIGN_PLAN_ID ? CAMPAIGN_MONTHLY_DISCOUNT : 0;
 
+	// ペット向けページへの導線（店舗コードを引き継ぐ）。
+	$: petPageUrl = `https://pet.wellbeingroom.tokyo/${$agencyCode ?? ''}`;
+
 	let step = 1;
 	let agreed = false;
 	let selectedPlanId = '';
@@ -385,6 +388,12 @@
 						<h3 class="text-xl text-[#2e1d24] sm:text-2xl">どちらにしますか？</h3>
 						<p class="mt-2 text-sm leading-7 text-[#6f5861]">「顔マスク付きプラン」と「通常プラン」の2つから選ぶだけ。モバイルバッテリーはどちらにも追加できます。</p>
 					{/if}
+					<a
+						href={petPageUrl}
+						class="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-[#c15582] underline underline-offset-2 transition hover:text-[#a84672]"
+					>
+						🐾 ペットと一緒に使いたい方はこちら
+					</a>
 				</div>
 				<div>
 					<div class={visiblePlans.length === 1 ? 'mx-auto max-w-md' : 'grid gap-5 md:grid-cols-2'}>
