@@ -81,15 +81,14 @@
 			price: 5500,
 			priceLabel: '月額 5,500円（税込）',
 			afterPriceLabel: '12ヶ月後、顔マスクはお客様のもの',
-			img: `${base}/images/plans/special.jpg`,
+			img: `${base}/images/plans/face-mask.jpg`,
 			accent: 'from-[#f1e5e9] via-[#fff7f7] to-[#efe7e2]',
 			highlight: '振動器＋顔マスクのフルセット',
 			contents: [
 				'小型振動器（ポータブルタイプ）',
 				'振動ヘッドキャップ',
 				'顔マスク',
-				'充電用USBケーブル',
-				'携帯用ポーチ'
+				'充電用USBケーブル'
 			],
 			orderProducts: [
 				{ productId: 'price_1SUdstPo9yD7PttV1EclsBsi', quantity: 1 },
@@ -122,8 +121,7 @@
 			contents: [
 				'小型振動器（ポータブルタイプ）',
 				'振動ヘッドキャップ',
-				'充電用USBケーブル',
-				'携帯用ポーチ'
+				'充電用USBケーブル'
 			],
 			orderProducts: [{ productId: 'price_1SUdstPo9yD7PttV1EclsBsi', quantity: 1 }],
 			includedBenefits: [
