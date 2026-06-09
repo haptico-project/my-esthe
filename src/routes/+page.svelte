@@ -39,13 +39,17 @@
 	style="background-color:#fff;font-family:'Hiragino Mincho Pro',serif;"
 >
 
-	<!-- ================= ペット導線（最上部・告知バー） ================= -->
+	<!-- ================= ペット導線（最上部・みずみずしいラベル） ================= -->
 	<a
 		href={petPageUrl}
-		class="flex w-full items-center justify-center gap-2 bg-[#C45A8A] px-4 py-2.5 text-xs font-semibold text-white transition hover:bg-[#b14d7b] sm:text-sm"
+		class="pet-bar group relative flex w-full items-center justify-center gap-2 overflow-hidden px-4 py-3 text-xs font-semibold text-white sm:text-sm"
 	>
-		🐾 ペットと一緒に使いたい方はこちら
-		<span aria-hidden="true">→</span>
+		<span class="pet-bar__label relative z-10 flex items-center gap-2">
+			<span aria-hidden="true">🐾</span>
+			ペットと一緒に使いたい方はこちら
+			<span aria-hidden="true" class="transition-transform duration-300 group-hover:translate-x-1">→</span>
+		</span>
+		<span class="pet-bar__shine pointer-events-none absolute inset-0 z-0" aria-hidden="true"></span>
 	</a>
 
 	<!-- ================= HERO ================= -->
@@ -343,6 +347,41 @@
 {/if}
 
 <style>
+    /* ===== ペット導線ラベル（フロストグラス＋みずみずしい光沢） ===== */
+    .pet-bar {
+        background: linear-gradient(
+            100deg,
+            rgba(236, 122, 167, 0.6) 0%,
+            rgba(244, 158, 197, 0.46) 40%,
+            rgba(150, 209, 222, 0.5) 100%
+        );
+        backdrop-filter: blur(8px) saturate(1.25);
+        -webkit-backdrop-filter: blur(8px) saturate(1.25);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45);
+    }
+    .pet-bar__label {
+        letter-spacing: 0.04em;
+        text-shadow: 0 1px 3px rgba(150, 60, 110, 0.4);
+    }
+    .pet-bar__shine {
+        background: linear-gradient(
+            115deg,
+            transparent 0%,
+            rgba(255, 255, 255, 0.55) 50%,
+            transparent 100%
+        );
+        transform: translateX(-130%);
+        animation: petShine 5s ease-in-out infinite;
+    }
+    @keyframes petShine {
+        0% { transform: translateX(-130%); }
+        28%, 100% { transform: translateX(130%); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+        .pet-bar__shine { animation: none; opacity: 0; }
+    }
+
     /* ===== カルーセル共通 ===== */
 
     .panel-inner {
