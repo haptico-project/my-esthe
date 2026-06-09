@@ -2,6 +2,7 @@
 	import { base } from '$app/paths';
 	import HeroBoard from '../infras/HeroBoard.svelte';
 	import ModalFlow from '../infras/ModalFlow.svelte';
+	import { agencyCode } from '$lib/agency/agencyCode';
 
 	import { Swiper, SwiperSlide } from 'swiper/svelte';
 	import 'swiper/css';
@@ -9,6 +10,9 @@
 	import 'swiper/css/pagination';
 
 	let showModal = false;
+
+	// ペット向けページへの導線。店舗コード（agencyCode）を引き継いで遷移する。
+	$: petPageUrl = `https://pet.wellbeingroom.tokyo/${$agencyCode ?? ''}`;
 
 	// 解約はメールでの受付を第一とする。メーラーに必要項目のテンプレートを差し込む。
 	const cancelMailAddress = 'tft.kao@gmail.com';
@@ -294,6 +298,14 @@
 				alt="request"
 			/>
 		</button>
+
+		<a
+			href={petPageUrl}
+			class="mx-auto mb-12 mt-2 flex w-full max-w-[560px] items-center justify-center gap-2 rounded-full border border-[#E6B9CE] bg-white px-5 py-4 text-sm font-semibold text-[#C45A8A] shadow-sm transition hover:bg-[#FFF7FB]"
+		>
+			🐾 ペットと一緒に使いたい方はこちら
+			<span aria-hidden="true">→</span>
+		</a>
 
 		<div class="mx-auto mb-10 mt-4 max-w-[560px] rounded-2xl border border-[#FAD1E1] bg-[#FFF7FB] px-6 py-6 text-left shadow-sm">
 			<div class="text-[13px] text-[#C45A8A]">ご契約中のお客さま</div>
