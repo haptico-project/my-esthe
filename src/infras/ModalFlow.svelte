@@ -4,7 +4,7 @@
 	import { createEventDispatcher } from 'svelte';
 	import { get } from 'svelte/store';
 	import { agencyCode } from '$lib/agency/agencyCode';
-	import { coupon } from '$lib/coupon';
+	import { coupon, clearCoupon } from '$lib/coupon';
 	import { postCheckout } from '$lib/checkoutAccessor';
 
 	type CheckoutProduct = {
@@ -146,8 +146,39 @@
 	// 毎月割引される＝実質ずっと月3,300円。Stripeクーポンは顔マスク商品限定なので通常プランには効かない。
 	const CAMPAIGN_PLAN_ID = 'face-mask-plan';
 	const CAMPAIGN_MONTHLY_DISCOUNT = 2200;
+	// クーポンの有効性（バックエンドで判定）。null=未確認/判定中, true=有効, false=無効。
+	let couponValid: boolean | null = null;
 	const campaignDiscount = (plan: Plan) =>
-		$coupon && plan.id === CAMPAIGN_PLAN_ID ? CAMPAIGN_MONTHLY_DISCOUNT : 0;
+		$coupon && couponValid === true && plan.id === CAMPAIGN_PLAN_ID ? CAMPAIGN_MONTHLY_DISCOUNT : 0;
+
+	// クーポンが指定されていれば、バックエンドで有効性を事前判定する（割引表示の前提）。
+	let couponChecked = false;
+	$: if ($coupon && !couponChecked) {
+		couponChecked = true;
+		void checkCoupon($coupon);
+	}
+	const checkCoupon = async (code: string) => {
+		try {
+			const campaignPlan = plans.find((plan) => plan.id === CAMPAIGN_PLAN_ID);
+			const res = await postCheckout<
+				{ couponId: string; orderProducts: CheckoutProduct[] },
+				{ valid: boolean; reason: string }
+			>('/api/v1/checkout/coupon-validate', {
+				couponId: code,
+				orderProducts: campaignPlan?.orderProducts ?? []
+			});
+			if (res && res.valid) {
+				couponValid = true;
+			} else {
+				// 無効と確定 → 割引を出さず、保管場所からも破棄する。
+				couponValid = false;
+				clearCoupon();
+			}
+		} catch (e) {
+			// 判定不能（ネットワーク等）は割引を出さない（安全側）。クーポンは破棄しない。
+			couponValid = null;
+		}
+	};
 
 	// ペット向けページへの導線（店舗コードを引き継ぐ）。
 	$: petPageUrl = `https://pet.wellbeingroom.tokyo/${$agencyCode ?? ''}`;
@@ -226,9 +257,16 @@
 				return;
 			}
 			alert('リダイレクト先が取得できませんでした。');
-		} catch (err) {
+		} catch (err: any) {
 			console.error(err);
-			alert('決済処理中にエラーが発生しました。');
+			if (err?.code === 'INVALID_COUPON') {
+				// 無効クーポンは保管場所から破棄し、割引表示も解除。通常価格で再度お試しいただく。
+				clearCoupon();
+				couponValid = false;
+				alert('クーポンが無効なため、割引を解除しました。通常価格でもう一度お試しください。');
+			} else {
+				alert('決済処理中にエラーが発生しました。');
+			}
 		} finally {
 			isProcessing = false;
 		}
@@ -392,6 +430,11 @@
 					>
 						🐾 ペットと一緒に使いたい方はこちら
 					</a>
+					{#if couponValid === false}
+						<p class="mt-3 rounded-lg bg-[#fdeef0] px-3 py-2 text-xs leading-5 text-[#c0395f]">
+							無効なクーポンコードが指定されました。通常価格でのご案内となります。
+						</p>
+					{/if}
 				</div>
 				<div>
 					<div class={visiblePlans.length === 1 ? 'mx-auto max-w-md' : 'grid gap-5 md:grid-cols-2'}>

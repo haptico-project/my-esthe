@@ -25,3 +25,11 @@ export function initCoupon(): void {
 		coupon.set(sessionCoupon);
 	}
 }
+
+/**
+ * 無効と判定されたクーポンを保管場所（sessionStorage）とストアから破棄する。
+ */
+export function clearCoupon(): void {
+	if (browser) sessionStorage.removeItem('coupon');
+	coupon.set(null);
+}

@@ -20,9 +20,13 @@ export async function postCheckout<TRequest extends object, TResponse = any>(
 
 		return response.data;
 	} catch (error: any) {
-		// エラーハンドリング
-		const msg = error?.response?.data?.message || error.message || 'Unknown error';
-		throw new Error(`Checkoutリクエスト失敗: ${msg}`);
+		// エラーハンドリング（バックエンドの code/status を呼び出し側へ伝搬する）
+		const data = error?.response?.data;
+		const msg = data?.message || error.message || 'Unknown error';
+		const e: any = new Error(`Checkoutリクエスト失敗: ${msg}`);
+		e.code = data?.code;
+		e.status = error?.response?.status;
+		throw e;
 	}
 }
 
