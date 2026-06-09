@@ -42,7 +42,7 @@
 	<!-- ================= ペット導線（最上部・みずみずしいラベル） ================= -->
 	<a
 		href={petPageUrl}
-		class="pet-bar group relative flex w-full items-center justify-center gap-2 overflow-hidden px-4 py-3 text-xs font-semibold text-white sm:text-sm"
+		class="pet-bar group relative flex w-full items-center justify-center gap-2 overflow-hidden px-4 py-3 text-sm font-bold text-white sm:text-base"
 	>
 		<span class="pet-bar__label relative z-10 flex items-center gap-2">
 			<span aria-hidden="true">🐾</span>
@@ -351,9 +351,9 @@
     .pet-bar {
         background: linear-gradient(
             100deg,
-            rgba(236, 122, 167, 0.6) 0%,
-            rgba(244, 158, 197, 0.46) 40%,
-            rgba(150, 209, 222, 0.5) 100%
+            rgba(226, 100, 152, 0.66) 0%,
+            rgba(234, 130, 178, 0.6) 55%,
+            rgba(150, 209, 222, 0.54) 100%
         );
         backdrop-filter: blur(8px) saturate(1.25);
         -webkit-backdrop-filter: blur(8px) saturate(1.25);
@@ -362,7 +362,7 @@
     }
     .pet-bar__label {
         letter-spacing: 0.04em;
-        text-shadow: 0 1px 3px rgba(150, 60, 110, 0.4);
+        text-shadow: 0 1px 1px rgba(105, 35, 75, 0.6), 0 1px 7px rgba(105, 35, 75, 0.45);
     }
     .pet-bar__shine {
         background: linear-gradient(
