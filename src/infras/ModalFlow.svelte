@@ -216,6 +216,9 @@
 	};
 
 	const goToCheckout = async () => {
+		// 二重申込防止：処理中の再クリックは無視する（決済ページ遷移までの数秒の連打対策）。
+		if (isProcessing) return;
+
 		const currentPlan = selectedPlan();
 		const code = get(agencyCode);
 		const couponId = get(coupon);
@@ -229,6 +232,12 @@
 
 		const currentUrl = get(page).url;
 		const baseUrl = `${window.location.origin}${currentUrl.pathname}${currentUrl.search}`;
+		// 決済完了 / キャンセルの戻り先に目印を付ける。戻ったフロント(+layout)はこれを見て
+		// 「お申し込みが完了しました」の完了画面を表示し、重複申込を防ぐ。
+		const successUrl = new URL(baseUrl);
+		successUrl.searchParams.set('checkout', 'success');
+		const cancelUrl = new URL(baseUrl);
+		cancelUrl.searchParams.set('checkout', 'cancel');
 		const selectedOptionsForPlan = selectedOptionList(currentPlan);
 		const oneTimePriceIds = selectedOptionList(currentPlan)
 			.filter((option) => option.checkoutPriceId)
@@ -242,8 +251,8 @@
 
 		try {
 			const res = await postCheckout('/api/v1/checkout/subscription-url', {
-				checkoutSuccessUrl: baseUrl,
-				checkoutCancelUrl: baseUrl,
+				checkoutSuccessUrl: successUrl.toString(),
+				checkoutCancelUrl: cancelUrl.toString(),
 				agencyCode: code,
 				orderProducts,
 				oneTimePriceIds,
@@ -648,4 +657,14 @@
 			{/if}
 		{/if}
 	</div>
+
+	{#if isProcessing}
+		<!-- 決済セッション生成〜遷移までの待ち時間に、処理中であることを明示し再クリックを物理的に塞ぐ -->
+		<div class="absolute inset-0 z-30 flex items-center justify-center bg-[#1a1016]/55 backdrop-blur-sm">
+			<div class="flex flex-col items-center rounded-2xl bg-white px-8 py-7 text-center shadow-[0_20px_50px_rgba(38,16,31,0.35)]">
+				<span class="h-9 w-9 animate-spin rounded-full border-[3px] border-[#f0d6df] border-t-[#d45588]" aria-hidden="true"></span>
+				<p class="mt-4 text-sm leading-6 text-[#5f4b53]">決済ページへ移動しています。<br />そのままお待ちください…</p>
+			</div>
+		</div>
+	{/if}
 </div>
