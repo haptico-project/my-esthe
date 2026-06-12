@@ -7,14 +7,20 @@
 	import ModalFlow from '../infras/ModalFlow.svelte';
 	import { agencyCode } from '$lib/agency/agencyCode';
 	import { initCoupon } from '$lib/coupon';
+	import { initReferrer, referrerPromptOpen, saveReferrer, REFERRER_MAX_LENGTH } from '$lib/referrer';
 
 	// Stripe決済からの戻りを検知して、完了/キャンセルの案内を出す。
 	// null=通常表示, 'success'=お申し込み完了, 'cancel'=未完了。
 	let checkoutResult: 'success' | 'cancel' | null = null;
 
+	// 紹介者入力ポップアップの入力値。
+	let referrerInput = '';
+	const submitReferrer = () => saveReferrer(referrerInput);
+
 	onMount(() => {
 		initAgencyCode();
 		initCoupon();
+		initReferrer();
 
 		const params = new URL(window.location.href).searchParams;
 		const result = params.get('checkout');
@@ -95,6 +101,39 @@
 
 {#if showModal}
 	<ModalFlow on:close={() => (showModal = false)} />
+{/if}
+
+{#if $referrerPromptOpen}
+	<!-- 紹介用URL(?ref)で来訪。紹介者を入力するまで閉じない（×・背景クリックでの閉じ不可）。 -->
+	<div
+		class="fixed inset-0 z-[60] flex items-center justify-center bg-[radial-gradient(circle_at_top,rgba(255,205,224,0.5),rgba(19,12,18,0.9))] p-4 backdrop-blur-sm"
+		style="font-family: 'Hiragino Mincho Pro', serif;"
+	>
+		<div class="relative w-full max-w-md rounded-3xl border border-[#f0dbe3] bg-white p-7 text-center shadow-[0_24px_60px_rgba(38,16,31,0.3)]">
+			<div class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-[#fbeef3]">
+				<span class="text-2xl text-[#d45588]" aria-hidden="true">🤝</span>
+			</div>
+			<h2 class="mt-5 text-xl text-[#2e1d24]">ご紹介者のお名前</h2>
+			<p class="mt-3 text-sm leading-7 text-[#5f4b53]">
+				ご紹介でお越しいただきありがとうございます。<br />ご紹介者のお名前をご入力ください。
+			</p>
+			<input
+				type="text"
+				bind:value={referrerInput}
+				maxlength={REFERRER_MAX_LENGTH}
+				placeholder="例：山田 花子"
+				on:keydown={(e) => e.key === 'Enter' && submitReferrer()}
+				class="mt-5 w-full rounded-xl border border-[#E6B9CE] bg-white px-4 py-3 text-center text-base text-[#4D2B3C] placeholder:text-[#BC9AAD] focus:border-[#D86A99] focus:outline-none focus:ring-2 focus:ring-[#F4B8D2]"
+			/>
+			<button
+				class="mt-5 w-full rounded-full bg-[#d45588] px-5 py-3.5 text-sm font-semibold text-white transition hover:bg-[#be3d72] disabled:cursor-not-allowed disabled:opacity-50"
+				on:click={submitReferrer}
+				disabled={!referrerInput.trim()}
+			>
+				確定して進む
+			</button>
+		</div>
+	</div>
 {/if}
 
 {#if checkoutResult}

@@ -5,6 +5,7 @@
 	import { get } from 'svelte/store';
 	import { agencyCode } from '$lib/agency/agencyCode';
 	import { coupon, clearCoupon } from '$lib/coupon';
+	import { referrer } from '$lib/referrer';
 	import { postCheckout } from '$lib/checkoutAccessor';
 
 	type CheckoutProduct = {
@@ -222,6 +223,7 @@
 		const currentPlan = selectedPlan();
 		const code = get(agencyCode);
 		const couponId = get(coupon);
+		const referredBy = get(referrer);
 
 		if (!code || !currentPlan) {
 			alert('代理店コードまたは選択プランが未設定です。');
@@ -258,7 +260,9 @@
 				oneTimePriceIds,
 				// クーポンは顔マスク付きプランにのみ渡す。FACEMASK3300 は全体割引(applies_to無)のため、
 				// 通常プランに渡すと 3,300→1,100 と誤割引になる。対象プラン限定で防ぐ。
-				...(couponId && currentPlan.id === CAMPAIGN_PLAN_ID ? { couponId } : {})
+				...(couponId && currentPlan.id === CAMPAIGN_PLAN_ID ? { couponId } : {}),
+				// 紹介者（?ref で入力済みの場合）。Stripe metadata referred_by として保持される。
+				...(referredBy ? { referredBy } : {})
 			});
 
 			if (res) {
