@@ -238,8 +238,11 @@
 		// 「お申し込みが完了しました」の完了画面を表示し、重複申込を防ぐ。
 		const successUrl = new URL(baseUrl);
 		successUrl.searchParams.set('checkout', 'success');
+		// 戻りURLには紹介フラグ ?ref を残さない（完了/キャンセル後に入力ポップアップを再表示させない）。
+		successUrl.searchParams.delete('ref');
 		const cancelUrl = new URL(baseUrl);
 		cancelUrl.searchParams.set('checkout', 'cancel');
+		cancelUrl.searchParams.delete('ref');
 		const selectedOptionsForPlan = selectedOptionList(currentPlan);
 		const oneTimePriceIds = selectedOptionList(currentPlan)
 			.filter((option) => option.checkoutPriceId)

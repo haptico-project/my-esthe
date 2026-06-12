@@ -5,37 +5,33 @@ import { get } from 'svelte/store';
 
 /**
  * 紹介者（チェックアウト時に Stripe metadata `referred_by` として保持される）。
- * 紹介用URL `?ref` を踏んだ場合、入力されるまでポップアップで入力を促す。
+ * メモリのみで保持し、永続化しない（ページを開き直す＝次回アクセスでは消える）。
+ * 値はチェックアウトに進むまで有効。
  */
 export const referrer = writable<string | null>(null);
 
-/** 紹介者入力ポップアップの表示状態。`?ref` 付きで来訪し未入力のとき true。 */
+/** 紹介者入力ポップアップの表示状態。`?ref` 付きで来訪したら必ず true。 */
 export const referrerPromptOpen = writable<boolean>(false);
 
 /** 入力値の上限（バックエンドの保存上限と揃える）。 */
 export const REFERRER_MAX_LENGTH = 50;
 
 /**
- * 紹介者を解決する。すでに入力済み(sessionStorage)ならそれを採用。
- * 未入力で `?ref` フラグ付きなら、入力ポップアップを開く。
+ * `?ref` 付きでアクセスした場合は、前回値に関わらず必ず入力ポップアップを開く。
+ * 永続化はしないため、毎回の来訪で入力を求める。
  */
 export function initReferrer(): void {
 	if (!browser) return;
-	const stored = sessionStorage.getItem('referrer');
-	if (stored) {
-		referrer.set(stored);
-		return;
-	}
 	if (get(page).url.searchParams.has('ref')) {
+		referrer.set(null);
 		referrerPromptOpen.set(true);
 	}
 }
 
-/** 入力された紹介者を保存し、ポップアップを閉じる。空文字は無視。 */
+/** 入力された紹介者を（メモリのみ）保持し、ポップアップを閉じる。空文字は無視。 */
 export function saveReferrer(value: string): void {
 	const v = value.trim().slice(0, REFERRER_MAX_LENGTH);
 	if (!v) return;
-	if (browser) sessionStorage.setItem('referrer', v);
 	referrer.set(v);
 	referrerPromptOpen.set(false);
 }
