@@ -1,8 +1,10 @@
 <script lang="ts">
 	import { base } from '$app/paths';
+	import { onMount } from 'svelte';
 	import HeroBoard from '../infras/HeroBoard.svelte';
 	import ModalFlow from '../infras/ModalFlow.svelte';
 	import { agencyCode } from '$lib/agency/agencyCode';
+	import { getCheckout } from '$lib/checkoutAccessor';
 
 	import { Swiper, SwiperSlide } from 'swiper/svelte';
 	import 'swiper/css';
@@ -14,24 +16,46 @@
 	// ペット向けページへの導線。店舗コード（agencyCode）を引き継いで遷移する。
 	$: petPageUrl = `https://pet.wellbeingroom.tokyo/${$agencyCode ?? ''}`;
 
-	// 解約はメールでの受付を第一とする。メーラーに必要項目のテンプレートを差し込む。
-	const cancelMailAddress = 'tft.kao@gmail.com';
-	const cancelSubject = 'わたしのエステ 解約のお申し込み';
-	const cancelBody = [
-		'下記をご記入のうえ、そのまま送信してください。',
-		'',
-		'■ お名前：',
-		'■ お電話番号：',
-		'■ ご契約メールアドレス：',
-		'■ 集荷先ご住所（レンタル品の返却用／レンタル品がある場合）：',
-		'　〒',
-		'　',
-		'',
-		'※ レンタル品の返却が必要な場合は、追って集荷のご案内をいたします。'
-	].join('\n');
-	const cancelMailto = `mailto:${cancelMailAddress}?subject=${encodeURIComponent(
-		cancelSubject
-	)}&body=${encodeURIComponent(cancelBody)}`;
+	const fixedPortalShopId = 'acct_1QhJkZPo9yD7PttV';
+	let cancelMailAddress = '';
+	let isCancelLoading = false;
+	let cancelError = '';
+
+	onMount(() => {
+		const mailAddress = new URLSearchParams(window.location.search).get('mail_address');
+		if (mailAddress) cancelMailAddress = mailAddress;
+	});
+
+	const goToCancelPortal = async () => {
+		cancelError = '';
+		const mailAddress = cancelMailAddress.trim();
+		if (!mailAddress) {
+			cancelError = 'ご契約メールアドレスを入力してください。';
+			return;
+		}
+
+		isCancelLoading = true;
+		try {
+			const url = await getCheckout<string>('/api/v1/subscription/portal-url', {
+				params: {
+					shopId: fixedPortalShopId,
+					mail_address: mailAddress,
+					return_url: window.location.href
+				}
+			});
+
+			if (typeof url === 'string' && url.length > 0) {
+				window.location.href = url;
+				return;
+			}
+			throw new Error('invalid response');
+		} catch (e) {
+			console.error('解約ポータルの表示に失敗しました:', e);
+			cancelError = '解約ページの表示に失敗しました。メールアドレスをご確認のうえ、再度お試しください。';
+		} finally {
+			isCancelLoading = false;
+		}
+	};
 </script>
 
 <section
@@ -305,6 +329,12 @@
 			</div>
 		</div>
 
+		<p class="text-center text-sm text-[#A54F77] pb-4">
+			<a href="#cancel-portal" class="underline underline-offset-4 hover:text-[#8E3F66] transition">
+				ご契約中の方の解約手続きはこちら
+			</a>
+		</p>
+
 		<button class="mr-auto ml-auto w-[40%] pb-8 pt-2" on:click={() => (showModal = true)}>
 			<img
 				src={`${base}/images/request.png`}
@@ -320,23 +350,40 @@
 			<span aria-hidden="true">→</span>
 		</a>
 
-		<div class="mx-auto mb-10 mt-4 max-w-[560px] rounded-2xl border border-[#FAD1E1] bg-[#FFF7FB] px-6 py-6 text-left shadow-sm">
-			<div class="text-[13px] text-[#C45A8A]">ご契約中のお客さま</div>
-			<h3 class="mt-1 text-lg text-[#6D2140]">解約のお手続きについて</h3>
-			<p class="mt-3 text-sm leading-7 text-[#6B5460]">
-				解約をご希望の場合は、メールにて承っております。下のボタンを押すとメールが開き、必要事項の入力欄が表示されますので、ご記入のうえ送信してください。
+		<div id="cancel-portal" class="mx-auto mb-10 mt-4 max-w-[560px] rounded-2xl border border-[#FAD1E1] bg-[#FFF7FB] px-5 py-5 text-left shadow-sm">
+			<div class="text-[13px] tracking-[0.08em] text-[#C45A8A]">ご契約中のお客さま</div>
+			<h3 class="mt-1 text-lg text-[#6D2140]">解約・お支払い情報の確認</h3>
+			<p class="mt-2 text-sm leading-7 text-[#6B5460]">
+				ご契約メールアドレスを入力すると、専用ページへ移動します。
 			</p>
 
-			<a
-				href={cancelMailto}
-				class="mt-5 flex w-full items-center justify-center rounded-full bg-[#D9578D] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#C7487D]"
-			>
-				メールで解約を申し込む
-			</a>
+			<label class="mt-4 block text-sm text-[#6D2140]">
+				ご契約メールアドレス
+				<input
+					type="email"
+					bind:value={cancelMailAddress}
+					placeholder="user@example.com"
+					class="mt-2 w-full rounded-xl border border-[#E6B9CE] bg-white px-4 py-3 text-sm text-[#4D2B3C] placeholder:text-[#BC9AAD] focus:border-[#D86A99] focus:outline-none focus:ring-2 focus:ring-[#F4B8D2]"
+				/>
+			</label>
 
-			<p class="mt-4 text-xs leading-6 text-[#8A6A77]">
-				メールが開かない場合は <span class="text-[#6D2140]">{cancelMailAddress}</span> 宛に、お名前・お電話番号・ご契約メールアドレス・集荷先ご住所（レンタル品がある場合）をご記入のうえお送りください。お電話（03-3818-0408）でも承ります。
-			</p>
+			{#if cancelError}
+				<p class="mt-3 text-sm text-[#C22F61]">{cancelError}</p>
+			{/if}
+
+			<div class="mt-4">
+				<button
+					class="w-full rounded-full bg-[#D9578D] px-5 py-3 text-sm font-semibold tracking-wide text-white transition hover:bg-[#C7487D] disabled:cursor-not-allowed disabled:opacity-60"
+					on:click={goToCancelPortal}
+					disabled={isCancelLoading}
+				>
+					{#if isCancelLoading}
+						解約ページを準備中...
+					{:else}
+						解約ページへ進む
+					{/if}
+				</button>
+			</div>
 		</div>
 	</section>
 	<div class="h-10"></div>
