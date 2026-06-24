@@ -178,6 +178,9 @@
 					ご決済が完了し、お申し込みを受け付けました。<br />
 					<span class="font-semibold text-[#c15582]">重ねてお申し込みいただく必要はございません。</span>
 				</p>
+				<p class="mt-4 rounded-xl bg-[#fbeef3] px-4 py-3 text-xs leading-6 text-[#8a5a72]">
+					✉ <span class="font-semibold">haptico.co.jp</span> より、お申し込みに関する通知メールをお送りします。
+				</p>
 				<button
 					class="mt-6 w-full rounded-full bg-[#d45588] px-5 py-3.5 text-sm font-semibold text-white transition hover:bg-[#be3d72]"
 					on:click={closeCheckoutResult}

@@ -5,6 +5,7 @@
 	import ModalFlow from '../infras/ModalFlow.svelte';
 	import { agencyCode } from '$lib/agency/agencyCode';
 	import { getCheckout } from '$lib/checkoutAccessor';
+	import MailNoticeDialog from '$lib/MailNoticeDialog.svelte';
 
 	import { Swiper, SwiperSlide } from 'swiper/svelte';
 	import 'swiper/css';
@@ -20,10 +21,20 @@
 	let cancelMailAddress = '';
 	let isCancelLoading = false;
 	let cancelError = '';
+	let showMailNotice = false;
 
 	onMount(() => {
-		const mailAddress = new URLSearchParams(window.location.search).get('mail_address');
+		const params = new URLSearchParams(window.location.search);
+		const mailAddress = params.get('mail_address');
 		if (mailAddress) cancelMailAddress = mailAddress;
+
+		// 解約ポータルから戻ってきたタイミングで、確認メール通知の案内ダイアログを出す。
+		if (params.get('portal_return') === '1') {
+			showMailNotice = true;
+			const url = new URL(window.location.href);
+			url.searchParams.delete('portal_return');
+			window.history.replaceState({}, '', url.toString());
+		}
 	});
 
 	const goToCancelPortal = async () => {
@@ -36,11 +47,15 @@
 
 		isCancelLoading = true;
 		try {
+			// 戻り URL に目印を付け、ポータルから戻った直後に確認メール通知の案内を出す。
+			const returnUrl = new URL(window.location.href);
+			returnUrl.searchParams.set('portal_return', '1');
+
 			const url = await getCheckout<string>('/api/v1/subscription/portal-url', {
 				params: {
 					shopId: fixedPortalShopId,
 					mail_address: mailAddress,
-					return_url: window.location.href
+					return_url: returnUrl.toString()
 				}
 			});
 
@@ -379,6 +394,13 @@
 {#if showModal}
 	<ModalFlow on:close={() => (showModal = false)} />
 {/if}
+
+<MailNoticeDialog
+	open={showMailNotice}
+	title="解約手続きについて"
+	message={'解約などのお手続きをいただいた場合は、haptico.co.jp より通知メールをお送りします。'}
+	on:close={() => (showMailNotice = false)}
+/>
 
 <style>
     /* ===== カルーセル共通 ===== */
