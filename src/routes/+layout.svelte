@@ -97,9 +97,8 @@
 						<img src="{`${base}/images/logo.png`}" alt="logo" class="max-w-[68px]" />
 					</button>
 					<div class="flex items-center gap-3">
-						<!-- Instagram / TikTok: 公式ブランドキットのロゴ（Instagram_Glyph_Gradient / TIKTOK_NOTE_BLACK。元データは images/ に保管） -->
+						<!-- Instagram: 公式ブランドキットのロゴ（Instagram_Glyph_Gradient。元データは images/ に保管） -->
 						<a href="https://www.instagram.com/facetherapie" target="_blank" rel="noopener noreferrer" aria-label="Instagram" class="transition-opacity hover:opacity-80"><img src={`${base}/images/sns/instagram.png`} alt="" class="w-6 h-6" /></a>
-						<a href="https://www.tiktok.com/@tftkabonj6g" target="_blank" rel="noopener noreferrer" aria-label="TikTok" class="transition-opacity hover:opacity-80"><img src={`${base}/images/sns/tiktok.svg`} alt="" class="h-6 w-auto" /></a>
 						<button on:click={() => (showModal = true)}>
 						<img src="{`${base}/images/request.png`}" alt="logo" class="max-w-[140px]" />
 					</button>
