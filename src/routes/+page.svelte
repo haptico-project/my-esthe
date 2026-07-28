@@ -1,16 +1,10 @@
 <script lang="ts">
 	import { base } from '$app/paths';
 	import { onMount } from 'svelte';
-	import HeroBoard from '../infras/HeroBoard.svelte';
 	import ModalFlow from '../infras/ModalFlow.svelte';
 	import { agencyCode } from '$lib/agency/agencyCode';
 	import { getCheckout } from '$lib/checkoutAccessor';
 	import MailNoticeDialog from '$lib/MailNoticeDialog.svelte';
-
-	import { Swiper, SwiperSlide } from 'swiper/svelte';
-	import 'swiper/css';
-	import { Pagination } from 'swiper';
-	import 'swiper/css/pagination';
 
 	let showModal = false;
 
@@ -73,147 +67,103 @@
 	};
 </script>
 
-<section
-	class="text-center relative"
-	style="background-color:#fff;font-family:'Hiragino Mincho Pro',serif;"
->
+<div class="lp">
 
 	<!-- ================= HERO ================= -->
-	<HeroBoard src={`${base}/images/main.png`} designW={420} designH={620}>
-		<div class="absolute top-[52%] left-4">
-			<div
-				class="inline-block text-white leading-tight text-left"
-				style="font-size:42pt;"
-			>
-				エステの<br />ある暮らし。
-			</div>
-		</div>
+	<div class="hero">
+		<div class="hero-frame">
+			<img class="hero-img" src={`${base}/images/hero/main.png`} alt="" />
 
-		<!-- ===== Awards ===== -->
-		<div class="hero-awards">
-			<img src={`${base}/images/awards/c1.png`} alt="award 1" />
-			<img src={`${base}/images/awards/c2.png`} alt="award 2" />
-		</div>
-	</HeroBoard>
+			<!-- タイトルと受賞マーク。画面が低い端末では sticky でビューポート下端に
+			     追従表示し、本来の位置（ヒーロー下部）に来たら止まる。 -->
+			<div class="hero-caption">
+				<h1 class="hero-title">エステの<br />ある暮らし。</h1>
 
-	<!-- ================= INTRO ================= -->
-	<section class="relative px-6 pt-8" style="margin-top:12rem;">
-		<div class="text-center">
-			<span style="font-size:20px;">頑張る美容から、感じる美容へ</span>
-			<br /><br /><br /><br />
-			<div class="leading-9">
-				気持ちいいから、<br />
-				気づけば毎日続けてしまう。<br />
-				続けるから、<br />
-				きれいになる。<br />
-			</div>
-		</div>
-	</section>
-
-	<!-- ================= 水たまり：カルーセル ================= -->
-	<section
-		class="relative"
-		style="margin-top:12rem;"
-	>
-		<div class="max-w-[100%] mx-auto">
-
-			<Swiper
-				slidesPerView={1}
-				spaceBetween={1}
-				centeredSlides={true}
-				grabCursor={true}
-				modules={[Pagination]}
-				pagination={{ clickable: true }}
-			>
-
-				<!-- ===== Slide 1 ===== -->
-				<SwiperSlide>
-					<div class="panel-inner">
-						<img
-							src={`${base}/images/section/water_vibrated.png`}
-							alt="自然由来の振動"
-						/>
-
-						<div class="panel-text left-bottom text-left">
-							<h3>自然由来の振動</h3>
-							<p>
-								森などから抽出した自然由来の<br />
-								微細な振動で揺れることで、<br />
-								肌への摩擦を抑えながら、<br />
-								負担をかけず本来の美しさを引き出します。
-							</p>
-						</div>
-					</div>
-				</SwiperSlide>
-
-				<!-- ===== Slide 2 ===== -->
-				<SwiperSlide>
-					<div class="panel-inner">
-						<img
-							src={`${base}/images/section/esthe.png`}
-							alt="振動 × エステティシャンの手技"
-						/>
-
-						<div class="panel-text right-top">
-							<h3>
-								振動 ×<br />
-								エステティシャンの<br />
-								手技リズム
-							</h3>
-							<p>
-								エステティシャン監修で、<br />
-								人の手のリズムを振動で再現。<br />
-								心地よいケアをご自宅で体験できます。
-							</p>
-						</div>
-					</div>
-				</SwiperSlide>
-
-			</Swiper>
-		</div>
-	</section>
-
-	<!-- ================= MAIN IMAGE ================= -->
-	<div class="text-center" style="margin-top:12rem;margin-bottom:6rem;">
-		<img src={`${base}/images/main2.png`} alt="main2" class="w-[75%]" />
-	</div>
-
-	<!-- ================= USAGE ================= -->
-	<section class="relative pt-8" style="margin-top:2rem;">
-		<div class="text-right" style="font-size:24px;">
-			<div style="line-height:2em;color:#FF62A5">
-				<span style="font-size:1.3em;">１日の終わりに、</span><br />
-				<span style="font-size:1.3em;">自分へのご褒美タイム</span>
-			</div>
-
-			<img
-				src={`${base}/images/line.png`}
-				alt=""
-				class="ml-auto w-[75%] pb-8 pt-2"
-			/>
-
-			<div class="text-right pb-4 text-black">
-				<div class="leading-8" style="font-size:18px;">
-					使い方は簡単、顔に載せるだけ。<br />
-					だから忙しい毎日でも続けられる。<br />
-					お手持ちのパックと合わせてご利用いただくと、<br />
-					10分でエステ1回分の効果が得られます。<br />
+				<div class="hero-awards">
+					<img src={`${base}/images/awards/kyoto-univ.png`} alt="京都大学総長賞" />
+					<img src={`${base}/images/awards/health20.png`} alt="health2.0受賞" />
 				</div>
 			</div>
+		</div>
+	</div>
 
-			<img
-				src={`${base}/images/gohoubi_time.png`}
-				alt="ご褒美タイム"
-				class="ml-auto w-[40%] pb-8 pt-4"
-			/>
+	<!-- ================= ミスト振動 ================= -->
+	<section class="mist">
+		<img class="mist-bg" src={`${base}/images/mist/ripple.png`} alt="" aria-hidden="true" />
+		<div class="mist-content">
+			<h2 class="heading">
+				霧のように細やかな<br />
+				「ミスト振動」が、<br />
+				肌の奥からハリを呼び覚ます。
+			</h2>
+
+			<p class="body-copy">
+				手のひらでのマッサージは、<br />
+				実は肌への摩擦になりがち。
+			</p>
+			<p class="body-copy">
+				この美顔器が採用したのは、<br />
+				まるで極上の霧を浴びているかのような<br />
+				繊細な「ミスト振動」です。
+			</p>
+			<p class="body-copy">
+				肌の奥を心地よく刺激することで、<br />
+				お肌本来のコラーゲン生成を促します。
+			</p>
+		</div>
+	</section>
+
+	<!-- ================= コラーゲン ================= -->
+	<section class="collagen">
+		<h2 class="heading align-right">
+			肌のたるみ、くすみに<br />
+			素早くアプローチ
+		</h2>
+
+		<div class="collagen-images">
+			<img src={`${base}/images/collagen/before.png`} alt="使用前のコラーゲン" />
+			<img src={`${base}/images/collagen/after.png`} alt="使用後のコラーゲン" />
 		</div>
 
-		<div class="max-w-[800px] mx-auto pt-12 pb-24 px-4">
-			<div class="relative w-full pt-[56.25%]">
+		<p class="note align-right">
+			緑、黄色の表示部分がコラーゲン(黄色:密度高)<br />
+			皮膚の下に沈んでいたコラーゲンが<br />
+			振動によって表皮に押し上げられ、<br />
+			肌にハリをもたらします。
+		</p>
+	</section>
+
+	<!-- ================= 使い方 ================= -->
+	<section class="usage">
+		<div class="usage-block">
+			<h2 class="heading align-left">
+				使い方は簡単、<br />
+				顔に乗せるだけ。
+			</h2>
+			<p class="sub align-left">
+				忙しい毎日でも続けられる。<br />
+				10分間、心地よいセルフエステタイム
+			</p>
+			<img class="usage-img" src={`${base}/images/usage/face-mask.png`} alt="美顔器を顔に乗せる様子" />
+		</div>
+
+		<div class="usage-block">
+			<h2 class="heading align-right">
+				顔以外にも、<br />
+				全身どこでも使えます。
+			</h2>
+			<p class="sub align-right">
+				頭からつま先まで全身にお使いいただけます。<br />
+				深く満たされる心地よいリラックスタイムを。
+			</p>
+			<img class="usage-img" src={`${base}/images/usage/body.png`} alt="振動器を身体に使う様子" />
+		</div>
+
+		<div class="usage-video">
+			<div class="usage-video-frame">
 				<iframe
-					class="absolute top-0 left-0 w-full h-full rounded-lg"
 					src="https://www.youtube.com/embed/irmZgfw1CzQ?si=ok31EkunFMwryn__"
-					title="YouTube video player"
+					title="わたしのエステ 使い方動画"
 					frameborder="0"
 					allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
 					referrerpolicy="strict-origin-when-cross-origin"
@@ -223,173 +173,67 @@
 		</div>
 	</section>
 
+	<!-- ================= エステのサブスク ================= -->
+	<section class="subsc">
+		<img class="subsc-bg" src={`${base}/images/subscription/pond.png`} alt="" aria-hidden="true" />
+		<div class="subsc-content">
+			<h2 class="heading">エステのサブスク</h2>
 
-	<!-- エビデンス -->
-	<section class="relative" style="padding-top: 6rem; margin-top: -4rem; background-color: #FFF;">
-
-		<div style="background-color: #FFADD0CC; padding-bottom: 84pt;">
-
-			<div class="text-left pt-16 pl-4" style="line-height: 2.4em; color: #000000;">
-				<span style="font-size: 24pt;">肌のたるみ、くすみに</span><br />
-				<span style="font-size: 24pt;">素早くアプローチ</span>
-			</div>
-
-			<img
-				src={`${base}/images/line2.png`}
-				alt="line2"
-				class="mr-auto w-[75%] pb-8 pt-2"
-			/>
-
-			<div class="text-left pb-4 pl-4 text-black">
-				<div class="leading-7" style="font-size: 18px;">
-					自然由来の振動で、<br />
-					お肌のコラーゲン生成を促します。<br />
-					気になるお肌のトラブルに、優しくアプローチ。<br />
-					<br />
-				</div>
-			</div>
-
-			<img
-				src={`${base}/images/evidence.png`}
-				alt="evidence"
-				class="mr-auto ml-auto w-[96%] pt-2"
-			/>
-			<span>※白い線は表皮です</span>
-
-			<div class="text-left pt-4 pb-4 pl-4 text-black">
-				<div class="leading-7" style="font-size: 18px;">
-					緑、黄色の表示部分がコラーゲン(密度高：黄色)<br />
-					振動によって皮膚の下に沈んでいたコラーゲンが表皮に押し上げ<br />
-					られて、肌にハリをもたらします。<br />
-					<br />
-				</div>
-			</div>
-		</div>
-	</section>
-
-	<section class="relative pt-8"
-					 style="margin-top: 2rem; background-color: #FFF0; font-family: 'Hiragino Mincho Pro', serif;">
-		<div class="text-right" style="font-size: 24px; padding-bottom: 24px;">
-			<div style="line-height: 2.0em; color: #FF62A5">
-				<span style="font-size: 1.4em;">顔以外にも、</span><br />
-				<span style="font-size: 1.4em;">全身どこでも使えます</span>
-			</div>
-
-			<img
-				src={`${base}/images/line.png`}
-				alt="line"
-				class=" ml-auto w-[75%] pb-8 pt-2"
-			/>
-
-			<div class="text-right pb-4 text-black">
-				<div class="leading-8" style="font-size: 18px;">
-					<br />
-					顔以外にも、頭、お腹にもご利用いただけます。<br />
-					身体を整えて、内側から綺麗に。<br />
-					<br />
-				</div>
-			</div>
-
-			<img
-				src={`${base}/images/head.png`}
-				alt="head"
-				class=" ml-auto w-[60%] pb-8 pt-4"
-			/>
-			<img
-				src={`${base}/images/stomach.png`}
-				alt="stomach"
-				class="mr-auto ml-2 w-[60%] pb-8 pt-2"
-			/>
-		</div>
-	</section>
-
-	<!-- エステのサブスク -->
-	<section class="relative px-6 pt-8" style="margin-top: 2rem;">
-		<div class="text-center" style="font-size: 24px;">
-			エステのサブスク
-			<img
-				src={`${base}/images/line.png`}
-				alt="line"
-				class="mr-auto ml-auto w-[75%] pb-8 pt-2"
-			/>
-		</div>
-
-		<div class="text-center pb-4 text-black">
-			<div class="leading-8" style="font-size: 18px;">
-				この繊細な振動は<br />
+			<p class="subsc-copy">
+				ミストのように繊細な振動は、<br />
 				一つひとつ職人の手で調整された<br />
-				装置から生まれます<br /><br />
-
-				高価な機器を、気軽に毎日の生活へ<br />
+				装置から生まれます。
+			</p>
+			<p class="subsc-copy">
+				高価な機器を、気軽に毎日の生活へ。<br />
 				月3,300円のサブスクリプションで、<br />
-				家族みんなの“感じる美容”を叶えます。<br /><br />
+				“感じる美容”を叶えます。
+			</p>
+			<p class="subsc-copy">
+				合わなければ、いつでもご返却いただけます。<br />
+				まずは１ヶ月、初めてみませんか？
+			</p>
 
-				メンテナンスも丁寧に対応させて頂きます<br />
-				合わなければ、いつでもご返却いただけます。<br /><br />
-
-				まずは１ヶ月、初めてみませんか？<br /><br /><br />
-			</div>
+			<button class="cta" on:click={() => (showModal = true)}>お申しこみはこちら</button>
 		</div>
+	</section>
 
-		<p class="text-center text-sm text-[#A54F77] pb-4">
-			<a href="#cancel-portal" class="underline underline-offset-4 hover:text-[#8E3F66] transition">
-				ご契約中の方の解約手続きはこちら
-			</a>
-		</p>
-
-		<button class="mr-auto ml-auto w-[40%] pb-8 pt-2" on:click={() => (showModal = true)}>
-			<img
-				src={`${base}/images/request.png`}
-				alt="request"
-			/>
-		</button>
-
-		<a
-			href={petPageUrl}
-			class="mx-auto mb-12 mt-2 flex w-full max-w-[560px] items-center justify-center gap-2 rounded-full border border-[#E6B9CE] bg-white px-5 py-4 text-sm font-semibold text-[#C45A8A] shadow-sm transition hover:bg-[#FFF7FB]"
-		>
+	<!-- ================= 付帯導線（ペット / 解約） ================= -->
+	<section class="extras">
+		<a href={petPageUrl} class="pet-link">
 			🐾 ペットと一緒に使いたい方はこちら
 			<span aria-hidden="true">→</span>
 		</a>
 
-		<div id="cancel-portal" class="mx-auto mb-10 mt-4 max-w-[560px] rounded-2xl border border-[#FAD1E1] bg-[#FFF7FB] px-5 py-5 text-left shadow-sm">
-			<div class="text-[13px] tracking-[0.08em] text-[#C45A8A]">ご契約中のお客さま</div>
-			<h3 class="mt-1 text-lg text-[#6D2140]">解約・お支払い情報の確認</h3>
-			<p class="mt-2 text-sm leading-7 text-[#6B5460]">
-				ご契約メールアドレスを入力すると、専用ページへ移動します。
-			</p>
+		<div id="cancel-portal" class="cancel-card">
+			<div class="cancel-eyebrow">ご契約中のお客さま</div>
+			<h3 class="cancel-title">解約・お支払い情報の確認</h3>
+			<p class="cancel-lead">ご契約メールアドレスを入力すると、専用ページへ移動します。</p>
 
-			<label class="mt-4 block text-sm text-[#6D2140]">
+			<label class="cancel-label">
 				ご契約メールアドレス
 				<input
 					type="email"
 					bind:value={cancelMailAddress}
 					placeholder="user@example.com"
-					class="mt-2 w-full rounded-xl border border-[#E6B9CE] bg-white px-4 py-3 text-sm text-[#4D2B3C] placeholder:text-[#BC9AAD] focus:border-[#D86A99] focus:outline-none focus:ring-2 focus:ring-[#F4B8D2]"
+					class="cancel-input"
 				/>
 			</label>
 
 			{#if cancelError}
-				<p class="mt-3 text-sm text-[#C22F61]">{cancelError}</p>
+				<p class="cancel-error">{cancelError}</p>
 			{/if}
 
-			<div class="mt-4">
-				<button
-					class="w-full rounded-full bg-[#D9578D] px-5 py-3 text-sm font-semibold tracking-wide text-white transition hover:bg-[#C7487D] disabled:cursor-not-allowed disabled:opacity-60"
-					on:click={goToCancelPortal}
-					disabled={isCancelLoading}
-				>
-					{#if isCancelLoading}
-						解約ページを準備中...
-					{:else}
-						解約ページへ進む
-					{/if}
-				</button>
-			</div>
+			<button class="cancel-button" on:click={goToCancelPortal} disabled={isCancelLoading}>
+				{#if isCancelLoading}
+					解約ページを準備中...
+				{:else}
+					解約ページへ進む
+				{/if}
+			</button>
 		</div>
 	</section>
-	<div class="h-10"></div>
-</section>
+</div>
 
 {#if showModal}
 	<ModalFlow on:close={() => (showModal = false)} />
@@ -403,96 +247,369 @@
 />
 
 <style>
-    /* ===== カルーセル共通 ===== */
+	/* ===== デザイントークン =====
+	   背景(明): #EDEFEE / 背景(暗): #415356 / 文字: #000000 / #FFFFFF
+	   字体: ヒラギノ明朝Pro */
+	.lp {
+		--light: #edefee;
+		--dark: #415356;
+		font-family: 'Hiragino Mincho Pro', 'Hiragino Mincho ProN', 'hiragino-mincho-pro',
+			'Yu Mincho', serif;
+		color: #000;
+		background-color: var(--light);
+	}
 
-    .panel-inner {
-        position: relative;
-        height: 80vh; /* ← 高さ固定 */
-        aspect-ratio: 396 / 679; /* Figma比率 */
-        margin: 0 auto;
-    }
+	/* 幅393px（デザイン基準）未満の端末では行が崩れないよう比例縮小する */
+	.heading {
+		font-size: min(22px, 5.4vw);
+		font-weight: 400;
+		line-height: 2;
+		letter-spacing: 0.1em;
+	}
 
-    .panel-inner img {
-        height: 100%;
-        width: auto;
-        object-fit: contain;
-        display: block;
-        margin: 0 auto;
-    }
+	.align-right {
+		text-align: right;
+	}
+	.align-left {
+		text-align: left;
+	}
 
-    /* テキスト */
-    .panel-text {
-        position: absolute;
-        color: #fff;
-        text-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
-        max-width: 80%;
-    }
+	/* ===== HERO ===== */
+	.hero {
+		container-type: inline-size;
+		/* 半透明ヘッダー（ロゴ行）の背面にヒーローを潜り込ませる */
+		margin-top: calc(-1 * var(--header-h, 0px));
+	}
 
-    .panel-text h3 {
-        font-size: 18px;
-        font-weight: 600;
-        margin-bottom: 6px;
-        line-height: 1.4;
-    }
+	/* sticky をビューポート基準で効かせるため overflow は設定しない */
+	.hero-frame {
+		position: relative;
+		aspect-ratio: 393 / 733;
+		display: flex;
+		flex-direction: column;
+		justify-content: flex-end;
+	}
 
-    .panel-text p {
-        font-size: 13px;
-        line-height: 1.7;
-        opacity: 0.95;
-    }
+	.hero-img {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+	}
 
-    /* 配置 */
-    .left-bottom {
-        left: 12px;
-        bottom: 16px;
-    }
+	.hero-caption {
+		position: sticky;
+		bottom: 0;
+		z-index: 2;
+		padding: 3cqw 5% 4cqw;
+		text-align: left;
+	}
 
-    .right-top {
-        right: 12px;
-        top: 16px;
-        text-align: right;
-    }
+	.hero-title {
+		color: #fff;
+		font-weight: 400;
+		font-size: 40px;
+		font-size: 10.7cqw;
+		line-height: 1.5;
+		letter-spacing: 0.06em;
+	}
 
-    .hero-awards {
-        position: absolute;
-        bottom: 8%;
-        left: 26%;
-        transform: translateX(-50%);
-        display: flex;
-        gap: 4px;
-        align-items: center;
-        justify-content: center;
-        z-index: 2;
-    }
+	.hero-awards {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		gap: 2.5cqw;
+		margin-top: 14px;
+		margin-top: 3.5cqw;
+	}
 
-    .hero-awards img {
-        height: 8vh;
-        width: auto;
-        opacity: 1;
-    }
+	.hero-awards img {
+		width: 76px;
+		width: 19.5cqw;
+		height: auto;
+	}
 
-    /* スマホ微調整 */
-    @media (max-width: 480px) {
-        .hero-awards {
-            bottom: 3%;
-            gap: 2px;
-        }
+	/* ===== ミスト振動 ===== */
+	.mist {
+		position: relative;
+		overflow: hidden;
+		background-color: var(--light);
+		text-align: center;
+	}
 
-        .hero-awards img {
-            height: 80px;
-        }
-    }
+	.mist-bg {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		-webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 18%, #000 78%, transparent 100%);
+		mask-image: linear-gradient(to bottom, transparent 0%, #000 18%, #000 78%, transparent 100%);
+	}
 
-    :global(.swiper-pagination) {
-        bottom: -28px; /* 画像の下に少し余白 */
-    }
+	.mist-content {
+		position: relative;
+		z-index: 1;
+		padding: 96px 28px 110px;
+	}
 
-    :global(.swiper-pagination-bullet) {
-        background: #ccc;
-        opacity: 1;
-    }
+	.body-copy {
+		font-size: min(13.5px, 4.1vw);
+		line-height: 2.4;
+		letter-spacing: 0.08em;
+		color: rgba(0, 0, 0, 0.65);
+	}
 
-    :global(.swiper-pagination-bullet-active) {
-        background: #555;
-    }
+	.mist-content .body-copy:first-of-type {
+		margin-top: 170px;
+	}
+
+	.mist-content .body-copy + .body-copy {
+		margin-top: 56px;
+	}
+
+	/* ===== コラーゲン ===== */
+	.collagen {
+		background-color: var(--light);
+		padding: 40px 24px 110px;
+	}
+
+	.collagen-images {
+		display: flex;
+		justify-content: center;
+		gap: 16px;
+		margin-top: 48px;
+	}
+
+	.collagen-images img {
+		width: 41%;
+		height: auto;
+	}
+
+	.note {
+		margin-top: 40px;
+		font-size: min(12px, 3.3vw);
+		line-height: 2.3;
+		letter-spacing: 0.06em;
+		color: rgba(0, 0, 0, 0.75);
+	}
+
+	/* ===== 使い方 ===== */
+	.usage {
+		background-color: var(--dark);
+		color: #fff;
+		padding: 100px 28px 110px;
+	}
+
+	.usage-block + .usage-block {
+		margin-top: 150px;
+	}
+
+	.sub {
+		margin-top: 26px;
+		font-size: min(13px, 3.6vw);
+		line-height: 2.2;
+		letter-spacing: 0.08em;
+		color: rgba(255, 255, 255, 0.85);
+	}
+
+	.usage-img {
+		display: block;
+		margin: 56px auto 0;
+		width: 72%;
+		height: auto;
+	}
+
+	.usage-video {
+		margin-top: 130px;
+		display: flex;
+		justify-content: center;
+	}
+
+	.usage-video-frame {
+		position: relative;
+		width: 62%;
+		max-width: 420px;
+		aspect-ratio: 16 / 9;
+	}
+
+	.usage-video-frame iframe {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+	}
+
+	/* ===== エステのサブスク ===== */
+	.subsc {
+		position: relative;
+		overflow: hidden;
+		background-color: var(--light);
+		text-align: center;
+	}
+
+	.subsc-bg {
+		position: absolute;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		width: 100%;
+		height: auto;
+		-webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 35%);
+		mask-image: linear-gradient(to bottom, transparent 0%, #000 35%);
+	}
+
+	.subsc-content {
+		position: relative;
+		z-index: 1;
+		padding: 100px 28px 110px;
+	}
+
+	.subsc-copy {
+		font-size: min(14px, 3.65vw);
+		line-height: 2.5;
+		letter-spacing: 0.08em;
+	}
+
+	.subsc-content .subsc-copy:first-of-type {
+		margin-top: 90px;
+	}
+
+	.subsc-content .subsc-copy + .subsc-copy {
+		margin-top: 48px;
+	}
+
+	/* ボタン文字: #415356 / ボタン背景: #FFFFFF(透過度80%) */
+	.cta {
+		display: block;
+		margin: 90px auto 0;
+		width: 60%;
+		max-width: 280px;
+		padding: 15px 0;
+		border-radius: 9999px;
+		background-color: rgba(255, 255, 255, 0.8);
+		color: var(--dark);
+		font-family: inherit;
+		font-size: 15px;
+		letter-spacing: 0.12em;
+		transition: background-color 0.2s ease;
+	}
+
+	.cta:hover {
+		background-color: rgba(255, 255, 255, 0.95);
+	}
+
+	/* ===== 付帯導線（デザイン外の機能ブロック） ===== */
+	.extras {
+		background-color: var(--light);
+		padding: 72px 24px 40px;
+	}
+
+	.pet-link {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 8px;
+		margin: 0 auto;
+		max-width: 480px;
+		padding: 14px 20px;
+		border: 1px solid rgba(65, 83, 86, 0.35);
+		border-radius: 9999px;
+		background-color: rgba(255, 255, 255, 0.8);
+		color: var(--dark);
+		font-size: 13px;
+		letter-spacing: 0.06em;
+		transition: background-color 0.2s ease;
+	}
+
+	.pet-link:hover {
+		background-color: #fff;
+	}
+
+	.cancel-card {
+		margin: 48px auto 0;
+		max-width: 480px;
+		padding: 24px 22px 26px;
+		border: 1px solid rgba(65, 83, 86, 0.25);
+		border-radius: 16px;
+		background-color: rgba(255, 255, 255, 0.7);
+		text-align: left;
+	}
+
+	.cancel-eyebrow {
+		font-size: 11px;
+		letter-spacing: 0.14em;
+		color: rgba(65, 83, 86, 0.8);
+	}
+
+	.cancel-title {
+		margin-top: 6px;
+		font-size: 17px;
+		letter-spacing: 0.06em;
+		color: var(--dark);
+	}
+
+	.cancel-lead {
+		margin-top: 10px;
+		font-size: 13px;
+		line-height: 2;
+		color: rgba(0, 0, 0, 0.65);
+	}
+
+	.cancel-label {
+		display: block;
+		margin-top: 18px;
+		font-size: 13px;
+		color: var(--dark);
+	}
+
+	.cancel-input {
+		margin-top: 8px;
+		width: 100%;
+		padding: 12px 16px;
+		border: 1px solid rgba(65, 83, 86, 0.35);
+		border-radius: 12px;
+		background-color: #fff;
+		font-size: 14px;
+		color: #222;
+	}
+
+	.cancel-input:focus {
+		outline: none;
+		border-color: var(--dark);
+		box-shadow: 0 0 0 2px rgba(65, 83, 86, 0.2);
+	}
+
+	.cancel-input::placeholder {
+		color: rgba(65, 83, 86, 0.4);
+	}
+
+	.cancel-error {
+		margin-top: 12px;
+		font-size: 13px;
+		color: #b3403c;
+	}
+
+	.cancel-button {
+		margin-top: 18px;
+		width: 100%;
+		padding: 13px 20px;
+		border-radius: 9999px;
+		background-color: var(--dark);
+		color: #fff;
+		font-family: inherit;
+		font-size: 14px;
+		letter-spacing: 0.1em;
+		transition: opacity 0.2s ease;
+	}
+
+	.cancel-button:hover {
+		opacity: 0.9;
+	}
+
+	.cancel-button:disabled {
+		cursor: not-allowed;
+		opacity: 0.6;
+	}
 </style>
