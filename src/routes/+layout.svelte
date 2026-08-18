@@ -99,9 +99,11 @@
 					<div class="flex items-center gap-3">
 						<!-- Instagram: 公式ブランドキットのロゴ（Instagram_Glyph_Gradient。元データは images/ に保管） -->
 						<a href="https://www.instagram.com/facetherapie" target="_blank" rel="noopener noreferrer" aria-label="Instagram" class="transition-opacity hover:opacity-80"><img src={`${base}/images/sns/instagram.png`} alt="" class="w-6 h-6" /></a>
-						<button on:click={() => (showModal = true)}>
-						<img src="{`${base}/images/request.png`}" alt="logo" class="max-w-[140px]" />
-					</button>
+						<!-- 申込ボタン。旧 request.png（ピンクのピル #ffadd0・白の明朝）をHTML化し、
+						     広告と同じ「1週間無料お試し」を常時見える位置（固定ヘッダー）で訴求する。 -->
+						<button class="apply-btn" on:click={() => (showModal = true)}>
+							1週間無料お試し
+						</button>
 					</div>
 				</div>
 			</header>
@@ -219,6 +221,24 @@
 {/if}
 
 <style>
+	/* 申込ボタン（旧 request.png 画像と同じピンクのピル＋白の明朝） */
+	.apply-btn {
+		padding: 12px 18px;
+		border-radius: 9999px;
+		background-color: #ffadd0;
+		color: #fff;
+		font-family: 'Hiragino Mincho Pro', 'Hiragino Mincho ProN', 'Yu Mincho', serif;
+		font-size: 13.5px;
+		letter-spacing: 0.05em;
+		line-height: 1;
+		white-space: nowrap;
+		transition: opacity 0.2s ease;
+	}
+
+	.apply-btn:hover {
+		opacity: 0.85;
+	}
+
 	/* ペット導線ラベル（固定ヘッダー上部・フロストグラス＋みずみずしい光沢） */
 	.pet-bar {
 		background: linear-gradient(
