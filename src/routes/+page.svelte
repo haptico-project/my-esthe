@@ -79,6 +79,9 @@
 			<div class="hero-caption">
 				<h1 class="hero-title">エステの<br />ある暮らし。</h1>
 
+				<!-- Instagram広告と同じサブコピー -->
+				<p class="hero-subtitle">毎日が、ちょっと楽しくなる。</p>
+
 				<div class="hero-awards">
 					<img src={`${base}/images/awards/kyoto-univ.png`} alt="京都大学総長賞" />
 					<img src={`${base}/images/awards/health20.png`} alt="health2.0受賞" />
@@ -313,6 +316,13 @@
 		font-size: 10.7cqw;
 		line-height: 1.5;
 		letter-spacing: 0.06em;
+	}
+
+	.hero-subtitle {
+		margin-top: 2.5cqw;
+		color: #fff;
+		font-size: 4.7cqw;
+		letter-spacing: 0.14em;
 	}
 
 	.hero-awards {
