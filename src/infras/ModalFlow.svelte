@@ -468,15 +468,18 @@
 								<div class="mt-3 flex flex-wrap items-baseline gap-x-3 gap-y-2">
 									{#if campaignDiscount(plan) > 0}
 										<span class="text-lg font-semibold text-[#b8a3ac] line-through">{formatCurrency(plan.price)}</span>
-										<span class="text-3xl font-bold text-[#c15582]">月額 {formatCurrency(plan.price - campaignDiscount(plan))}（税込）</span>
+										<span class="text-3xl font-bold text-[#c15582]">月額 {(plan.price - campaignDiscount(plan)).toLocaleString()}円<span class="text-sm font-semibold">（税込）</span></span>
 										<span class="rounded-full bg-[#d45588] px-2.5 py-1 text-xs font-semibold text-white">キャンペーン適用中</span>
 									{:else}
-										<span class="text-3xl font-bold text-[#c15582]">{plan.priceLabel}</span>
+										<span class="text-3xl font-bold text-[#c15582]">月額 {plan.price.toLocaleString()}円<span class="text-sm font-semibold">（税込）</span></span>
 										{#if plan.afterPriceLabel}
 											<span class="rounded-full bg-[#fff0f5] px-3 py-1 text-xs font-semibold text-[#c15582]">{plan.afterPriceLabel}</span>
 										{/if}
 									{/if}
 								</div>
+
+								<p class="mt-2 font-semibold text-[#d45588]">1週間無料お試しいただけます。</p>
+								<p class="mt-1 text-xs leading-5 text-[#8d6f79]">※モバイルバッテリーは買い切りのためお試し期間はございません。</p>
 
 								<p class="mt-4 text-sm leading-7 text-[#5f4b53]">{plan.description}</p>
 
