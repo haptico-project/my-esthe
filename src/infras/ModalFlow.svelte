@@ -296,8 +296,8 @@
 	<div class="relative max-h-[92vh] w-full max-w-5xl overflow-y-auto rounded-3xl border border-[#f0dbe3] bg-white p-5 shadow-[0_24px_60px_rgba(38,16,31,0.22)] sm:max-h-[90vh] sm:w-[94%] sm:p-8 lg:w-[88%]">
 		<button class="absolute right-4 top-4 rounded-full border border-[#ead7df] bg-white px-3 py-1 text-sm text-[#7a626c] transition hover:bg-[#fbf2f6]" on:click={close}>閉じる</button>
 
-		<div class="mb-7 border-b border-[#f0d6df] pb-4">
-			<h2 class="text-2xl text-[#2e1d24]">お申し込み</h2>
+		<div class="mb-7 border-b border-[#f0d6df] pb-4 pr-20">
+			<h2 class="text-xl text-[#2e1d24] sm:text-2xl">1週間無料お試しのお申込み</h2>
 		</div>
 
 		{#if step === 1}
@@ -432,6 +432,17 @@
 			</div>
 		{:else if step === 2}
 				<div class="mb-6">
+				<!-- 無料お試しの案内を価格より先に見せる（広告→HP→申込ページで「1週間無料」の言葉を貫き、
+				     「すぐ課金されるのでは」という不安を先に解消する） -->
+				<div class="mb-6 rounded-2xl bg-[#fbeef3] px-5 py-6 text-center">
+					<h3 class="text-2xl font-semibold text-[#d45588]">1週間無料お試し</h3>
+					<p class="mt-3 text-sm leading-7 text-[#5f4b53]">まずは7日間、無料でお試しいただけます。</p>
+					<p class="text-sm leading-7 text-[#5f4b53]">その後、ご継続の場合 月額3,300円（税込）〜</p>
+					<p class="mt-3 text-xs leading-6 text-[#8a5a72]">
+						※無料期間中に解約された場合、月額料金はかかりません。<br />
+						※ご返送の際の送料はお客様のご負担となります。
+					</p>
+				</div>
 				<div class="mb-6">
 					{#if visiblePlans.length === 1}
 						<h3 class="text-xl text-[#2e1d24] sm:text-2xl">プランのご案内</h3>
@@ -479,7 +490,6 @@
 								</div>
 
 								<p class="mt-2 font-semibold text-[#d45588]">1週間無料お試しいただけます。</p>
-								<p class="mt-1 text-xs leading-5 text-[#8d6f79]">※モバイルバッテリーは買い切りのためお試し期間はございません。</p>
 
 								<p class="mt-4 text-sm leading-7 text-[#5f4b53]">{plan.description}</p>
 
@@ -525,6 +535,10 @@
 															<span class="shrink-0 text-sm font-semibold text-[#c15582]">{opt.priceLabel}</span>
 														</div>
 														<p class="mt-1.5 text-xs leading-6 text-[#65515a]">{opt.description}</p>
+														{#if opt.kind === 'one_time'}
+															<!-- 買い切り品の注意はページ上部でなく、料金説明の後（オプション欄）に置く -->
+															<p class="mt-1.5 text-xs leading-5 text-[#8d6f79]">※モバイルバッテリーは買い切りのためお試し期間はございません。</p>
+														{/if}
 													</div>
 												</label>
 											{/each}
@@ -533,7 +547,7 @@
 								{/if}
 
 								<button class="mt-6 w-full rounded-full bg-[#26202a] px-4 py-3 text-sm text-white transition hover:bg-[#171317]" on:click={() => selectPlan(plan)}>
-									このプランで申し込む
+									1週間無料で試してみる
 								</button>
 							</div>
 						{/each}
