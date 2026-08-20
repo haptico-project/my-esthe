@@ -176,10 +176,86 @@
 		</div>
 	</section>
 
+	<!-- ================= ブランドストーリー（30年の歩み） ================= -->
+	<!-- 申込セクション直前に「30年・卒業生700名・大学共同研究」の信頼材料を置く。
+	     年表はサブスク（2023年〜）まで繋がる構成（addict/ のデザイン準拠）。 -->
+	<section class="story">
+		<div class="story-head">
+			<h2 class="story-title">30年間、<br />手を研究してきました。</h2>
+			<ol class="story-milestones">
+				<li><span>1993年</span>サロン開業</li>
+				<li><span>スクール</span>開校</li>
+				<li><span>触覚の譜面</span>「触譜」誕生</li>
+				<li><span>ミスト振動</span>開発</li>
+			</ol>
+		</div>
+
+		<img class="story-hand" src={`${base}/images/story/hand.png`} alt="施術者の手" loading="lazy" />
+
+		<article class="story-block story-dark">
+			<div class="story-year">1993年</div>
+			<h3 class="story-heading">エステサロンとしての歩み</h3>
+			<p class="story-copy">
+				1993年、マンションの一室からスタート。<br />
+				一人ひとりのお客様と真摯に向き合いながら、<br />
+				技術と経験を積み重ねてきました。
+			</p>
+			<figure class="story-figure">
+				<img src={`${base}/images/story/salon.png`} alt="ファセテラピー千石店の外観" loading="lazy" />
+				<figcaption>ファセテラピー　千石店</figcaption>
+			</figure>
+		</article>
+
+		<article class="story-block story-light">
+			<div class="story-year">2000年</div>
+			<h3 class="story-heading">エステスクールの開講</h3>
+			<p class="story-copy">
+				エステスクールを開校し、<br />
+				これまでに700名以上の卒業生を輩出しました。
+			</p>
+			<figure class="story-figure">
+				<img src={`${base}/images/story/school.png`} alt="エステスクールの授業風景" loading="lazy" />
+			</figure>
+		</article>
+
+		<article class="story-block story-dark">
+			<div class="story-year">2005年</div>
+			<h3 class="story-heading">触譜の誕生</h3>
+			<p class="story-copy">
+				マッサージの手技をどうすれば人に伝えられるか、<br />
+				考えた末に見出した答えが、<br />
+				記譜することでした。<br />
+				そして、触覚の譜面、触譜を考案します。
+			</p>
+			<figure class="story-figure">
+				<img src={`${base}/images/story/score.png`} alt="触覚の譜面「触譜」" loading="lazy" />
+				<figcaption>
+					アルファベットは使う手の位置、<br />数字はストロークの種類を表しています。
+				</figcaption>
+			</figure>
+		</article>
+
+		<article class="story-block story-light">
+			<div class="story-year">2015年</div>
+			<h3 class="story-heading">触譜から振動へ</h3>
+			<p class="story-copy">
+				マッサージをより多くの人へ伝えるために、<br />
+				マッサージを振動に変換することを考えます。<br />
+				名古屋大学との10年にわたる共同研究の末、<br />
+				ミスト振動が誕生しました。
+			</p>
+			<figure class="story-figure">
+				<img src={`${base}/images/story/vibration.png`} alt="ミスト振動の顔マスクを手にする女性" loading="lazy" />
+			</figure>
+		</article>
+	</section>
+
 	<!-- ================= エステのサブスク ================= -->
 	<section class="subsc">
 		<img class="subsc-bg" src={`${base}/images/subscription/pond.png`} alt="" aria-hidden="true" />
 		<div class="subsc-content">
+			<!-- 30年の歩み（story）からの年表の続き -->
+			<div class="subsc-year">2023年〜</div>
 			<h2 class="heading">エステのサブスク</h2>
 
 			<p class="subsc-copy">
@@ -451,7 +527,195 @@
 		height: 100%;
 	}
 
+	/* ===== ブランドストーリー（30年の歩み） ===== */
+	.story {
+		background-color: var(--light);
+	}
+
+	.story-head {
+		padding: 96px 24px 48px;
+		text-align: center;
+	}
+
+	.story-title {
+		font-size: min(26px, 6.6vw);
+		font-weight: 400;
+		line-height: 1.9;
+		letter-spacing: 0.12em;
+	}
+
+	/* 年表サマリー: 横一列のマイルストーン（点と結線） */
+	.story-milestones {
+		display: flex;
+		margin-top: 40px;
+		list-style: none;
+		padding: 0;
+	}
+
+	.story-milestones li {
+		position: relative;
+		flex: 1;
+		padding-top: 18px;
+		font-size: min(10.5px, 2.8vw);
+		line-height: 1.9;
+		letter-spacing: 0.06em;
+		color: rgba(0, 0, 0, 0.75);
+	}
+
+	.story-milestones li span {
+		display: block;
+	}
+
+	/* 結線（点の高さに合わせて引く） */
+	.story-milestones li::before {
+		content: '';
+		position: absolute;
+		top: 3.5px;
+		left: 0;
+		right: 0;
+		height: 1px;
+		background-color: rgba(65, 83, 86, 0.4);
+	}
+
+	.story-milestones li:first-child::before {
+		left: 50%;
+	}
+
+	.story-milestones li:last-child::before {
+		right: 50%;
+	}
+
+	/* 点 */
+	.story-milestones li::after {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 50%;
+		transform: translateX(-50%);
+		width: 8px;
+		height: 8px;
+		border-radius: 9999px;
+		background-color: var(--dark);
+	}
+
+	.story-hand {
+		display: block;
+		width: 100%;
+		height: auto;
+	}
+
+	/* 年表ブロック: 左のレール（縦線）＋見出しの点。濃淡を交互に。 */
+	.story-block {
+		position: relative;
+		padding: 72px 28px 80px 60px;
+	}
+
+	.story-block::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		left: 32px;
+		width: 1px;
+	}
+
+	.story-dark {
+		background-color: var(--dark);
+		color: #fff;
+	}
+
+	.story-dark::before {
+		background-color: rgba(255, 255, 255, 0.45);
+	}
+
+	.story-light {
+		background-color: var(--light);
+		color: #000;
+	}
+
+	.story-light::before {
+		background-color: rgba(65, 83, 86, 0.35);
+	}
+
+	.story-year {
+		font-size: min(12px, 3.2vw);
+		letter-spacing: 0.18em;
+		opacity: 0.75;
+	}
+
+	.story-heading {
+		position: relative;
+		margin-top: 8px;
+		font-size: min(19px, 4.9vw);
+		font-weight: 400;
+		line-height: 1.7;
+		letter-spacing: 0.12em;
+	}
+
+	/* 見出し位置の点（レール中心 x=32.5px に重ねる。見出しの左端は padding 60px） */
+	.story-heading::before {
+		content: '';
+		position: absolute;
+		top: 50%;
+		left: -27.5px;
+		transform: translate(-50%, -50%);
+		width: 11px;
+		height: 11px;
+		border-radius: 9999px;
+	}
+
+	.story-dark .story-heading::before {
+		background-color: #fff;
+	}
+
+	.story-light .story-heading::before {
+		background-color: var(--dark);
+	}
+
+	.story-copy {
+		margin-top: 28px;
+		font-size: min(13px, 3.5vw);
+		line-height: 2.4;
+		letter-spacing: 0.08em;
+	}
+
+	.story-dark .story-copy {
+		color: rgba(255, 255, 255, 0.88);
+	}
+
+	.story-light .story-copy {
+		color: rgba(0, 0, 0, 0.72);
+	}
+
+	.story-figure {
+		margin-top: 40px;
+	}
+
+	.story-figure img {
+		display: block;
+		margin: 0 auto;
+		width: 78%;
+		max-width: 360px;
+		height: auto;
+	}
+
+	.story-figure figcaption {
+		margin-top: 14px;
+		text-align: center;
+		font-size: min(11px, 3vw);
+		line-height: 1.9;
+		letter-spacing: 0.1em;
+		opacity: 0.7;
+	}
+
 	/* ===== エステのサブスク ===== */
+	.subsc-year {
+		font-size: min(12px, 3.2vw);
+		letter-spacing: 0.18em;
+		color: rgba(0, 0, 0, 0.6);
+		margin-bottom: 10px;
+	}
+
 	.subsc {
 		position: relative;
 		overflow: hidden;
