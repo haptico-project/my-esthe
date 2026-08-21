@@ -8,6 +8,8 @@
 	import { agencyCode } from '$lib/agency/agencyCode';
 	import { initCoupon } from '$lib/coupon';
 	import { initReferrer, referrerPromptOpen, saveReferrer, REFERRER_MAX_LENGTH } from '$lib/referrer';
+	import { petDiffOpen } from '$lib/petDiff';
+	import PetDifferenceDialog from '$lib/PetDifferenceDialog.svelte';
 
 	// Stripe決済からの戻りを検知して、完了/キャンセルの案内を出す。
 	// null=通常表示, 'success'=お申し込み完了, 'cancel'=未完了。
@@ -76,18 +78,27 @@
 		<!-- 中央。モバイルはフル幅、PCはスマホ幅に制限 -->
 		<main class="w-full md:mx-auto md:max-w-phone" style="--header-h: {headerRowHeight}px">
 			<header class="sticky top-0 z-20">
-				<!-- ペット導線（固定・常時表示） -->
-				<a
-					href={petPageUrl}
-					class="pet-bar group relative flex w-full items-center justify-center gap-2 overflow-hidden px-4 py-2.5 text-sm font-bold text-white sm:text-base"
-				>
-					<span class="pet-bar__label relative z-10 flex items-center gap-2">
-						<span aria-hidden="true">🐾</span>
-						ペットと一緒に使いたい方はこちら
-						<span aria-hidden="true" class="transition-transform duration-300 group-hover:translate-x-1">→</span>
-					</span>
-					<span class="pet-bar__shine pointer-events-none absolute inset-0 z-0" aria-hidden="true"></span>
-				</a>
+				<!-- ペット導線（固定・常時表示）。「？」でひと専用との違い説明を開ける -->
+				<div class="relative">
+					<a
+						href={petPageUrl}
+						class="pet-bar group relative flex w-full items-center justify-center gap-2 overflow-hidden px-4 py-2.5 text-sm font-bold text-white sm:text-base"
+					>
+						<span class="pet-bar__label relative z-10 flex items-center gap-2">
+							<span aria-hidden="true">🐾</span>
+							ペットと一緒に使いたい方はこちら
+							<span aria-hidden="true" class="transition-transform duration-300 group-hover:translate-x-1">→</span>
+						</span>
+						<span class="pet-bar__shine pointer-events-none absolute inset-0 z-0" aria-hidden="true"></span>
+					</a>
+					<button
+						class="absolute right-3 top-1/2 z-10 flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-full bg-white text-xs font-bold text-[#c15582] shadow-[0_1px_4px_rgba(105,35,75,0.35)] transition hover:bg-[#fbeef3]"
+						on:click={() => petDiffOpen.set(true)}
+						aria-label="ペット用とひと専用の違いを見る"
+					>
+						？
+					</button>
+				</div>
 				<div
 					bind:clientHeight={headerRowHeight}
 					class="flex justify-between items-center w-full px-5 py-3"
@@ -138,6 +149,8 @@
 {#if showModal}
 	<ModalFlow on:close={() => (showModal = false)} />
 {/if}
+
+<PetDifferenceDialog />
 
 {#if $referrerPromptOpen}
 	<!-- 紹介用URL(?ref)で来訪。紹介者を入力するまで閉じない（×・背景クリックでの閉じ不可）。 -->

@@ -5,6 +5,7 @@
 	import { agencyCode } from '$lib/agency/agencyCode';
 	import { getCheckout } from '$lib/checkoutAccessor';
 	import MailNoticeDialog from '$lib/MailNoticeDialog.svelte';
+	import { petDiffOpen } from '$lib/petDiff';
 
 	let showModal = false;
 
@@ -279,10 +280,19 @@
 
 	<!-- ================= 付帯導線（ペット / 解約） ================= -->
 	<section class="extras">
-		<a href={petPageUrl} class="pet-link">
-			🐾 ペットと一緒に使いたい方はこちら
-			<span aria-hidden="true">→</span>
-		</a>
+		<div class="pet-link-row">
+			<a href={petPageUrl} class="pet-link">
+				🐾 ペットと一緒に使いたい方はこちら
+				<span aria-hidden="true">→</span>
+			</a>
+			<button
+				class="pet-help"
+				on:click={() => petDiffOpen.set(true)}
+				aria-label="ペット用とひと専用の違いを見る"
+			>
+				？
+			</button>
+		</div>
 
 		<div id="cancel-portal" class="cancel-card">
 			<div class="cancel-eyebrow">ご契約中のお客さま</div>
@@ -780,19 +790,49 @@
 		padding: 72px 24px 40px;
 	}
 
+	.pet-link-row {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 10px;
+		margin: 0 auto;
+		max-width: 480px;
+	}
+
+	/* ひと専用との違い説明を開く「？」ボタン */
+	.pet-help {
+		flex-shrink: 0;
+		width: 30px;
+		height: 30px;
+		border-radius: 9999px;
+		border: 1px solid rgba(65, 83, 86, 0.55);
+		background-color: #fff;
+		color: var(--dark);
+		font-family: inherit;
+		font-size: 13px;
+		font-weight: 700;
+		box-shadow: 0 1px 4px rgba(65, 83, 86, 0.2);
+		transition: background-color 0.2s ease;
+	}
+
+	.pet-help:hover {
+		background-color: #f2f6f5;
+	}
+
 	.pet-link {
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		gap: 8px;
-		margin: 0 auto;
+		gap: 6px;
+		flex: 1;
 		max-width: 480px;
-		padding: 14px 20px;
+		padding: 14px 10px;
 		border: 1px solid rgba(65, 83, 86, 0.35);
 		border-radius: 9999px;
 		background-color: rgba(255, 255, 255, 0.8);
 		color: var(--dark);
-		font-size: 13px;
+		white-space: nowrap;
+		font-size: min(12.5px, 3.3vw);
 		letter-spacing: 0.06em;
 		transition: background-color 0.2s ease;
 	}

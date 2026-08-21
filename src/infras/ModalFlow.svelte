@@ -5,6 +5,7 @@
 	import { get } from 'svelte/store';
 	import { agencyCode } from '$lib/agency/agencyCode';
 	import { coupon, clearCoupon } from '$lib/coupon';
+	import { petDiffOpen } from '$lib/petDiff';
 	import { referrer } from '$lib/referrer';
 	import { postCheckout } from '$lib/checkoutAccessor';
 
@@ -451,12 +452,22 @@
 						<h3 class="text-xl text-[#2e1d24] sm:text-2xl">どちらにしますか？</h3>
 						<p class="mt-2 text-sm leading-7 text-[#6f5861]">「顔マスク付きプラン」と「通常プラン」の2つから選ぶだけ。モバイルバッテリーはどちらにも追加できます。</p>
 					{/if}
-					<a
-						href={petPageUrl}
-						class="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-[#c15582] underline underline-offset-2 transition hover:text-[#a84672]"
-					>
-						🐾 ペットと一緒に使いたい方はこちら
-					</a>
+					<div class="mt-3 flex items-center gap-2">
+						<a
+							href={petPageUrl}
+							class="inline-flex items-center gap-1 text-xs font-semibold text-[#c15582] underline underline-offset-2 transition hover:text-[#a84672]"
+						>
+							🐾 ペットと一緒に使いたい方はこちら
+						</a>
+						<button
+							type="button"
+							class="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full border border-[#d45588] bg-[#fbeef3] text-[10px] font-bold text-[#b8437a] transition hover:bg-[#f6d9e5]"
+							on:click={() => petDiffOpen.set(true)}
+							aria-label="ペット用とひと専用の違いを見る"
+						>
+							？
+						</button>
+					</div>
 					{#if couponValid === false}
 						<p class="mt-3 rounded-lg bg-[#fdeef0] px-3 py-2 text-xs leading-5 text-[#c0395f]">
 							無効なクーポンコードが指定されました。通常価格でのご案内となります。
