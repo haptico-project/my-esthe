@@ -436,7 +436,7 @@
 				     「すぐ課金されるのでは」という不安を先に解消する） -->
 				<div class="mb-6 rounded-2xl bg-[#fbeef3] px-5 py-6 text-center">
 					<h3 class="text-2xl font-semibold text-[#d45588]">1週間無料お試し</h3>
-					<p class="mt-3 text-sm leading-7 text-[#5f4b53]">まずは7日間、無料でお試しいただけます。</p>
+					<p class="mt-3 text-sm leading-7 text-[#5f4b53]">まずは1週間、無料でお試しいただけます。</p>
 					<p class="text-sm leading-7 text-[#5f4b53]">その後、ご継続の場合 月額3,300円（税込）〜</p>
 					<p class="mt-3 text-xs leading-6 text-[#8a5a72]">
 						※無料期間中に解約された場合、月額料金はかかりません。<br />
