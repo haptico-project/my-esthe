@@ -6,6 +6,7 @@
 	import { agencyCode } from '$lib/agency/agencyCode';
 	import { coupon, clearCoupon } from '$lib/coupon';
 	import { petDiffOpen } from '$lib/petDiff';
+	import PetLeadPanel from '$lib/PetLeadPanel.svelte';
 	import { referrer } from '$lib/referrer';
 	import { postCheckout } from '$lib/checkoutAccessor';
 
@@ -43,6 +44,8 @@
 		includedBenefits: string[];
 		imageAlt: string;
 		contentSummary: string;
+		/** プラン選択ボタンに出す一言（何を基準に選ぶかを伝える） */
+		chooserLead: string;
 		availableOptionIds: string[];
 		popular?: boolean;
 		eyebrow?: string;
@@ -104,6 +107,7 @@
 			],
 			imageAlt: '顔マスク付きプランのセット',
 			contentSummary: '振動器と顔マスクがそろった、一番人気のフルセットです。',
+			chooserLead: '顔にのせるだけ。手軽に顔のマッサージができます。',
 			availableOptionIds: ['mobile-battery'],
 			popular: true,
 			eyebrow: '人気No.1',
@@ -133,6 +137,7 @@
 			],
 			imageAlt: '通常プランの美容機器セット',
 			contentSummary: '毎日のケアを始めやすい基本セットです。',
+			chooserLead: '手に持って、顔や身体に使いたい方へ。',
 			availableOptionIds: ['mobile-battery']
 		}
 	];
@@ -184,6 +189,16 @@
 
 	// ペット向けページへの導線（店舗コードを引き継ぐ）。
 	$: petPageUrl = `https://pet.wellbeingroom.tokyo/${$agencyCode ?? ''}`;
+
+	// ペット導線はリンク直行ではなく、まず説明パネルを開く。
+	let petLeadOpen = false;
+
+	// プラン選択ボタンから、モーダル内の該当プランカードへスクロールする。
+	const scrollToPlan = (planId: string) => {
+		document
+			.getElementById(`plan-card-${planId}`)
+			?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+	};
 
 	let step = 1;
 	let agreed = false;
@@ -449,16 +464,39 @@
 						<h3 class="text-xl text-[#2e1d24] sm:text-2xl">プランのご案内</h3>
 						<p class="mt-2 text-sm leading-7 text-[#6f5861]">毎日のフェイスケアを始めやすい通常プランです。モバイルバッテリーも追加できます。</p>
 					{:else}
-						<h3 class="text-xl text-[#2e1d24] sm:text-2xl">どちらにしますか？</h3>
-						<p class="mt-2 text-sm leading-7 text-[#6f5861]">「顔マスク付きプラン」と「通常プラン」の2つから選ぶだけ。モバイルバッテリーはどちらにも追加できます。</p>
+						<h3 class="text-xl text-[#2e1d24] sm:text-2xl">あなたに合うプランをお選びください</h3>
+						<p class="mt-2 text-sm leading-7 text-[#6f5861]">モバイルバッテリーはどちらのプランにも追加できます。</p>
+						<!-- 選ぶ基準を先に見せる大きな選択ボタン。押すと該当プランの説明へページ内スクロールする -->
+						<div class="mt-4 grid gap-3 sm:grid-cols-2">
+							{#each visiblePlans as plan}
+								<button
+									type="button"
+									class={`relative rounded-2xl p-4 text-left transition ${plan.popular ? 'border border-[#d45588] bg-[#fffafc] hover:bg-[#fdf1f6]' : 'border border-[#edd9e2] bg-white hover:bg-[#fffafc]'}`}
+									on:click={() => scrollToPlan(plan.id)}
+								>
+									{#if plan.eyebrow}
+										<span class="absolute -top-2.5 left-4 rounded-full bg-[#d45588] px-2.5 py-0.5 text-[11px] font-semibold text-white">{plan.eyebrow}</span>
+									{/if}
+									<span class="block text-base font-semibold text-[#2e1d24]">{plan.name}</span>
+									<span class="mt-1.5 block text-xs leading-6 text-[#6f5861]">{plan.chooserLead}</span>
+									<span class="mt-2.5 inline-flex items-center gap-1 text-xs font-semibold text-[#c15582]">
+										このプランを見る
+										<span aria-hidden="true">↓</span>
+									</span>
+								</button>
+							{/each}
+						</div>
 					{/if}
 					<div class="mt-3 flex items-center gap-2">
-						<a
-							href={petPageUrl}
+						<button
+							type="button"
 							class="inline-flex items-center gap-1 text-xs font-semibold text-[#c15582] underline underline-offset-2 transition hover:text-[#a84672]"
+							aria-expanded={petLeadOpen}
+							on:click={() => (petLeadOpen = !petLeadOpen)}
 						>
 							🐾 ペットと一緒に使いたい方はこちら
-						</a>
+							<span aria-hidden="true">{petLeadOpen ? '▴' : '▾'}</span>
+						</button>
 						<button
 							type="button"
 							class="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full border border-[#d45588] bg-[#fbeef3] text-[10px] font-bold text-[#b8437a] transition hover:bg-[#f6d9e5]"
@@ -468,6 +506,11 @@
 							？
 						</button>
 					</div>
+					{#if petLeadOpen}
+						<div class="mt-3">
+							<PetLeadPanel {petPageUrl} />
+						</div>
+					{/if}
 					{#if couponValid === false}
 						<p class="mt-3 rounded-lg bg-[#fdeef0] px-3 py-2 text-xs leading-5 text-[#c0395f]">
 							無効なクーポンコードが指定されました。通常価格でのご案内となります。
@@ -477,7 +520,10 @@
 				<div>
 					<div class={visiblePlans.length === 1 ? 'mx-auto max-w-md' : 'grid gap-5 md:grid-cols-2'}>
 						{#each visiblePlans as plan}
-							<div class={`relative flex flex-col rounded-2xl p-5 ${plan.popular ? 'border border-[#d45588] bg-[#fffafc] shadow-[0_8px_24px_rgba(212,85,136,0.12)]' : 'border border-[#edd9e2] bg-white'}`}>
+							<div
+								id={`plan-card-${plan.id}`}
+								class={`relative flex flex-col scroll-mt-6 rounded-2xl p-5 ${plan.popular ? 'border border-[#d45588] bg-[#fffafc] shadow-[0_8px_24px_rgba(212,85,136,0.12)]' : 'border border-[#edd9e2] bg-white'}`}
+							>
 								{#if plan.eyebrow}
 									<span class="absolute -top-3 left-5 rounded-full bg-[#d45588] px-3 py-1 text-xs font-semibold text-white">{plan.eyebrow}</span>
 								{/if}
