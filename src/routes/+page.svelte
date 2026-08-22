@@ -6,11 +6,15 @@
 	import { getCheckout } from '$lib/checkoutAccessor';
 	import MailNoticeDialog from '$lib/MailNoticeDialog.svelte';
 	import { petDiffOpen } from '$lib/petDiff';
+	import PetLeadPanel from '$lib/PetLeadPanel.svelte';
 
 	let showModal = false;
 
 	// ペット向けページへの導線。店舗コード（agencyCode）を引き継いで遷移する。
 	$: petPageUrl = `https://pet.wellbeingroom.tokyo/${$agencyCode ?? ''}`;
+
+	// ペット導線はリンク直行ではなく、まず説明パネルを開く。
+	let petLeadOpen = false;
 
 	const fixedPortalShopId = 'acct_1QhJkZPo9yD7PttV';
 	let cancelMailAddress = '';
@@ -165,8 +169,10 @@
 
 		<div class="usage-video">
 			<div class="usage-video-frame">
+				<!-- playsinline=1: iPhone Safari でページ内再生させる（未指定だと全画面再生になる）。
+				     rel=0: 停止後の関連動画を自チャンネルに限定する。 -->
 				<iframe
-					src="https://www.youtube.com/embed/irmZgfw1CzQ?si=ok31EkunFMwryn__"
+					src="https://www.youtube.com/embed/irmZgfw1CzQ?si=ok31EkunFMwryn__&playsinline=1&rel=0"
 					title="わたしのエステ 使い方動画"
 					frameborder="0"
 					allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
@@ -281,10 +287,15 @@
 	<!-- ================= 付帯導線（ペット / 解約） ================= -->
 	<section class="extras">
 		<div class="pet-link-row">
-			<a href={petPageUrl} class="pet-link">
+			<button
+				type="button"
+				class="pet-link"
+				aria-expanded={petLeadOpen}
+				on:click={() => (petLeadOpen = !petLeadOpen)}
+			>
 				🐾 ペットと一緒に使いたい方はこちら
-				<span aria-hidden="true">→</span>
-			</a>
+				<span aria-hidden="true">{petLeadOpen ? '▴' : '▾'}</span>
+			</button>
 			<button
 				class="pet-help"
 				on:click={() => petDiffOpen.set(true)}
@@ -293,6 +304,11 @@
 				？
 			</button>
 		</div>
+		{#if petLeadOpen}
+			<div class="pet-lead-panel">
+				<PetLeadPanel {petPageUrl} />
+			</div>
+		{/if}
 
 		<div id="cancel-portal" class="cancel-card">
 			<div class="cancel-eyebrow">ご契約中のお客さま</div>
@@ -523,10 +539,11 @@
 		justify-content: center;
 	}
 
+	/* スマホで小さすぎるとプレーヤー上部のチャンネル名帯を誤タップして
+	   YouTube側へ遷移しやすいため、再生ボタンが十分大きくなる幅にする */
 	.usage-video-frame {
 		position: relative;
-		width: 62%;
-		max-width: 420px;
+		width: min(86%, 420px);
 		aspect-ratio: 16 / 9;
 	}
 
@@ -839,6 +856,11 @@
 
 	.pet-link:hover {
 		background-color: #fff;
+	}
+
+	.pet-lead-panel {
+		margin: 12px auto 0;
+		max-width: 480px;
 	}
 
 	.cancel-card {
