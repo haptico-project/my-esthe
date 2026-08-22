@@ -2,9 +2,13 @@
      振動器本体は同一で、選べる振動モードの組み合わせだけが違う、という趣旨を比較表で伝える。
      開閉は $lib/petDiff の petDiffOpen ストア（各所の「？」ボタンが立てる）。 -->
 <script lang="ts">
+	import { agencyCode } from '$lib/agency/agencyCode';
 	import { petDiffOpen } from '$lib/petDiff';
 
 	const close = () => petDiffOpen.set(false);
+
+	// ペット向けページへの導線（店舗コードを引き継ぐ）。違いを理解した人をそのまま案内する。
+	$: petPageUrl = `https://pet.wellbeingroom.tokyo/${$agencyCode ?? ''}`;
 </script>
 
 {#if $petDiffOpen}
@@ -62,8 +66,15 @@
 				どちらのタイプをお使いいただいても問題ありませんので、用途に合わせてお選びいただけます。
 			</p>
 
+			<a
+				href={petPageUrl}
+				class="mt-6 flex w-full items-center justify-center gap-1.5 rounded-full bg-[#d45588] px-5 py-3.5 text-sm font-semibold text-white transition hover:bg-[#be3d72]"
+			>
+				🐾 ペット向けページへ進む
+				<span aria-hidden="true">→</span>
+			</a>
 			<button
-				class="mt-6 w-full rounded-full bg-[#d45588] px-5 py-3.5 text-sm font-semibold text-white transition hover:bg-[#be3d72]"
+				class="mt-3 w-full rounded-full border border-[#d7b0c1] px-5 py-3 text-sm text-[#5f4b53] transition hover:bg-[#fbf2f6]"
 				on:click={close}
 			>
 				閉じる

@@ -10,6 +10,7 @@
 	import { initReferrer, referrerPromptOpen, saveReferrer, REFERRER_MAX_LENGTH } from '$lib/referrer';
 	import { petDiffOpen } from '$lib/petDiff';
 	import PetDifferenceDialog from '$lib/PetDifferenceDialog.svelte';
+	import PetLeadPanel from '$lib/PetLeadPanel.svelte';
 
 	// Stripe決済からの戻りを検知して、完了/キャンセルの案内を出す。
 	// null=通常表示, 'success'=お申し込み完了, 'cancel'=未完了。
@@ -52,6 +53,10 @@
 
 	// ペット向けページへの導線（店舗コードを引き継ぐ）。固定ヘッダーに常時表示する。
 	$: petPageUrl = `https://pet.wellbeingroom.tokyo/${$agencyCode ?? ''}`;
+
+	// ペット導線バーはリンク直行ではなく、まず説明パネルを開く（初見ユーザーに
+	// 「人にもペットにも同じ振動器」を先に伝えてから遷移してもらう）。
+	let petLeadOpen = false;
 </script>
 
 <div class="relative min-h-dvh font-sans text-ink">
@@ -78,19 +83,24 @@
 		<!-- 中央。モバイルはフル幅、PCはスマホ幅に制限 -->
 		<main class="w-full md:mx-auto md:max-w-phone" style="--header-h: {headerRowHeight}px">
 			<header class="sticky top-0 z-20">
-				<!-- ペット導線（固定・常時表示）。「？」でひと専用との違い説明を開ける -->
+				<!-- ペット導線（固定・常時表示）。押すと説明パネルが開き、「？」でひと専用との違い説明を開ける -->
 				<div class="relative">
-					<a
-						href={petPageUrl}
+					<button
+						type="button"
 						class="pet-bar group relative flex w-full items-center justify-center gap-2 overflow-hidden px-4 py-2.5 text-sm font-bold text-white sm:text-base"
+						aria-expanded={petLeadOpen}
+						on:click={() => (petLeadOpen = !petLeadOpen)}
 					>
 						<span class="pet-bar__label relative z-10 flex items-center gap-2">
 							<span aria-hidden="true">🐾</span>
 							ペットと一緒に使いたい方はこちら
-							<span aria-hidden="true" class="transition-transform duration-300 group-hover:translate-x-1">→</span>
+							<span
+								aria-hidden="true"
+								class="transition-transform duration-300 {petLeadOpen ? 'rotate-180' : ''}"
+							>▾</span>
 						</span>
 						<span class="pet-bar__shine pointer-events-none absolute inset-0 z-0" aria-hidden="true"></span>
-					</a>
+					</button>
 					<button
 						class="absolute right-3 top-1/2 z-10 flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-full bg-white text-xs font-bold text-[#c15582] shadow-[0_1px_4px_rgba(105,35,75,0.35)] transition hover:bg-[#fbeef3]"
 						on:click={() => petDiffOpen.set(true)}
@@ -98,6 +108,20 @@
 					>
 						？
 					</button>
+					{#if petLeadOpen}
+						<!-- パネル外タップで閉じる透明レイヤー（申込ボタン等がパネルに隠れたままになるのを防ぐ） -->
+						<button
+							type="button"
+							tabindex="-1"
+							aria-hidden="true"
+							class="fixed inset-0 z-0 cursor-default"
+							on:click={() => (petLeadOpen = false)}
+						></button>
+						<!-- ドロップダウン表示（ヘッダー高さを変えず、ヒーローの上に重ねる） -->
+						<div class="absolute left-0 right-0 top-full z-10 px-3 pt-2">
+							<PetLeadPanel {petPageUrl} />
+						</div>
+					{/if}
 				</div>
 				<div
 					bind:clientHeight={headerRowHeight}
