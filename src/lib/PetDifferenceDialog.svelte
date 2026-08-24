@@ -1,6 +1,6 @@
 <!-- 「ペット用と、ひと専用の違い」説明ダイアログ。
      振動器本体は同一で、選べる振動モードの組み合わせだけが違う、という趣旨を比較表で伝える。
-     開閉は $lib/petDiff の petDiffOpen ストア（各所の「？」ボタンが立てる）。 -->
+     開閉は $lib/petDiff の petDiffOpen ストア（ペット導線パネルの[詳しく見る]が立てる）。 -->
 <script lang="ts">
 	import { agencyCode } from '$lib/agency/agencyCode';
 	import { petDiffOpen } from '$lib/petDiff';

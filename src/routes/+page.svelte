@@ -5,7 +5,6 @@
 	import { agencyCode } from '$lib/agency/agencyCode';
 	import { getCheckout } from '$lib/checkoutAccessor';
 	import MailNoticeDialog from '$lib/MailNoticeDialog.svelte';
-	import { petDiffOpen } from '$lib/petDiff';
 	import PetLeadPanel from '$lib/PetLeadPanel.svelte';
 
 	let showModal = false;
@@ -295,13 +294,6 @@
 			>
 				🐾 ペットと一緒に使いたい方はこちら
 				<span aria-hidden="true">{petLeadOpen ? '▴' : '▾'}</span>
-			</button>
-			<button
-				class="pet-help"
-				on:click={() => petDiffOpen.set(true)}
-				aria-label="ペット用とひと専用の違いを見る"
-			>
-				？
 			</button>
 		</div>
 		{#if petLeadOpen}
@@ -814,26 +806,6 @@
 		gap: 10px;
 		margin: 0 auto;
 		max-width: 480px;
-	}
-
-	/* ひと専用との違い説明を開く「？」ボタン */
-	.pet-help {
-		flex-shrink: 0;
-		width: 30px;
-		height: 30px;
-		border-radius: 9999px;
-		border: 1px solid rgba(65, 83, 86, 0.55);
-		background-color: #fff;
-		color: var(--dark);
-		font-family: inherit;
-		font-size: 13px;
-		font-weight: 700;
-		box-shadow: 0 1px 4px rgba(65, 83, 86, 0.2);
-		transition: background-color 0.2s ease;
-	}
-
-	.pet-help:hover {
-		background-color: #f2f6f5;
 	}
 
 	.pet-link {

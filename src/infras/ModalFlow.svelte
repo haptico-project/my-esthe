@@ -5,7 +5,6 @@
 	import { get } from 'svelte/store';
 	import { agencyCode } from '$lib/agency/agencyCode';
 	import { coupon, clearCoupon } from '$lib/coupon';
-	import { petDiffOpen } from '$lib/petDiff';
 	import PetLeadPanel from '$lib/PetLeadPanel.svelte';
 	import { referrer } from '$lib/referrer';
 	import { postCheckout } from '$lib/checkoutAccessor';
@@ -496,14 +495,6 @@
 						>
 							🐾 ペットと一緒に使いたい方はこちら
 							<span aria-hidden="true">{petLeadOpen ? '▴' : '▾'}</span>
-						</button>
-						<button
-							type="button"
-							class="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full border border-[#d45588] bg-[#fbeef3] text-[10px] font-bold text-[#b8437a] transition hover:bg-[#f6d9e5]"
-							on:click={() => petDiffOpen.set(true)}
-							aria-label="ペット用とひと専用の違いを見る"
-						>
-							？
 						</button>
 					</div>
 					{#if petLeadOpen}

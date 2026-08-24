@@ -8,7 +8,6 @@
 	import { agencyCode } from '$lib/agency/agencyCode';
 	import { initCoupon } from '$lib/coupon';
 	import { initReferrer, referrerPromptOpen, saveReferrer, REFERRER_MAX_LENGTH } from '$lib/referrer';
-	import { petDiffOpen } from '$lib/petDiff';
 	import PetDifferenceDialog from '$lib/PetDifferenceDialog.svelte';
 	import PetLeadPanel from '$lib/PetLeadPanel.svelte';
 
@@ -83,7 +82,7 @@
 		<!-- 中央。モバイルはフル幅、PCはスマホ幅に制限 -->
 		<main class="w-full md:mx-auto md:max-w-phone" style="--header-h: {headerRowHeight}px">
 			<header class="sticky top-0 z-20">
-				<!-- ペット導線（固定・常時表示）。押すと説明パネルが開き、「？」でひと専用との違い説明を開ける -->
+				<!-- ペット導線（固定・常時表示）。押すと説明パネルが開く -->
 				<div class="relative">
 					<button
 						type="button"
@@ -100,13 +99,6 @@
 							>▾</span>
 						</span>
 						<span class="pet-bar__shine pointer-events-none absolute inset-0 z-0" aria-hidden="true"></span>
-					</button>
-					<button
-						class="absolute right-3 top-1/2 z-10 flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-full bg-white text-xs font-bold text-[#c15582] shadow-[0_1px_4px_rgba(105,35,75,0.35)] transition hover:bg-[#fbeef3]"
-						on:click={() => petDiffOpen.set(true)}
-						aria-label="ペット用とひと専用の違いを見る"
-					>
-						？
 					</button>
 					{#if petLeadOpen}
 						<!-- パネル外タップで閉じる透明レイヤー（申込ボタン等がパネルに隠れたままになるのを防ぐ） -->
