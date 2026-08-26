@@ -312,7 +312,7 @@
 		<button class="absolute right-4 top-4 rounded-full border border-[#ead7df] bg-white px-3 py-1 text-sm text-[#7a626c] transition hover:bg-[#fbf2f6]" on:click={close}>閉じる</button>
 
 		<div class="mb-7 border-b border-[#f0d6df] pb-4 pr-20">
-			<h2 class="text-xl text-[#2e1d24] sm:text-2xl">1週間無料お試しのお申込み</h2>
+			<h2 class="text-xl text-[#2e1d24] sm:text-2xl">商品到着後7日間無料お試しのお申込み</h2>
 		</div>
 
 		{#if step === 1}
@@ -447,15 +447,23 @@
 			</div>
 		{:else if step === 2}
 				<div class="mb-6">
-				<!-- 無料お試しの案内を価格より先に見せる（広告→HP→申込ページで「1週間無料」の言葉を貫き、
-				     「すぐ課金されるのでは」という不安を先に解消する） -->
+				<!-- 無料お試しの案内を価格より先に見せる（広告→HP→申込ページで「商品到着後7日間無料」の言葉を貫き、
+				     「すぐ課金されるのでは」「簡単にやめられるのか」という不安を申込み前に解消する。
+				     解約方法はページ下部の解約セクションに加えて、ここにも明記する（鈴木さん要望・2026-08） -->
 				<div class="mb-6 rounded-2xl bg-[#fbeef3] px-5 py-6 text-center">
-					<h3 class="text-2xl font-semibold text-[#d45588]">1週間無料お試し</h3>
-					<p class="mt-3 text-sm leading-7 text-[#5f4b53]">まずは1週間、無料でお試しいただけます。</p>
-					<p class="text-sm leading-7 text-[#5f4b53]">その後、ご継続の場合 月額3,300円（税込）〜</p>
-					<p class="mt-3 text-xs leading-6 text-[#8a5a72]">
-						※無料期間中に解約された場合、月額料金はかかりません。<br />
-						※ご返送の際の送料はお客様のご負担となります。
+					<h3 class="text-2xl font-semibold text-[#d45588]">商品到着後7日間無料</h3>
+					<p class="mt-3 text-sm leading-7 text-[#5f4b53]">
+						{visiblePlans.length > 1 ? 'どちらのプランも、' : ''}商品到着後7日間、無料でお試しいただけます。
+					</p>
+					<p class="text-sm leading-7 text-[#5f4b53]">
+						気に入っていただけた場合のみ、無料期間終了後、お選びいただいたプランの月額料金で継続いただけます。
+					</p>
+					<p class="mx-auto mt-4 w-fit rounded-xl border border-[#f0c7d8] bg-white px-4 py-2.5 text-sm font-bold leading-6 text-[#d45588]">
+						無料期間中に解約いただいた場合、月額料金はかかりません。
+					</p>
+					<p class="mt-4 text-xs leading-6 text-[#8a5a72]">
+						解約は、このホームページ下部の「解約・お支払い情報の確認」から、いつでもお手続きいただけます。<br />
+						※商品のご返送時の送料のみ、お客様のご負担となります。
 					</p>
 				</div>
 				<div class="mb-6">
@@ -537,7 +545,7 @@
 									{/if}
 								</div>
 
-								<p class="mt-2 font-semibold text-[#d45588]">1週間無料お試しいただけます。</p>
+								<p class="mt-2 font-semibold text-[#d45588]">商品到着後7日間、無料でお試しいただけます。</p>
 
 								<p class="mt-4 text-sm leading-7 text-[#5f4b53]">{plan.description}</p>
 
@@ -595,7 +603,7 @@
 								{/if}
 
 								<button class="mt-6 w-full rounded-full bg-[#26202a] px-4 py-3 text-sm text-white transition hover:bg-[#171317]" on:click={() => selectPlan(plan)}>
-									1週間無料で試してみる
+									7日間無料で試してみる
 								</button>
 							</div>
 						{/each}

@@ -128,9 +128,9 @@
 						<!-- Instagram: 公式ブランドキットのロゴ（Instagram_Glyph_Gradient。元データは images/ に保管） -->
 						<a href="https://www.instagram.com/facetherapie" target="_blank" rel="noopener noreferrer" aria-label="Instagram" class="transition-opacity hover:opacity-80"><img src={`${base}/images/sns/instagram.png`} alt="" class="w-6 h-6" /></a>
 						<!-- 申込ボタン。旧 request.png（ピンクのピル #ffadd0・白の明朝）をHTML化し、
-						     広告と同じ「1週間無料お試し」を常時見える位置（固定ヘッダー）で訴求する。 -->
+						     「商品到着後7日間無料」を常時見える位置（固定ヘッダー）で訴求する。 -->
 						<button class="apply-btn" on:click={() => (showModal = true)}>
-							1週間無料お試し
+							到着後7日間無料お試し
 						</button>
 					</div>
 				</div>
