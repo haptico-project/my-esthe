@@ -22,8 +22,7 @@
 		{
 			title: 'ペット',
 			links: [
-				{ label: 'ペットウェルネス', url: 'https://pet.wellbeingroom.tokyo/', code: 'path' },
-				{ label: 'ペット介護', url: 'https://ペット介護.com/', code: 'querySnake' }
+				{ label: 'ペットウェルネス', url: 'https://pet.wellbeingroom.tokyo/', code: 'path' }
 			]
 		},
 		{

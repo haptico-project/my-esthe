@@ -55,7 +55,7 @@ You can preview the production build with `npm run preview`.
 | サービス | Wellbeing Room | https://wellbeingroom.tokyo/ | `?agencyCode=XXXX` |
 | サービス | 顔リズム | https://顔リズム.com/ | なし（Wix・外部管理） |
 | ペット | ペットウェルネス | https://pet.wellbeingroom.tokyo/ | パス `/XXXX` または `?agencyCode=XXXX` |
-| ペット | ペット介護 | https://ペット介護.com/ | `?agency_code=XXXX`（※ここだけスネークケース） |
+| ペット | ペット介護 | https://ペット介護.com/ | `?agency_code=XXXX`（※スネークケース）※フッター非掲載 |
 | ショップ・スクール | 公式ショップ | https://facetherapie.shop/ | `?agencyCode=XXXX` |
 | ショップ・スクール | 東京フェイセテラピー（スクール） | https://tokyo-ft.com/ | なし（外部管理） |
 | 会社 | ファセテラピー（会社HP） | https://facetherapie.com/ | なし |
@@ -63,6 +63,7 @@ You can preview the production build with `npm run preview`.
 運用ルール:
 
 - 各サイトのフッターでは自サイト自身は表示しない。
+- ペット介護はフッターの関連リンクに掲載しない（2026-08-26決定）。
 - 店舗コード対応サイトへは、リンク元で有効な店舗コードがあれば上記書式で引き継ぐ。
   なければ素のURLでリンクし、遷移先側のデフォルト（2139）にフォールバックさせる。
 - 外部リンクは `target="_blank"` + `rel="noopener"` で開く。
