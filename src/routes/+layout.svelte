@@ -10,6 +10,7 @@
 	import { initReferrer, referrerPromptOpen, saveReferrer, REFERRER_MAX_LENGTH } from '$lib/referrer';
 	import PetDifferenceDialog from '$lib/PetDifferenceDialog.svelte';
 	import PetLeadPanel from '$lib/PetLeadPanel.svelte';
+	import RelatedLinksFooter from '$lib/RelatedLinksFooter.svelte';
 
 	// Stripe決済からの戻りを検知して、完了/キャンセルの案内を出す。
 	// null=通常表示, 'success'=お申し込み完了, 'cancel'=未完了。
@@ -148,6 +149,9 @@
 						<a href="/regal" class="hover:text-gray-900 transition-colors">特定商取引法に基づく表記</a>
 						<!--				<a href="#" class="hover:text-gray-900 transition-colors">お問い合わせ</a>-->
 					</nav>
+
+					<!-- 関連リンク（グループサイト） -->
+					<RelatedLinksFooter />
 
 					<!-- コピーライト -->
 					<div class="text-xs text-gray-400 mt-12">
