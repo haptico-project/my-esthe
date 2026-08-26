@@ -199,15 +199,12 @@
 			?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 	};
 
+	// ステップ順は「①説明＋プラン選択 → ②内容確認 → ③利用規約に同意して申込み」。
+	// 内容・料金を理解してもらってから規約同意を求める（鈴木さん要望・2026-08）。
 	let step = 1;
 	let agreed = false;
 	let selectedPlanId = '';
 	let isProcessing = false;
-
-	const next = () => {
-		if (step === 1 && !agreed) return;
-		step++;
-	};
 
 	const back = () => step > 1 && step--;
 	const close = () => dispatch('close');
@@ -228,7 +225,7 @@
 
 	const selectPlan = (plan: Plan) => {
 		selectedPlanId = plan.id;
-		step = 3;
+		step = 2;
 	};
 
 	const goToCheckout = async () => {
@@ -315,8 +312,12 @@
 			<h2 class="text-xl text-[#2e1d24] sm:text-2xl">お申込み</h2>
 		</div>
 
-		{#if step === 1}
-			<h3 class="mb-4 text-lg font-bold text-[#2e1d24]">ご利用規約の確認</h3>
+		{#if step === 3}
+			<!-- 規約同意は最後（内容・料金を理解したあと）に置く -->
+			<h3 class="mb-2 text-lg font-bold text-[#2e1d24]">ご利用規約の確認</h3>
+			<p class="mb-4 text-sm leading-7 text-[#5f4b53]">
+				お申し込み内容をご確認のうえ、利用規約に同意してお進みください。
+			</p>
 			<div class="h-56 overflow-y-auto rounded-2xl border border-[#efdae2] bg-[#fffafc] p-5 text-sm leading-7 text-gray-700">
 				<p>
 
@@ -438,14 +439,17 @@
 			</div>
 			<label for="agree" class="mt-5 flex cursor-pointer items-center rounded-2xl bg-[#fff2f6] px-5 py-4">
 				<input id="agree" type="checkbox" bind:checked={agreed} class="mr-3 h-4 w-4 accent-[#d45588]" />
-				<span class="text-sm text-[#5f4b53]">利用規約に同意してプラン選択へ進みます</span>
+				<span class="text-sm text-[#5f4b53]">利用規約に同意します</span>
 			</label>
-			<div class="mt-6 flex justify-end">
-				<button class="rounded-full bg-[#26202a] px-7 py-3 text-sm text-white transition hover:bg-[#171317] disabled:opacity-40" on:click={next} disabled={!agreed}>
-					プラン選択へ進む
+			<div class="mt-6 flex flex-col-reverse justify-end gap-3 sm:flex-row">
+				<button class="rounded-full border border-[#d7b0c1] px-7 py-3 text-sm text-[#5f4b53] transition hover:bg-[#fbf2f6]" on:click={back} disabled={isProcessing}>
+					確認画面に戻る
+				</button>
+				<button class="rounded-full bg-[#d45588] px-7 py-3 text-sm font-semibold text-white transition hover:bg-[#be3d72] disabled:opacity-40" on:click={goToCheckout} disabled={!agreed || isProcessing}>
+					{isProcessing ? '処理中...' : '申込みへ進む'}
 				</button>
 			</div>
-		{:else if step === 2}
+		{:else if step === 1}
 				<div class="mb-6">
 				<!-- 無料お試しの案内を価格より先に見せる（広告→HP→申込ページで「商品到着後7日間無料」の言葉を貫き、
 				     「すぐ課金されるのでは」「簡単にやめられるのか」という不安を申込み前に解消する。
@@ -611,11 +615,11 @@
 
 					</div>
 				</div>
-		{:else if step === 3}
+		{:else if step === 2}
 			{@const currentPlan = selectedPlan()}
 			{#if currentPlan === undefined}
 				<p class="text-sm text-red-500">プラン情報の取得に失敗しました。</p>
-				<button class="mt-4 text-gray-600 underline" on:click={() => (step = 2)}>プラン選択に戻る</button>
+				<button class="mt-4 text-gray-600 underline" on:click={() => (step = 1)}>プラン選択に戻る</button>
 			{:else}
 				{@const appliedOptions = selectedOptionList(currentPlan)}
 				{@const planDiscount = campaignDiscount(currentPlan)}
@@ -724,11 +728,17 @@
 								{/if}
 							</div>
 
+							<!-- 無料期間と解約条件も確認画面でひと目でわかるようにする -->
+							<div class="mt-5 rounded-xl border border-dashed border-[#dfb2c3] bg-white p-4 text-xs leading-6 text-[#7a626c]">
+								<div class="mb-1 font-semibold tracking-wide text-[#8d6f79]">無料期間と解約について</div>
+								商品到着後7日間、無料でお試しいただけます。無料期間中に解約いただいた場合、月額料金はかかりません。解約は、このホームページ下部の「解約・お支払い情報の確認」から、いつでもお手続きいただけます。※商品のご返送時の送料のみ、お客様のご負担となります。
+							</div>
+
 							<div class="mt-6 flex flex-col gap-3">
-								<button class="w-full rounded-full bg-[#d45588] px-5 py-3.5 text-sm font-semibold text-white transition hover:bg-[#be3d72] disabled:opacity-50" on:click={goToCheckout} disabled={isProcessing}>
-									{isProcessing ? '処理中...' : '決済に進む'}
+								<button class="w-full rounded-full bg-[#d45588] px-5 py-3.5 text-sm font-semibold text-white transition hover:bg-[#be3d72]" on:click={() => (step = 3)}>
+									利用規約の確認へ進む
 								</button>
-								<button class="w-full rounded-full border border-[#d7b0c1] px-5 py-3 text-sm text-[#5f4b53] transition hover:bg-white" on:click={back} disabled={isProcessing}>
+								<button class="w-full rounded-full border border-[#d7b0c1] px-5 py-3 text-sm text-[#5f4b53] transition hover:bg-white" on:click={back}>
 									プラン選択に戻る
 								</button>
 							</div>
