@@ -29,7 +29,7 @@
 			title: 'ショップ・スクール',
 			links: [
 				{ label: '公式ショップ', url: 'https://facetherapie.shop/', code: 'query' },
-				{ label: '東京フェイセテラピー（スクール）', url: 'https://tokyo-ft.com/' }
+				{ label: 'スクール', url: 'https://tokyo-ft.com/' }
 			]
 		},
 		{
