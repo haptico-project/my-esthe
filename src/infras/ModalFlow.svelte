@@ -312,7 +312,7 @@
 		<button class="absolute right-4 top-4 rounded-full border border-[#ead7df] bg-white px-3 py-1 text-sm text-[#7a626c] transition hover:bg-[#fbf2f6]" on:click={close}>閉じる</button>
 
 		<div class="mb-7 border-b border-[#f0d6df] pb-4 pr-20">
-			<h2 class="text-xl text-[#2e1d24] sm:text-2xl">商品到着後7日間無料お試しのお申込み</h2>
+			<h2 class="text-xl text-[#2e1d24] sm:text-2xl">7日間無料お試しのお申込み</h2>
 		</div>
 
 		{#if step === 1}
