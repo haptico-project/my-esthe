@@ -52,6 +52,11 @@
 		commitmentMonths?: number;
 		/** 支払い完了後の月額（commitmentMonths 経過後） */
 		ongoingPrice?: number;
+		/** 月額の内訳（「なぜこの金額か」をカード上で一目で見せたいプランのみ。キャンペーン適用時は非表示） */
+		priceBreakdown?: {
+			items: { label: string; amount: number }[];
+			notes: string[];
+		};
 	};
 
 	const dispatch = createEventDispatcher();
@@ -80,11 +85,20 @@
 		{
 			id: 'face-mask-plan',
 			name: '顔マスク付きプラン',
-			description:
-				'振動器と顔マスクがセットになった一番人気のプランです。顔マスク代は12ヶ月のお支払いで完了し、その後は顔マスクをそのままお使いいただけます。',
+			description: '振動器と顔マスクがセットになった一番人気のプランです。',
 			price: 5500,
 			priceLabel: '月額 5,500円（税込）',
 			afterPriceLabel: '12ヶ月後、顔マスクはお客様のもの',
+			priceBreakdown: {
+				items: [
+					{ label: '通常プラン', amount: 3300 },
+					{ label: '顔マスク代', amount: 2200 }
+				],
+				notes: [
+					'※顔マスク代のお支払いは12ヶ月で終了します。',
+					'※13ヶ月目以降、顔マスクはそのままお客様のものとしてお使いいただけます。'
+				]
+			},
 			img: `${base}/images/plans/face-mask.jpg`,
 			accent: 'from-[#f1e5e9] via-[#fff7f7] to-[#efe7e2]',
 			highlight: '振動器＋顔マスクのフルセット',
@@ -98,15 +112,10 @@
 				{ productId: 'price_1SUdstPo9yD7PttV1EclsBsi', quantity: 1 },
 				{ productId: 'price_1T94CTPo9yD7PttVbiyOrzT2', quantity: 1 }
 			],
-			includedBenefits: [
-				'今は月額5,500円（税込）',
-				'12ヶ月後、顔マスク代のお支払いが完了',
-				'13ヶ月目以降は月額3,300円に',
-				'ご家族やペットにも使える'
-			],
+			includedBenefits: ['ご家族やペットにも使える'],
 			imageAlt: '顔マスク付きプランのセット',
 			contentSummary: '振動器と顔マスクがそろった、一番人気のフルセットです。',
-			chooserLead: '顔にのせるだけ。手軽に顔のマッサージができます。',
+			chooserLead: '顔にのせるだけ。手軽にセルフエステを楽しみたい方へ。',
 			availableOptionIds: ['mobile-battery'],
 			popular: true,
 			eyebrow: '人気No.1',
@@ -117,7 +126,7 @@
 			id: 'standard-plan',
 			name: '通常プラン',
 			description:
-				'まずはシンプルに始めたい方向けのプランです。自宅で気軽に、毎日のフェイスケア習慣を作れます。',
+				'手に持って、顔や身体に使うシンプルなプランです。お顔はもちろん、首・肩・腕など、気になるところに自由にお使いいただけます。',
 			price: 3300,
 			priceLabel: '月額 3,300円（税込）',
 			img: `${base}/images/plans/basic_2.jpg`,
@@ -553,8 +562,45 @@
 
 								<p class="mt-4 text-sm leading-7 text-[#5f4b53]">{plan.description}</p>
 
+								{#if plan.priceBreakdown && campaignDiscount(plan) === 0}
+									<!-- 「なぜこの金額か」をカード上で一目で分かるようにする（鈴木さん要望・2026-08） -->
+									<div class="mt-5 border-t border-[#f0dde5] pt-5">
+										<div class="text-xs font-semibold tracking-wide text-[#8d6f79]">
+											月額{plan.price.toLocaleString()}円の内訳
+										</div>
+										<div class="mt-3 rounded-xl bg-[#fff7fa] p-4">
+											{#each plan.priceBreakdown.items as item, i (item.label)}
+												{#if i > 0}
+													<div class="my-1 text-center text-sm font-semibold text-[#c15582]">＋</div>
+												{/if}
+												<div class="flex items-center justify-between text-sm text-[#4d3b43]">
+													<span>{item.label}</span>
+													<span class="font-semibold">{item.amount.toLocaleString()}円</span>
+												</div>
+											{/each}
+										</div>
+										{#if plan.commitmentMonths}
+											<div class="mt-3 space-y-1.5 text-sm text-[#4d3b43]">
+												<div class="flex items-center justify-between">
+													<span>最初の{plan.commitmentMonths}ヶ月</span>
+													<span class="font-semibold">月額{plan.price.toLocaleString()}円</span>
+												</div>
+												<div class="flex items-center justify-between">
+													<span>{plan.commitmentMonths + 1}ヶ月目以降</span>
+													<span class="font-semibold text-[#c15582]">月額{(plan.ongoingPrice ?? plan.price).toLocaleString()}円</span>
+												</div>
+											</div>
+										{/if}
+										<p class="mt-3 text-xs leading-6 text-[#8d6f79]">
+											{#each plan.priceBreakdown.notes as note (note)}
+												{note}<br />
+											{/each}
+										</p>
+									</div>
+								{/if}
+
 								<div class="mt-5 border-t border-[#f0dde5] pt-5">
-									<div class="text-xs font-semibold tracking-wide text-[#8d6f79]">料金のポイント</div>
+									<div class="text-xs font-semibold tracking-wide text-[#8d6f79]">ポイント</div>
 									<ul class="mt-3 space-y-2 text-sm text-[#4d3b43]">
 										{#each plan.includedBenefits as item}
 											<li class="flex gap-2.5">
