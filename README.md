@@ -37,6 +37,32 @@ You can preview the production build with `npm run preview`.
 
 > To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
 
+## ルーティング構成
+
+`src/routes/` はレイアウトグループで「機能」と「見た目」を分けている。
+
+```
+src/routes/
+├── +layout.svelte          全ページ共通の機能シェル（店舗コード/クーポン/紹介者の取り込み、
+│                           申込モーダル・決済戻り・紹介者入力・ペット違いの各ダイアログ）
+├── +layout.server.ts       prerender = true
+├── (site)/                 サイト本体（URL には現れない）
+│   ├── +layout.svelte      背景・固定ヘッダー（ペット導線 / ロゴ / SNS / 申込ボタン）・フッター
+│   ├── +page.svelte        トップ /
+│   ├── [id]/               /XXXX → /?agencyCode=XXXX
+│   ├── regal/ terms_of_service/ privacy_policy/
+└── lp/                     Instagram 流入用 LP（ヘッダー無し・専用フッター）
+    ├── +layout.svelte
+    ├── +page.svelte        /lp（デザイン: addict/design_lp.png、素材: static/images/lp/）
+    └── [id]/               /lp/XXXX → /lp?agencyCode=XXXX
+```
+
+- 申込は `$lib/applyModal` の `openApplyModal()` を呼ぶだけ（モーダル本体はルートレイアウトに1つ）。
+- 解約カードは `$lib/CancelPortal.svelte` をトップと LP で共用。
+- 店舗コード付きパス（`/XXXX`, `/lp/XXXX`）は `$lib/agency/AgencyCodeRedirect.svelte` が
+  `?agencyCode=` に付け替えてフル遷移する。静的ビルドでは列挙できないため `prerender = false` とし、
+  `svelte.config.js` の `fallback: '404.html'`（GitHub Pages の 404 を SPA フォールバックに流用）で動かす。
+
 ## 関連リンク一覧（グループサイト）
 
 各サイトのフッター「関連リンク」のマスター一覧。リンクの追加・変更時は、
