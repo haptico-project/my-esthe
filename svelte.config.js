@@ -14,7 +14,9 @@ const config = {
 			// these options are set automatically — see below
 			pages: 'build',
 			assets: 'build',
-			fallback: undefined,
+			// GitHub Pages では存在しないパスに 404.html が返る。これを SPA フォールバックにして、
+			// 店舗コード付きパス（/XXXX, /lp/XXXX）をクライアント側でルーティングできるようにする。
+			fallback: '404.html',
 			precompress: false,
 			strict: true
 		}),
