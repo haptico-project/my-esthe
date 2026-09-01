@@ -95,7 +95,7 @@
 			</figure>
 			<figure>
 				<img src={`${base}/images/lp/clients/alsok-joylife.png`} alt="ALSOKジョイライフ様の導入風景" loading="lazy" />
-				<figcaption>ALSOKジョイライフ様</figcaption>
+				<figcaption>ALSOKジョイライフ<br />株式会社様</figcaption>
 			</figure>
 		</div>
 	</section>
@@ -106,7 +106,7 @@
 		<img
 			class="technique-img"
 			src={`${base}/images/lp/technique/hand-to-vibration.png`}
-			alt="エステティシャンの手技が振動の波形に変換されるイメージ"
+			alt="エステティシャンの手技を振動の波形として解析し、振動器で再現するイメージ"
 			loading="lazy"
 		/>
 		<ol class="technique-flow">
@@ -408,31 +408,33 @@
 		height: auto;
 	}
 
-	/* デザインではキャプション幅≒写真幅（16px・字送り0）。狭い端末では写真幅に合わせて縮める */
+	/* デザインではキャプション幅≒写真幅（16px・字送り0・行送り 25px）。狭い端末では写真幅に合わせて縮める */
 	.clients-photos figcaption {
-		margin-top: 14px;
+		margin-top: 7px;
 		font-size: min(16px, 4vw);
+		line-height: 1.56;
 		letter-spacing: 0;
 		white-space: nowrap;
 	}
 
 	/* ===== 手技を振動に ===== */
 	.technique {
-		margin-top: 33px;
+		margin-top: 26px;
 		padding: 40px 20px 76px;
 		background-color: var(--dark);
 		color: #fff;
 	}
 
+	/* 354×74（手技→波形→振動器）。デザイン実測: 見出し下 38px・幅 347px（左右余白 23px）・下の説明まで 72px（393px 基準） */
 	.technique-img {
 		display: block;
-		width: 88%;
+		width: 98.3%;
 		height: auto;
-		margin: 30px auto 0;
+		margin: 38px auto 0;
 	}
 
 	.technique-flow {
-		margin: 43px 0 0;
+		margin: 72px 0 0;
 		padding: 0;
 		list-style: none;
 	}
