@@ -17,7 +17,7 @@
 
 // ===== 差し替えるのはここだけ =====================================================
 // GA4 測定 ID: GA 管理 → データストリーム → ウェブ → 「測定 ID」（G-XXXXXXXXXX）
-export const GA_MEASUREMENT_ID = '';
+export const GA_MEASUREMENT_ID = 'G-RZZ9JEPWJN';
 // Clarity プロジェクト ID: clarity.microsoft.com → Settings → Setup（10文字程度の英数字）
 export const CLARITY_PROJECT_ID = '';
 // =================================================================================
