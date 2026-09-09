@@ -76,7 +76,7 @@
 
 	<h2 class="text-xl font-semibold mb-3">第7条（Cookieおよびアクセス解析）</h2>
 	<p class="mb-6">
-		当社は、サービス改善のためにCookieおよびアクセス解析ツール（Google Analytics等）を使用する場合があります。これにより取得されるデータは個人を特定しません。
+		当社は、サービス改善のためにCookieおよびアクセス解析ツール（Google Analytics、Microsoft Clarity等）を使用する場合があります。これらのツールでは、ページの閲覧・スクロール・ボタン操作といったサイト内での行動が記録されますが、取得されるデータは個人を特定しません。
 	</p>
 
 	<h2 class="text-xl font-semibold mb-3">第8条（外部サービスへの委託）</h2>

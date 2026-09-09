@@ -6,6 +6,13 @@
 	import { base } from '$app/paths';
 	import { agencyCode } from '$lib/agency/agencyCode';
 	import { openApplyModal } from '$lib/applyModal';
+	import { track } from '$lib/analytics';
+
+	// 固定ヘッダーの申込ボタン。ページ内の申込ボタンと区別して計測する。
+	const applyFromHeader = () => {
+		track('cta_click', { cta_location: 'header' });
+		openApplyModal();
+	};
 	import PetLeadPanel from '$lib/PetLeadPanel.svelte';
 	import RelatedLinksFooter from '$lib/RelatedLinksFooter.svelte';
 
@@ -91,7 +98,7 @@
 						<a href="https://www.instagram.com/facetherapie" target="_blank" rel="noopener noreferrer" aria-label="Instagram" class="transition-opacity hover:opacity-80"><img src={`${base}/images/sns/instagram.png`} alt="" class="w-6 h-6" /></a>
 						<!-- 申込ボタン。旧 request.png（ピンクのピル #ffadd0・白の明朝）をHTML化し、
 						     「商品到着後7日間無料」を常時見える位置（固定ヘッダー）で訴求する。 -->
-						<button class="apply-btn" on:click={openApplyModal}>
+						<button class="apply-btn" on:click={applyFromHeader}>
 							到着後7日間無料お試し
 						</button>
 					</div>

@@ -3,6 +3,7 @@
      全ページ共通なので +layout.svelte で1つだけ描画する。 -->
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { trackCheckoutResult } from '$lib/analytics';
 
 	// null=通常表示, 'success'=お申し込み完了, 'cancel'=未完了。
 	let checkoutResult: 'success' | 'cancel' | null = null;
@@ -12,6 +13,8 @@
 		const result = params.get('checkout');
 		if (result === 'success' || result === 'cancel') {
 			checkoutResult = result;
+			// 決済完了は GA4 の purchase（収益レポートに反映）、未完了は checkout_cancel として送る。
+			trackCheckoutResult(result);
 			// 目印は消す（リロードでの再表示・URL汚染・SNS共有時の流出を防ぐ）。
 			const url = new URL(window.location.href);
 			url.searchParams.delete('checkout');

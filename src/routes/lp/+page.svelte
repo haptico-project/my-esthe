@@ -8,6 +8,14 @@
 	import { fly } from 'svelte/transition';
 	import { openApplyModal } from '$lib/applyModal';
 	import CancelPortal from '$lib/CancelPortal.svelte';
+	import { initPageTracking, track } from '$lib/analytics';
+
+	// 申込ボタンは3箇所ある。どこから申し込まれたか / どこが押されないかを見るため、
+	// クリック位置を付けて計測してから同じモーダルを開く。
+	const applyFrom = (location: 'hero' | 'sticky' | 'subsc') => () => {
+		track('cta_click', { cta_location: location });
+		openApplyModal();
+	};
 
 	// ヒーローの申込ボタンがスクロールで画面の上に消えたら、同じ訴求の固定ヘッダーを出す。
 	// 初期表示で画面の下にある（まだ見ていない）ときは出さない。
@@ -16,13 +24,19 @@
 	let stickyCtaDuration = 250;
 
 	onMount(() => {
+		// スクロール到達率と、data-ga-section を付けた各セクションの閲覧到達を計測する。
+		const stopTracking = initPageTracking();
+
 		if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) stickyCtaDuration = 0;
 
 		const observer = new IntersectionObserver(([entry]) => {
 			stickyCtaVisible = !entry.isIntersecting && entry.boundingClientRect.top < 0;
 		});
 		observer.observe(heroCta);
-		return () => observer.disconnect();
+		return () => {
+			observer.disconnect();
+			stopTracking();
+		};
 	});
 </script>
 
@@ -36,7 +50,7 @@
 
 <div class="lp">
 	<!-- ================= HERO ================= -->
-	<section class="hero">
+	<section class="hero" data-ga-section="hero">
 		<div class="hero-frame">
 			<img class="hero-img" src={`${base}/images/lp/hero.png`} alt="" />
 			<img class="hero-badge" src={`${base}/images/logo.png`} alt="わたしのエステ" />
@@ -55,13 +69,13 @@
 		</div>
 
 		<!-- ヒーロー下端にまたがる申込ボタン -->
-		<button type="button" class="hero-cta" bind:this={heroCta} on:click={openApplyModal}>
+		<button type="button" class="hero-cta" bind:this={heroCta} on:click={applyFrom('hero')}>
 			まずは<em>7日間無料</em>お試し
 		</button>
 	</section>
 
 	<!-- ================= 使い方 ================= -->
-	<section class="usage">
+	<section class="usage" data-ga-section="usage">
 		<h2 class="heading">使い方は簡単、<br />顔に乗せるだけ。</h2>
 		<ol class="usage-steps">
 			<li>1.ご希望の方はフェイスパックをつける</li>
@@ -82,7 +96,7 @@
 	</section>
 
 	<!-- ================= 導入事例 ================= -->
-	<section class="clients">
+	<section class="clients" data-ga-section="clients">
 		<h2 class="heading">
 			<em>企業の福利厚生、介護施設</em>で<br />
 			「わたしのエステ」を<br />
@@ -101,7 +115,7 @@
 	</section>
 
 	<!-- ================= 手技を振動に ================= -->
-	<section class="technique">
+	<section class="technique" data-ga-section="technique">
 		<h2 class="heading">エステティシャンの手技を<br />振動にしました。</h2>
 		<img
 			class="technique-img"
@@ -118,7 +132,7 @@
 	</section>
 
 	<!-- ================= セット内容 ================= -->
-	<section class="sets">
+	<section class="sets" data-ga-section="sets">
 		<h2 class="heading">セット内容</h2>
 
 		<div class="set">
@@ -141,7 +155,7 @@
 	</section>
 
 	<!-- ================= ご利用の流れ ================= -->
-	<section class="flow">
+	<section class="flow" data-ga-section="flow">
 		<h2 class="heading">ご利用の流れ</h2>
 		<ol class="flow-steps">
 			<li class="flow-step">
@@ -178,7 +192,7 @@
 	</section>
 
 	<!-- ================= エステのサブスク ================= -->
-	<section class="subsc">
+	<section class="subsc" data-ga-section="subsc">
 		<img class="subsc-bg" src={`${base}/images/subscription/pond.png`} alt="" aria-hidden="true" loading="lazy" />
 		<div class="subsc-content">
 			<h2 class="heading">エステのサブスク</h2>
@@ -195,12 +209,12 @@
 			</p>
 			<p class="subsc-copy">まずは１週間、試してみませんか？</p>
 
-			<button type="button" class="cta" on:click={openApplyModal}>お申しこみはこちら</button>
+			<button type="button" class="cta" on:click={applyFrom('subsc')}>お申しこみはこちら</button>
 		</div>
 	</section>
 
 	<!-- ================= 解約（デザイン外・トップと同じ機能） ================= -->
-	<section class="cancel">
+	<section class="cancel" data-ga-section="cancel">
 		<CancelPortal />
 	</section>
 
@@ -210,7 +224,7 @@
 			type="button"
 			class="sticky-cta"
 			transition:fly={{ y: -72, duration: stickyCtaDuration }}
-			on:click={openApplyModal}
+			on:click={applyFrom('sticky')}
 		>
 			<img class="sticky-cta__logo" src={`${base}/images/logo.png`} alt="" />
 			<span class="sticky-cta__label">まずは<em>7日間無料</em>お試し</span>

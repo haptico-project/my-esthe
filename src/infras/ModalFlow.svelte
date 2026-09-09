@@ -8,6 +8,7 @@
 	import PetLeadPanel from '$lib/PetLeadPanel.svelte';
 	import { referrer } from '$lib/referrer';
 	import { postCheckout } from '$lib/checkoutAccessor';
+	import { track, rememberCheckout } from '$lib/analytics';
 
 	type CheckoutProduct = {
 		productId: string;
@@ -217,7 +218,19 @@
 	let isProcessing = false;
 
 	const back = () => step > 1 && step--;
-	const close = () => dispatch('close');
+
+	// 内容確認（step2）から規約同意（step3）へ。漏斗の「内容に納得した」段。
+	const goToTerms = () => {
+		step = 3;
+		const plan = selectedPlan();
+		track('view_terms', { plan_id: plan?.id ?? '', plan_name: plan?.name ?? '' });
+	};
+
+	// 閉じられた時点のステップを残す。「どの画面で申込をやめたか」を直接見るための計測。
+	const close = () => {
+		track('apply_modal_close', { step, plan_id: selectedPlanId });
+		dispatch('close');
+	};
 
 	const formatCurrency = (value: number) => `¥${value.toLocaleString()}`;
 	const selectedPlan = () => plans.find((plan) => plan.id === selectedPlanId);
@@ -236,6 +249,13 @@
 	const selectPlan = (plan: Plan) => {
 		selectedPlanId = plan.id;
 		step = 2;
+		// 漏斗の「プラン選択」段。どちらのプランで離脱しているかも見られるようにする。
+		track('select_plan', {
+			plan_id: plan.id,
+			plan_name: plan.name,
+			value: plan.price,
+			currency: 'JPY'
+		});
 	};
 
 	const goToCheckout = async () => {
@@ -253,6 +273,21 @@
 		}
 
 		isProcessing = true;
+
+		// 漏斗の最終段。決済ページへ送り出したことと、その内訳を記録する。
+		// 金額は戻り時の purchase にも使うため rememberCheckout で控えておく。
+		track('begin_checkout', {
+			plan_id: currentPlan.id,
+			plan_name: currentPlan.name,
+			value: currentPlan.price,
+			currency: 'JPY',
+			has_coupon: Boolean(couponId)
+		});
+		rememberCheckout({
+			planId: currentPlan.id,
+			planName: currentPlan.name,
+			value: currentPlan.price
+		});
 
 		const currentUrl = get(page).url;
 		const baseUrl = `${window.location.origin}${currentUrl.pathname}${currentUrl.search}`;
@@ -782,7 +817,7 @@
 							</div>
 
 							<div class="mt-6 flex flex-col gap-3">
-								<button class="w-full rounded-full bg-[#d45588] px-5 py-3.5 text-sm font-semibold text-white transition hover:bg-[#be3d72]" on:click={() => (step = 3)}>
+								<button class="w-full rounded-full bg-[#d45588] px-5 py-3.5 text-sm font-semibold text-white transition hover:bg-[#be3d72]" on:click={goToTerms}>
 									利用規約の確認へ進む
 								</button>
 								<button class="w-full rounded-full border border-[#d7b0c1] px-5 py-3 text-sm text-[#5f4b53] transition hover:bg-white" on:click={back}>

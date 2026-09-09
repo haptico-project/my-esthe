@@ -5,6 +5,17 @@
 	import { openApplyModal } from '$lib/applyModal';
 	import CancelPortal from '$lib/CancelPortal.svelte';
 	import PetLeadPanel from '$lib/PetLeadPanel.svelte';
+	import { onMount } from 'svelte';
+	import { initPageTracking, track } from '$lib/analytics';
+
+	// スクロール到達率と、data-ga-section を付けた各セクションの閲覧到達を計測する。
+	onMount(() => initPageTracking());
+
+	// どの位置の申込ボタンから入ったかを付けて計測してからモーダルを開く。
+	const applyFrom = (location: 'subsc') => () => {
+		track('cta_click', { cta_location: location });
+		openApplyModal();
+	};
 
 	// ペット向けページへの導線。店舗コード（agencyCode）を引き継いで遷移する。
 	$: petPageUrl = `https://pet.wellbeingroom.tokyo/${$agencyCode ?? ''}`;
@@ -16,7 +27,7 @@
 <div class="lp">
 
 	<!-- ================= HERO ================= -->
-	<div class="hero">
+	<div class="hero" data-ga-section="hero">
 		<div class="hero-frame">
 			<img class="hero-img" src={`${base}/images/hero/main.png`} alt="" />
 
@@ -37,7 +48,7 @@
 	</div>
 
 	<!-- ================= ミスト振動 ================= -->
-	<section class="mist">
+	<section class="mist" data-ga-section="mist">
 		<img class="mist-bg" src={`${base}/images/mist/ripple.png`} alt="" aria-hidden="true" />
 		<div class="mist-content">
 			<h2 class="heading">
@@ -63,7 +74,7 @@
 	</section>
 
 	<!-- ================= コラーゲン ================= -->
-	<section class="collagen">
+	<section class="collagen" data-ga-section="collagen">
 		<h2 class="heading align-right">
 			肌のたるみ、くすみに<br />
 			素早くアプローチ
@@ -83,7 +94,7 @@
 	</section>
 
 	<!-- ================= 使い方 ================= -->
-	<section class="usage">
+	<section class="usage" data-ga-section="usage">
 		<div class="usage-block">
 			<h2 class="heading align-left">
 				使い方は簡単、<br />
@@ -127,7 +138,7 @@
 	<!-- ================= ブランドストーリー（30年の歩み） ================= -->
 	<!-- 申込セクション直前に「30年・卒業生700名・大学共同研究」の信頼材料を置く。
 	     年表はサブスク（2023年〜）まで繋がる構成（addict/ のデザイン準拠）。 -->
-	<section class="story">
+	<section class="story" data-ga-section="story">
 		<div class="story-head">
 			<h2 class="story-title">30年間、<br />手を研究してきました。</h2>
 			<ol class="story-milestones">
@@ -199,7 +210,7 @@
 	</section>
 
 	<!-- ================= エステのサブスク ================= -->
-	<section class="subsc">
+	<section class="subsc" data-ga-section="subsc">
 		<img class="subsc-bg" src={`${base}/images/subscription/pond.png`} alt="" aria-hidden="true" />
 		<div class="subsc-content">
 			<!-- 30年の歩み（story）からの年表の続き -->
@@ -221,18 +232,21 @@
 				まずは１ヶ月、初めてみませんか？
 			</p>
 
-			<button class="cta" on:click={openApplyModal}>お申しこみはこちら</button>
+			<button class="cta" on:click={applyFrom('subsc')}>お申しこみはこちら</button>
 		</div>
 	</section>
 
 	<!-- ================= 付帯導線（ペット / 解約） ================= -->
-	<section class="extras">
+	<section class="extras" data-ga-section="extras">
 		<div class="pet-link-row">
 			<button
 				type="button"
 				class="pet-link"
 				aria-expanded={petLeadOpen}
-				on:click={() => (petLeadOpen = !petLeadOpen)}
+				on:click={() => {
+					petLeadOpen = !petLeadOpen;
+					if (petLeadOpen) track('pet_lead_open');
+				}}
 			>
 				🐾 ペットと一緒に使いたい方はこちら
 				<span aria-hidden="true">{petLeadOpen ? '▴' : '▾'}</span>
