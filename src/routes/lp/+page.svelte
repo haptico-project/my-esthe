@@ -311,7 +311,9 @@
 	.hero-title {
 		font-size: 8.9cqw;
 		font-weight: 400;
-		line-height: 1.714;
+		/* 行間は em（3,300 / エステ）が 1.286em と大きいぶん実質の余白が狭まる。
+		   1.714 は読点のない3行コピーには空きすぎて視線が途切れるため詰めた。 */
+		line-height: 1.45;
 		letter-spacing: 0.04em;
 	}
 
