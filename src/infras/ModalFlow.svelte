@@ -1,3 +1,9 @@
+<!-- src/infras/ModalFlow.svelte … 申込モーダル（トップ / LP 共通）
+     デザイン: addict/design_lp.png の「モーダル」フレーム（393px 基準・字体 ヒラギノ明朝Pro）
+
+     LP の計測で「モーダルまで来た6人が全員そこで離脱」していたため、2026-09 に
+     ①説明＋プラン選択 → ②内容確認 → ③規約同意 の3ステップをやめ、1画面に畳んだ。
+     プラン内容・同梱品の説明は LP 本体（/lp の「選べる2つのプラン」）へ移している。 -->
 <script lang="ts">
 	import { base } from '$app/paths';
 	import { page } from '$app/stores';
@@ -15,151 +21,115 @@
 		quantity: number;
 	};
 
-	type PlanOption = {
-		id: string;
-		name: string;
-		description: string;
-		priceLabel: string;
-		amount: number;
-		img: string;
-		kind: 'one_time' | 'installment';
-		checkoutPriceId?: string;
-		orderProduct?: CheckoutProduct;
-		badge: string;
-		eyebrow: string;
-	};
-
 	type Plan = {
 		id: string;
 		name: string;
-		description: string;
+		/** カードに出す一言（何を基準に選ぶかを伝える） */
+		lead: string;
 		price: number;
-		priceLabel: string;
-		afterPriceLabel?: string;
 		img: string;
-		accent: string;
-		highlight: string;
-		contents: string[];
-		orderProducts: CheckoutProduct[];
-		includedBenefits: string[];
 		imageAlt: string;
-		contentSummary: string;
-		/** プラン選択ボタンに出す一言（何を基準に選ぶかを伝える） */
-		chooserLead: string;
-		availableOptionIds: string[];
-		popular?: boolean;
-		eyebrow?: string;
+		orderProducts: CheckoutProduct[];
+		/** 価格の下に出す注記 */
+		notes: string[];
 		/** 顔マスク代の支払い月数（支払い完了後は ongoingPrice に下がる） */
 		commitmentMonths?: number;
 		/** 支払い完了後の月額（commitmentMonths 経過後） */
 		ongoingPrice?: number;
-		/** 月額の内訳（「なぜこの金額か」をカード上で一目で見せたいプランのみ。キャンペーン適用時は非表示） */
-		priceBreakdown?: {
-			items: { label: string; amount: number }[];
-			notes: string[];
-		};
+	};
+
+	type PlanOption = {
+		id: string;
+		name: string;
+		badge: string;
+		description: string;
+		amount: number;
+		checkoutPriceId: string;
+		images: { src: string; alt: string }[];
 	};
 
 	const dispatch = createEventDispatcher();
 
-	let selectedOptions: Record<string, boolean> = {};
-
-	const toggleOption = (optionId: string) => {
-		selectedOptions[optionId] = !selectedOptions[optionId];
-	};
-
-	const batteryOption: PlanOption = {
-		id: 'mobile-battery',
-		name: 'モバイルバッテリー',
-		description:
-			'外出先でも使いやすいモバイルバッテリーを買い切りで追加できます。どちらのプランでも追加できます。',
-		priceLabel: '＋3,300円（初回のみ）',
-		amount: 3300,
-		img: `${base}/images/plans/option/kaomask.png`,
-		kind: 'one_time',
-		checkoutPriceId: 'price_1T94LZPo9yD7PttVjccfOWqk',
-		badge: '買い切り',
-		eyebrow: ''
-	};
-
 	const plans: Plan[] = [
 		{
 			id: 'face-mask-plan',
-			name: '顔マスク付きプラン',
-			description:
-				'顔マスクを顔にのせるだけで、両手を使わずにセルフエステができる一番人気のプランです。振動器は単体でもお使いいただけるので、通常プランと同じように首・肩・腕など身体のケアにもご利用いただけます。',
+			name: '顔マスク付プラン',
+			lead: '顔に載せるだけで、気軽にセルフエステを楽しみたい方へ。',
 			price: 5500,
-			priceLabel: '月額 5,500円（税込）',
-			afterPriceLabel: '12ヶ月後、顔マスクはお客様のもの',
-			priceBreakdown: {
-				items: [
-					{ label: '通常プラン', amount: 3300 },
-					{ label: '顔マスク代', amount: 2200 }
-				],
-				notes: [
-					'※顔マスク代のお支払いは12ヶ月で終了します。',
-					'※13ヶ月目以降、顔マスクはそのままお客様のものとしてお使いいただけます。'
-				]
-			},
-			img: `${base}/images/plans/face-mask.jpg`,
-			accent: 'from-[#f1e5e9] via-[#fff7f7] to-[#efe7e2]',
-			highlight: '振動器＋顔マスクのフルセット',
-			contents: [
-				'小型振動器（ポータブルタイプ）',
-				'振動ヘッドキャップ',
-				'顔マスク',
-				'充電用USBケーブル'
-			],
+			img: `${base}/images/plans/face-mask.png`,
+			imageAlt: '顔マスク付プランの顔マスク',
 			orderProducts: [
 				{ productId: 'price_1SUdstPo9yD7PttV1EclsBsi', quantity: 1 },
 				{ productId: 'price_1T94CTPo9yD7PttVbiyOrzT2', quantity: 1 }
 			],
-			includedBenefits: ['ご家族やペットにも使える'],
-			imageAlt: '顔マスク付きプランのセット',
-			contentSummary: '振動器と顔マスクがそろった、一番人気のフルセットです。',
-			chooserLead: '顔にのせるだけ。手軽にセルフエステを楽しみたい方へ。',
-			availableOptionIds: ['mobile-battery'],
-			popular: true,
-			eyebrow: '人気No.1',
+			notes: ['12ヶ月後、顔マスクはお客様のものに。', '13ヶ月目以降は月額3,300円（税込）'],
 			commitmentMonths: 12,
 			ongoingPrice: 3300
 		},
 		{
 			id: 'standard-plan',
 			name: '通常プラン',
-			description:
-				'手に持って、顔や身体に使うシンプルなプランです。お顔はもちろん、首・肩・腕など、気になるところに自由にお使いいただけます。',
+			lead: '手に持って、顔や身体の気になるところにお使いいただけるシンプルなプランです。',
 			price: 3300,
-			priceLabel: '月額 3,300円（税込）',
-			img: `${base}/images/plans/basic_2.jpg`,
-			accent: 'from-[#f4e8ec] via-[#fffaf8] to-[#f3ece8]',
-			highlight: '本体セットで気軽にスタート',
-			contents: [
-				'小型振動器（ポータブルタイプ）',
-				'振動ヘッドキャップ',
-				'充電用USBケーブル'
-			],
+			img: `${base}/images/plans/standard.png`,
+			imageAlt: '通常プランの振動器',
 			orderProducts: [{ productId: 'price_1SUdstPo9yD7PttV1EclsBsi', quantity: 1 }],
-			includedBenefits: [
-				'月額3,300円（税込）でスタート',
-				'ご自宅で続けやすい基本セット',
-				'ご家族やペットにも使える'
-			],
-			imageAlt: '通常プランの美容機器セット',
-			contentSummary: '毎日のケアを始めやすい基本セットです。',
-			chooserLead: '手に持って、顔や身体に使いたい方へ。',
-			availableOptionIds: ['mobile-battery']
+			notes: []
 		}
 	];
 
-	const sharedOptions: PlanOption[] = [batteryOption];
+	const batteryOption: PlanOption = {
+		id: 'mobile-battery',
+		name: 'モバイルバッテリー',
+		badge: '買い切り',
+		description: '外出先でも使いやすいモバイルバッテリーを追加できます。',
+		amount: 3300,
+		checkoutPriceId: 'price_1T94LZPo9yD7PttVjccfOWqk',
+		images: [
+			{ src: `${base}/images/plans/option/battery.png`, alt: 'モバイルバッテリー本体' },
+			{ src: `${base}/images/plans/option/battery-cable.png`, alt: '付属の充電コード' }
+		]
+	};
 
-	// 顔マスク付きプランは、12回で顔マスクを終了させる payflow 側のスケジュール登録が
+	const options: PlanOption[] = [batteryOption];
+
+	// 顔マスク付プランは、12回で顔マスクを終了させる payflow 側のスケジュール登録が
 	// 本番反映済みのため公開する。問題時は false に戻せば即時に非表示へ戻せる。
 	const SHOW_FACE_MASK_PLAN = true;
 	const visiblePlans = plans.filter((plan) => SHOW_FACE_MASK_PLAN || plan.id !== 'face-mask-plan');
 
-	// キャンペーンクーポン（特定URL ?coupon=）適用時、顔マスク付きプランの顔マスク代(2,200円)が
+	// 最初から1つ選んでおく（選ばないと進めない画面にしない）。デザインどおり左＝顔マスク付プラン。
+	let selectedPlanId = visiblePlans[0].id;
+	let selectedOptions: Record<string, boolean> = {};
+	// 規約同意は必須のまま。3ステップ時代の全文表示はやめ、リンク＋小さなチェックに畳んでいる。
+	let agreed = false;
+	let isProcessing = false;
+
+	$: selectedPlan = visiblePlans.find((plan) => plan.id === selectedPlanId) ?? visiblePlans[0];
+
+	const choosePlan = (plan: Plan) => {
+		if (plan.id === selectedPlanId) return;
+		selectedPlanId = plan.id;
+		// 漏斗の「プラン選択」段。どちらのプランで離脱しているかも見られるようにする。
+		track('select_plan', {
+			plan_id: plan.id,
+			plan_name: plan.name,
+			value: plan.price,
+			currency: 'JPY'
+		});
+	};
+
+	const toggleOption = (optionId: string) => {
+		selectedOptions[optionId] = !selectedOptions[optionId];
+	};
+
+	// 閉じられた時点の選択内容を残す。「どこで申込をやめたか」を見るための計測。
+	const close = () => {
+		track('apply_modal_close', { step: 1, plan_id: selectedPlanId });
+		dispatch('close');
+	};
+
+	// キャンペーンクーポン（特定URL ?coupon=）適用時、顔マスク付プランの顔マスク代(2,200円)が
 	// 毎月割引される＝実質ずっと月3,300円。Stripeクーポンは顔マスク商品限定なので通常プランには効かない。
 	const CAMPAIGN_PLAN_ID = 'face-mask-plan';
 	const CAMPAIGN_MONTHLY_DISCOUNT = 2200;
@@ -197,75 +167,23 @@
 		}
 	};
 
-	// ペット向けページへの導線（店舗コードを引き継ぐ）。
+	// ペット向けページへの導線（店舗コードを引き継ぐ）。リンク直行ではなく、まず説明パネルを開く。
 	$: petPageUrl = `https://pet.wellbeingroom.tokyo/${$agencyCode ?? ''}`;
-
-	// ペット導線はリンク直行ではなく、まず説明パネルを開く。
 	let petLeadOpen = false;
-
-	// プラン選択ボタンから、モーダル内の該当プランカードへスクロールする。
-	const scrollToPlan = (planId: string) => {
-		document
-			.getElementById(`plan-card-${planId}`)
-			?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-	};
-
-	// ステップ順は「①説明＋プラン選択 → ②内容確認 → ③利用規約に同意して申込み」。
-	// 内容・料金を理解してもらってから規約同意を求める（鈴木さん要望・2026-08）。
-	let step = 1;
-	let agreed = false;
-	let selectedPlanId = '';
-	let isProcessing = false;
-
-	const back = () => step > 1 && step--;
-
-	// 内容確認（step2）から規約同意（step3）へ。漏斗の「内容に納得した」段。
-	const goToTerms = () => {
-		step = 3;
-		const plan = selectedPlan();
-		track('view_terms', { plan_id: plan?.id ?? '', plan_name: plan?.name ?? '' });
-	};
-
-	// 閉じられた時点のステップを残す。「どの画面で申込をやめたか」を直接見るための計測。
-	const close = () => {
-		track('apply_modal_close', { step, plan_id: selectedPlanId });
-		dispatch('close');
-	};
-
-	const formatCurrency = (value: number) => `¥${value.toLocaleString()}`;
-	const selectedPlan = () => plans.find((plan) => plan.id === selectedPlanId);
-	const availableOptions = (plan: Plan) =>
-		sharedOptions.filter((option) => plan.availableOptionIds.includes(option.id));
-	const selectedOptionList = (plan: Plan) =>
-		availableOptions(plan).filter((option) => selectedOptions[option.id]);
-
-	const planInitialAmount = (plan: Plan) => plan.price;
-	const planRecurringAmount = (plan: Plan) => plan.price;
-	const oneTimeOptionTotal = (options: PlanOption[]) =>
-		options.filter((option) => option.kind === 'one_time').reduce((sum, option) => sum + option.amount, 0);
-	const recurringOptionTotal = (options: PlanOption[]) =>
-		options.filter((option) => option.kind === 'installment').reduce((sum, option) => sum + option.amount, 0);
-
-	const selectPlan = (plan: Plan) => {
-		selectedPlanId = plan.id;
-		step = 2;
-		// 漏斗の「プラン選択」段。どちらのプランで離脱しているかも見られるようにする。
-		track('select_plan', {
-			plan_id: plan.id,
-			plan_name: plan.name,
-			value: plan.price,
-			currency: 'JPY'
-		});
-	};
 
 	const goToCheckout = async () => {
 		// 二重申込防止：処理中の再クリックは無視する（決済ページ遷移までの数秒の連打対策）。
 		if (isProcessing) return;
 
-		const currentPlan = selectedPlan();
+		const currentPlan = selectedPlan;
 		const code = get(agencyCode);
 		const couponId = get(coupon);
 		const referredBy = get(referrer);
+
+		if (!agreed) {
+			alert('利用規約に同意のうえ、お進みください。');
+			return;
+		}
 
 		if (!code || !currentPlan) {
 			alert('代理店コードまたは選択プランが未設定です。');
@@ -300,25 +218,18 @@
 		const cancelUrl = new URL(baseUrl);
 		cancelUrl.searchParams.set('checkout', 'cancel');
 		cancelUrl.searchParams.delete('ref');
-		const selectedOptionsForPlan = selectedOptionList(currentPlan);
-		const oneTimePriceIds = selectedOptionList(currentPlan)
-			.filter((option) => option.checkoutPriceId)
-			.map((option) => option.checkoutPriceId as string);
-		const orderProducts = [
-			...currentPlan.orderProducts,
-			...selectedOptionsForPlan
-				.filter((option) => option.orderProduct)
-				.map((option) => option.orderProduct as CheckoutProduct)
-		];
+		const oneTimePriceIds = options
+			.filter((option) => selectedOptions[option.id])
+			.map((option) => option.checkoutPriceId);
 
 		try {
 			const res = await postCheckout('/api/v1/checkout/subscription-url', {
 				checkoutSuccessUrl: successUrl.toString(),
 				checkoutCancelUrl: cancelUrl.toString(),
 				agencyCode: code,
-				orderProducts,
+				orderProducts: currentPlan.orderProducts,
 				oneTimePriceIds,
-				// クーポンは顔マスク付きプランにのみ渡す。FACEMASK3300 は全体割引(applies_to無)のため、
+				// クーポンは顔マスク付プランにのみ渡す。FACEMASK3300 は全体割引(applies_to無)のため、
 				// 通常プランに渡すと 3,300→1,100 と誤割引になる。対象プラン限定で防ぐ。
 				...(couponId && currentPlan.id === CAMPAIGN_PLAN_ID ? { couponId } : {}),
 				// 紹介者（?ref で入力済みの場合）。Stripe metadata referred_by として保持される。
@@ -346,497 +257,614 @@
 	};
 </script>
 
-<div
-	class="fixed inset-0 z-20 flex items-center justify-center bg-[radial-gradient(circle_at_top,rgba(255,205,224,0.42),rgba(19,12,18,0.88))] p-2 sm:p-4 backdrop-blur-sm"
-	style="font-family: 'hiragino-mincho-pro';"
->
-	<div class="relative max-h-[92vh] w-full max-w-5xl overflow-y-auto rounded-3xl border border-[#f0dbe3] bg-white p-5 shadow-[0_24px_60px_rgba(38,16,31,0.22)] sm:max-h-[90vh] sm:w-[94%] sm:p-8 lg:w-[88%]">
-		<button class="absolute right-4 top-4 rounded-full border border-[#ead7df] bg-white px-3 py-1 text-sm text-[#7a626c] transition hover:bg-[#fbf2f6]" on:click={close}>閉じる</button>
-
-		<div class="mb-7 border-b border-[#f0d6df] pb-4 pr-20">
-			<h2 class="text-xl text-[#2e1d24] sm:text-2xl">お申込み</h2>
+<div class="apply-overlay">
+	<div class="apply-modal" role="dialog" aria-modal="true" aria-label="お申し込み">
+		<div class="apply-head">
+			<h2 class="apply-title">お申し込み</h2>
+			<button type="button" class="apply-close" on:click={close}>閉じる</button>
 		</div>
 
-		{#if step === 3}
-			<!-- 規約同意は最後（内容・料金を理解したあと）に置く -->
-			<h3 class="mb-2 text-lg font-bold text-[#2e1d24]">ご利用規約の確認</h3>
-			<p class="mb-4 text-sm leading-7 text-[#5f4b53]">
-				お申し込み内容をご確認のうえ、利用規約に同意してお進みください。
+		<!-- 「すぐ課金されるのでは」「簡単にやめられるのか」を申込み前に解消する（鈴木さん要望・2026-08） -->
+		<div class="trial">
+			<p class="trial-lead">
+				<em class="trial-lead__from">商品到着後</em><em class="trial-lead__days">7日間無料</em
+				>でお試しいただけます。
 			</p>
-			<div class="h-56 overflow-y-auto rounded-2xl border border-[#efdae2] bg-[#fffafc] p-5 text-sm leading-7 text-gray-700">
-				<p>
+			<p class="trial-note">
+				無料期間中にご解約いただいた場合、月額料金はかかりません。<br />
+				※商品のご返送時の送料のみ、お客さまご負担となります。
+			</p>
+		</div>
 
-					「わたしのエステ」美容機器サブスク利用規約<br />
-					<br />
-					本利用規約（以下「本規約」といいます）は、株式会社ファセテラピー（以下「当社」といいます）が提供する美容機器レンタルサービス（以下「本サービス」といいます）の利用条件を定めるものです。<br />
-					利用者（以下「お客様」といいます）は、本規約に同意のうえ、本サービスを利用するものとします。<br />
-					<br />
-					⸻<br />
-					<br />
-					第1条（本サービスの内容）<br />
-					1. 本サービスは、お客様が当社指定の美容機器（以下「レンタル機器」といいます）を、月額利用料を支払うことにより一定期間レンタルできるサービスです。<br />
-					2. 本サービスの月額利用料は、1台あたり3,300円（税込）とします。ただし、当社が別途定める場合を除きます。<br />
-					<br />
-					⸻<br />
-					<br />
-					第2条（契約の成立および支払い方法）<br />
-					1. お客様が当社指定の申込手続を完了し、当社が承諾した時点で、レンタル契約が成立します。<br />
-					2. 利用料は、クレジットカードによる自動引き落としで支払うものとし、Stripe、GMOペイメントゲートウェイその他当社が指定する決済代行サービスを利用します。<br />
-					3. クレジットカード決済が不成立となった場合、当社は自動的に再請求を行います。再請求後も支払いが確認できない場合、当社は本サービスを一時停止または契約を解除することができます。<br />
-					<br />
-					⸻<br />
-					<br />
-					第3条（本人確認）<br />
-					1.
-					当社は、未返却・転売防止のため、本人確認（運転免許証、マイナンバーカード、その他eKYC等）を求める場合があります。<br />
-					2. 本人確認手続を完了できない場合、当社は申込を拒否または契約を解除できるものとします。<br />
-					<br />
-					⸻<br />
-					<br />
-					第4条（レンタル機器の引渡しおよび管理）<br />
-					1. 当社は、申込後、指定住所へレンタル機器を発送します。<br />
-					2. お客様は、受領後速やかに機器の状態を確認し、初期不良がある場合には7日以内に当社へ連絡するものとします。<br />
-					3.
-					お客様は、善良なる管理者の注意をもってレンタル機器を使用・保管するものとし、以下の行為を行ってはなりません。<br />
-					　(1) 第三者への譲渡、転貸、担保設定<br />
-					　(2) 分解、改造、修理、加工<br />
-					　(3) 本来の目的以外での使用<br />
-					<br />
-					⸻<br />
-					<br />
-					第5条（支払い遅延・未払い対応）<br />
-					1. クレジットカード決済が不成立の場合、当社は自動的に3〜5回の再請求を行います。<br />
-					2.
-					再請求後もお支払いが確認できない場合、当社はサービス提供を停止し、レンタル機器の返却を求めることができます。<br />
-					3. 支払い遅延または返却が行われない場合、当社は商品を**販売扱い（買取扱い）**とし、当社が定める金額（機器の販売価格相当額）を請求することができます。<br />
-					<br />
-					⸻<br />
-					<br />
-					第6条（解約および返却義務）<br />
-					1. お客様が解約を希望する場合は、本サイト上の解約ページからお手続きいただくか、当社指定のメールアドレス（tft.kao@gmail.com）または電話番号（03-3818-0408）宛にお問い合わせいただくものとします。<br />
-					2. 解約のお手続きが完了した時点で、以後の月額利用料の請求は停止します。無料お試し期間中に解約された場合、月額利用料は発生しません。<br />
-					3. お客様は、解約成立日（契約期間満了日または無料お試し期間終了日）から7日以内に、当社指定の返送先へレンタル品を返送するものとします。返送にかかる送料はお客様のご負担とします。<br />
-					4. 前項の期限までにレンタル品の返却が確認できない場合、当社は本サービスを継続して利用しているものとみなし月額利用料を請求し、または第5条第3項に定める販売扱い（買取扱い）として機器代金を請求することができます。<br />
-					<br />
-					⸻<br />
-					<br />
-					第7条（故障・破損・紛失）<br />
-					1. 使用中に故障が発生した場合、お客様は速やかに当社に連絡し、当社指定の返送先へ送付するものとします。その際の送料はお客様負担とします。<br />
-					2. 当社が通常使用による自然故障と判断した場合は、当社の負担で修理または交換を行います。<br />
-					3. お客様の過失、落下、水没、改造等による故障の場合、修理費または代替費用をお客様に請求することがあります。<br />
-					4.
-					お客様がレンタル機器を紛失または著しく破損した場合、当社が定める買取金額にて機器を買取いただくものとします。<br />
-					<br />
-					⸻<br />
-					<br />
-					第8条（契約期間・自動更新）<br />
-					1. 契約期間は1ヶ月単位とし、特段の申出がない限り自動更新されます。<br />
-					2. 解約を希望する場合は、第6条に定める方法に従いお手続きいただくものとします。<br />
-					<br />
-					⸻<br />
-					<br />
-					第9条（禁止事項）<br />
-					<br />
-					お客様は、以下の行為を行ってはなりません。<br />
-					1. 当社の許可なくレンタル機器を転売・譲渡・貸与する行為<br />
-					2. 不正利用目的での契約（架空名義・虚偽情報による申込を含む）<br />
-					3. 本サービスまたは他の利用者への迷惑・不利益を与える行為<br />
-					<br />
-					⸻<br />
-					<br />
-					第10条（免責事項）<br />
-					1. 当社は、機器の使用によりお客様または第三者に生じた損害について、当社の故意または重過失による場合を除き、一切の責任を負いません。<br />
-					2. 美容機器の使用により生じた肌トラブル・体調不良・アレルギー等についても、当社は責任を負いません。<br />
-					<br />
-					⸻<br />
-					<br />
-					第11条（個人情報の取扱い）<br />
-					<br />
-					当社は、本人確認、決済処理、サービス提供のためにお客様の個人情報を取得・利用し、法令およびプライバシーポリシーに従い適切に管理します。<br />
-					<br />
-					⸻<br />
-					<br />
-					第12条（規約の変更）<br />
-					<br />
-					当社は、必要に応じて本規約を改定することがあり、改定後の内容は当社ウェブサイトに掲示した時点で効力を生じます。<br />
-					<br />
-					⸻<br />
-					<br />
-					第13条（準拠法および合意管轄）<br />
-					<br />
-					本規約の解釈および適用は日本法に準拠し、本サービスに関して紛争が生じた場合は、当社所在地を管轄する地方裁判所または簡易裁判所を第一審の専属的合意管轄裁判所とします。<br />
-					<br />
-					⸻<br />
-					<br />
-					付則<br />
-					<br />
-					本規約は、2025年10月21日より施行します。<br />
-					<br />
-					⸻<br />
-					<br />
-					（当社指定の返却・送付先）<br />
-					解約時または故障時の機器返却・送付先は、下記住所宛にお願いいたします。<br />
-					<br />
-					〒606-8023<br />
-					京都府京都市左京区修学院水上田町5-11<br />
-					ファセテラピー京都 宛<br />
-				</p><br />
-			</div>
-			<label for="agree" class="mt-5 flex cursor-pointer items-center rounded-2xl bg-[#fff2f6] px-5 py-4">
-				<input id="agree" type="checkbox" bind:checked={agreed} class="mr-3 h-4 w-4 accent-[#d45588]" />
-				<span class="text-sm text-[#5f4b53]">利用規約に同意します</span>
-			</label>
-			<div class="mt-6 flex flex-col-reverse justify-end gap-3 sm:flex-row">
-				<button class="rounded-full border border-[#d7b0c1] px-7 py-3 text-sm text-[#5f4b53] transition hover:bg-[#fbf2f6]" on:click={back} disabled={isProcessing}>
-					確認画面に戻る
-				</button>
-				<button class="rounded-full bg-[#d45588] px-7 py-3 text-sm font-semibold text-white transition hover:bg-[#be3d72] disabled:opacity-40" on:click={goToCheckout} disabled={!agreed || isProcessing}>
-					{isProcessing ? '処理中...' : '申込みへ進む'}
-				</button>
-			</div>
-		{:else if step === 1}
-				<div class="mb-6">
-				<!-- 無料お試しの案内を価格より先に見せる（広告→HP→申込ページで「商品到着後7日間無料」の言葉を貫き、
-				     「すぐ課金されるのでは」「簡単にやめられるのか」という不安を申込み前に解消する。
-				     解約方法はページ下部の解約セクションに加えて、ここにも明記する（鈴木さん要望・2026-08） -->
-				<div class="mb-6 rounded-2xl bg-[#fbeef3] px-5 py-6 text-center">
-					<h3 class="text-2xl font-semibold text-[#d45588]">商品到着後7日間無料</h3>
-					<p class="mt-3 text-sm leading-7 text-[#5f4b53]">
-						{visiblePlans.length > 1 ? 'どちらのプランも、' : ''}商品到着後7日間、無料でお試しいただけます。
-					</p>
-					<p class="text-sm leading-7 text-[#5f4b53]">
-						気に入っていただけた場合のみ、無料期間終了後、お選びいただいたプランの月額料金で継続いただけます。
-					</p>
-					<p class="mx-auto mt-4 w-fit rounded-xl border border-[#f0c7d8] bg-white px-4 py-2.5 text-sm font-bold leading-6 text-[#d45588]">
-						無料期間中に解約いただいた場合、月額料金はかかりません。
-					</p>
-					<p class="mt-4 text-xs leading-6 text-[#8a5a72]">
-						解約は、このホームページ下部の「解約・お支払い情報の確認」から、いつでもお手続きいただけます。<br />
-						※商品のご返送時の送料のみ、お客様のご負担となります。
-					</p>
-				</div>
-				<div class="mb-6">
-					{#if visiblePlans.length === 1}
-						<h3 class="text-xl text-[#2e1d24] sm:text-2xl">プランのご案内</h3>
-						<p class="mt-2 text-sm leading-7 text-[#6f5861]">毎日のフェイスケアを始めやすい通常プランです。モバイルバッテリーも追加できます。</p>
-					{:else}
-						<h3 class="text-xl text-[#2e1d24] sm:text-2xl">あなたに合うプランをお選びください</h3>
-						<p class="mt-2 text-sm leading-7 text-[#6f5861]">モバイルバッテリーはどちらのプランにも追加できます。</p>
-						<!-- 選ぶ基準を先に見せる大きな選択ボタン。押すと該当プランの説明へページ内スクロールする -->
-						<div class="mt-4 grid gap-3 sm:grid-cols-2">
-							{#each visiblePlans as plan}
-								<button
-									type="button"
-									class={`relative rounded-2xl p-4 text-left transition ${plan.popular ? 'border border-[#d45588] bg-[#fffafc] hover:bg-[#fdf1f6]' : 'border border-[#edd9e2] bg-white hover:bg-[#fffafc]'}`}
-									on:click={() => scrollToPlan(plan.id)}
-								>
-									{#if plan.eyebrow}
-										<span class="absolute -top-2.5 left-4 rounded-full bg-[#d45588] px-2.5 py-0.5 text-[11px] font-semibold text-white">{plan.eyebrow}</span>
-									{/if}
-									<span class="block text-base font-semibold text-[#2e1d24]">{plan.name}</span>
-									<span class="mt-1.5 block text-xs leading-6 text-[#6f5861]">{plan.chooserLead}</span>
-									<span class="mt-2.5 inline-flex items-center gap-1 text-xs font-semibold text-[#c15582]">
-										このプランを見る
-										<span aria-hidden="true">↓</span>
-									</span>
-								</button>
-							{/each}
-						</div>
+		<h3 class="apply-section">プランを選ぶ</h3>
+		<div class="plans" class:plans--single={visiblePlans.length === 1}>
+			{#each visiblePlans as plan (plan.id)}
+				{@const discount = campaignDiscount(plan)}
+				<label class="plan-card" class:plan-card--on={plan.id === selectedPlanId}>
+					<span class="plan-head">
+						<input
+							class="plan-radio"
+							type="radio"
+							name="apply-plan"
+							value={plan.id}
+							checked={plan.id === selectedPlanId}
+							on:change={() => choosePlan(plan)}
+						/>
+						<span class="plan-mark" aria-hidden="true"></span>
+						<span class="plan-name">{plan.name}</span>
+					</span>
+
+					<span class="plan-body">
+						<span class="plan-lead">{plan.lead}</span>
+						<img class="plan-img" src={plan.img} alt={plan.imageAlt} />
+					</span>
+
+					<span class="plan-price">
+						{#if discount > 0}
+							<s class="plan-price__was">{plan.price.toLocaleString()}円</s>
+						{/if}
+						<em class="plan-price__unit">月額</em><em class="plan-price__value"
+							>{(plan.price - discount).toLocaleString()}</em
+						><em class="plan-price__unit">円</em><em class="plan-price__tax">（税込）</em>
+					</span>
+
+					{#if discount > 0}
+						<span class="plan-note">キャンペーン適用中。ご契約中はずっとこの月額です。</span>
+					{:else if plan.notes.length > 0}
+						<span class="plan-note">
+							{#each plan.notes as note (note)}{note}<br />{/each}
+						</span>
 					{/if}
-					<div class="mt-3 flex items-center gap-2">
-						<button
-							type="button"
-							class="inline-flex items-center gap-1 text-xs font-semibold text-[#c15582] underline underline-offset-2 transition hover:text-[#a84672]"
-							aria-expanded={petLeadOpen}
-							on:click={() => (petLeadOpen = !petLeadOpen)}
-						>
-							🐾 ペットと一緒に使いたい方はこちら
-							<span aria-hidden="true">{petLeadOpen ? '▴' : '▾'}</span>
-						</button>
-					</div>
-					{#if petLeadOpen}
-						<div class="mt-3">
-							<PetLeadPanel {petPageUrl} />
-						</div>
-					{/if}
-					{#if couponValid === false}
-						<p class="mt-3 rounded-lg bg-[#fdeef0] px-3 py-2 text-xs leading-5 text-[#c0395f]">
-							無効なクーポンコードが指定されました。通常価格でのご案内となります。
-						</p>
-					{/if}
-				</div>
-				<div>
-					<div class={visiblePlans.length === 1 ? 'mx-auto max-w-md' : 'grid gap-5 md:grid-cols-2'}>
-						{#each visiblePlans as plan}
-							<div
-								id={`plan-card-${plan.id}`}
-								class={`relative flex flex-col scroll-mt-6 rounded-2xl p-5 ${plan.popular ? 'border border-[#d45588] bg-[#fffafc] shadow-[0_8px_24px_rgba(212,85,136,0.12)]' : 'border border-[#edd9e2] bg-white'}`}
-							>
-								{#if plan.eyebrow}
-									<span class="absolute -top-3 left-5 rounded-full bg-[#d45588] px-3 py-1 text-xs font-semibold text-white">{plan.eyebrow}</span>
-								{/if}
+				</label>
+			{/each}
+		</div>
 
-								<div class="flex h-40 items-center justify-center overflow-hidden rounded-xl bg-[#faf2f5] px-4">
-									<img src={plan.img} alt={plan.imageAlt} class="max-h-full w-full object-contain" />
-								</div>
+		{#if couponValid === false}
+			<p class="apply-alert">無効なクーポンコードが指定されました。通常価格でのご案内となります。</p>
+		{/if}
 
-								<h4 class="mt-5 text-xl text-[#2e1d24] sm:text-2xl">{plan.name}</h4>
-								<div class="mt-3 flex flex-wrap items-baseline gap-x-3 gap-y-2">
-									{#if campaignDiscount(plan) > 0}
-										<span class="text-lg font-semibold text-[#b8a3ac] line-through">{formatCurrency(plan.price)}</span>
-										<span class="text-3xl font-bold text-[#c15582]">月額 {(plan.price - campaignDiscount(plan)).toLocaleString()}円<span class="text-sm font-semibold">（税込）</span></span>
-										<span class="rounded-full bg-[#d45588] px-2.5 py-1 text-xs font-semibold text-white">キャンペーン適用中</span>
-									{:else}
-										<span class="text-3xl font-bold text-[#c15582]">月額 {plan.price.toLocaleString()}円<span class="text-sm font-semibold">（税込）</span></span>
-										{#if plan.afterPriceLabel}
-											<span class="rounded-full bg-[#fff0f5] px-3 py-1 text-xs font-semibold text-[#c15582]">{plan.afterPriceLabel}</span>
-										{/if}
-									{/if}
-								</div>
-
-								<p class="mt-2 font-semibold text-[#d45588]">商品到着後7日間、無料でお試しいただけます。</p>
-
-								<p class="mt-4 text-sm leading-7 text-[#5f4b53]">{plan.description}</p>
-
-								{#if plan.priceBreakdown && campaignDiscount(plan) === 0}
-									<!-- 「なぜこの金額か」をカード上で一目で分かるようにする（鈴木さん要望・2026-08） -->
-									<div class="mt-5 border-t border-[#f0dde5] pt-5">
-										<div class="text-xs font-semibold tracking-wide text-[#8d6f79]">
-											月額{plan.price.toLocaleString()}円の内訳
-										</div>
-										<div class="mt-3 rounded-xl bg-[#fff7fa] p-4">
-											{#each plan.priceBreakdown.items as item, i (item.label)}
-												{#if i > 0}
-													<div class="my-1 text-center text-sm font-semibold text-[#c15582]">＋</div>
-												{/if}
-												<div class="flex items-center justify-between text-sm text-[#4d3b43]">
-													<span>{item.label}</span>
-													<span class="font-semibold">{item.amount.toLocaleString()}円</span>
-												</div>
-											{/each}
-										</div>
-										{#if plan.commitmentMonths}
-											<div class="mt-3 space-y-1.5 text-sm text-[#4d3b43]">
-												<div class="flex items-center justify-between">
-													<span>最初の{plan.commitmentMonths}ヶ月</span>
-													<span class="font-semibold">月額{plan.price.toLocaleString()}円</span>
-												</div>
-												<div class="flex items-center justify-between">
-													<span>{plan.commitmentMonths + 1}ヶ月目以降</span>
-													<span class="font-semibold text-[#c15582]">月額{(plan.ongoingPrice ?? plan.price).toLocaleString()}円</span>
-												</div>
-											</div>
-										{/if}
-										<p class="mt-3 text-xs leading-6 text-[#8d6f79]">
-											{#each plan.priceBreakdown.notes as note (note)}
-												{note}<br />
-											{/each}
-										</p>
-									</div>
-								{/if}
-
-								<div class="mt-5 border-t border-[#f0dde5] pt-5">
-									<div class="text-xs font-semibold tracking-wide text-[#8d6f79]">ポイント</div>
-									<ul class="mt-3 space-y-2 text-sm text-[#4d3b43]">
-										{#each plan.includedBenefits as item}
-											<li class="flex gap-2.5">
-												<span class="mt-[3px] text-[#d56f97]">✓</span>
-												<span class="leading-6">{item}</span>
-											</li>
-										{/each}
-									</ul>
-								</div>
-
-								<div class="mt-5 border-t border-[#f0dde5] pt-5">
-									<div class="text-xs font-semibold tracking-wide text-[#8d6f79]">セット内容</div>
-									<ul class="mt-3 space-y-2 text-sm text-[#4d3b43]">
-										{#each plan.contents as item}
-											<li class="flex gap-2.5">
-												<span class="mt-[3px] text-[#d56f97]">✓</span>
-												<span class="leading-6">{item}</span>
-											</li>
-										{/each}
-									</ul>
-								</div>
-
-								{#if availableOptions(plan).length > 0}
-									<div class="mt-5 border-t border-[#f0dde5] pt-5">
-										<div class="text-xs font-semibold tracking-wide text-[#8d6f79]">追加オプション</div>
-										<div class="mt-3 space-y-3">
-											{#each availableOptions(plan) as opt}
-												<label class="flex cursor-pointer items-start gap-3 rounded-xl border border-[#f0dde5] p-4 transition hover:border-[#e2bccb] hover:bg-[#fff7fa]">
-													<input
-														type="checkbox"
-														class="mt-1 h-4 w-4 accent-[#d45588]"
-														checked={selectedOptions[opt.id]}
-														on:change={() => toggleOption(opt.id)}
-													/>
-													<div class="flex-1">
-														<div class="flex items-center justify-between gap-2">
-															<span class="text-sm font-semibold text-[#2e1d24]">{opt.name}</span>
-															<span class="shrink-0 text-sm font-semibold text-[#c15582]">{opt.priceLabel}</span>
-														</div>
-														<p class="mt-1.5 text-xs leading-6 text-[#65515a]">{opt.description}</p>
-														{#if opt.kind === 'one_time'}
-															<!-- 買い切り品の注意はページ上部でなく、料金説明の後（オプション欄）に置く -->
-															<p class="mt-1.5 text-xs leading-5 text-[#8d6f79]">※モバイルバッテリーは買い切りのためお試し期間はございません。</p>
-														{/if}
-													</div>
-												</label>
-											{/each}
-										</div>
-									</div>
-								{/if}
-
-								<button class="mt-6 w-full rounded-full bg-[#26202a] px-4 py-3 text-sm text-white transition hover:bg-[#171317]" on:click={() => selectPlan(plan)}>
-									7日間無料で試してみる
-								</button>
-							</div>
+		<h3 class="apply-section">オプションを選ぶ <small>(任意)</small></h3>
+		{#each options as option (option.id)}
+			<label class="opt-card">
+				<span class="opt-head">
+					<input
+						class="plan-radio"
+						type="checkbox"
+						checked={selectedOptions[option.id]}
+						on:change={() => toggleOption(option.id)}
+					/>
+					<span class="plan-mark" aria-hidden="true"></span>
+					<span class="opt-name">{option.name}</span>
+					<span class="opt-badge">{option.badge}</span>
+					<span class="opt-price">
+						<em class="opt-price__sign">＋</em><em class="opt-price__value"
+							>{option.amount.toLocaleString()}</em
+						><em class="opt-price__sign">円</em><em class="opt-price__tax">（税込）</em>
+					</span>
+				</span>
+				<span class="opt-body">
+					<span class="opt-desc">{option.description}</span>
+					<span class="opt-images">
+						{#each option.images as image (image.src)}
+							<img src={image.src} alt={image.alt} />
 						{/each}
-					</div>
+					</span>
+				</span>
+			</label>
+		{/each}
 
-					</div>
-				</div>
-		{:else if step === 2}
-			{@const currentPlan = selectedPlan()}
-			{#if currentPlan === undefined}
-				<p class="text-sm text-red-500">プラン情報の取得に失敗しました。</p>
-				<button class="mt-4 text-gray-600 underline" on:click={() => (step = 1)}>プラン選択に戻る</button>
-			{:else}
-				{@const appliedOptions = selectedOptionList(currentPlan)}
-				{@const planDiscount = campaignDiscount(currentPlan)}
-				{@const totalFirst = planInitialAmount(currentPlan) + recurringOptionTotal(appliedOptions) + oneTimeOptionTotal(appliedOptions) - planDiscount}
-				{@const totalMonthly = planRecurringAmount(currentPlan) + recurringOptionTotal(appliedOptions) - planDiscount}
+		<label class="agree">
+			<input class="plan-radio" type="checkbox" bind:checked={agreed} />
+			<span class="agree-mark" aria-hidden="true"></span>
+			<span>
+				<a href="{base}/terms_of_service" target="_blank" rel="noopener">利用規約</a>に同意します
+			</span>
+		</label>
 
-					<div class="grid gap-5 md:grid-cols-[1.05fr_0.95fr]">
-						<div class="rounded-2xl border border-[#efdbe3] bg-white p-5">
-							<div class="flex h-48 items-center justify-center overflow-hidden rounded-xl bg-[#faf2f5] px-4 sm:h-56">
-								<img src={currentPlan.img} class="max-h-full w-full object-contain" alt={currentPlan.imageAlt} />
-							</div>
+		<button
+			type="button"
+			class="apply-submit"
+			on:click={goToCheckout}
+			disabled={!agreed || isProcessing}
+		>
+			{isProcessing ? '処理中...' : '7日間無料体験を始める'}
+		</button>
+		<p class="apply-caption">次のページで、お客様情報・お支払い方法の入力に進みます。</p>
 
-							<h3 class="mt-5 text-xl text-[#2e1d24] sm:text-2xl">{currentPlan.name}</h3>
-							<p class="mt-1 text-sm text-[#8f6c7a]">{currentPlan.highlight}</p>
-							<p class="mt-4 text-sm leading-7 text-[#5f4b53]">{currentPlan.description}</p>
-
-							<div class="mt-5 border-t border-[#f0dde5] pt-5">
-								<div class="text-xs font-semibold tracking-wide text-[#8d6f79]">セット内容</div>
-								<ul class="mt-3 space-y-2 text-sm text-[#4d3b43]">
-									{#each currentPlan.contents as item}
-										<li class="flex gap-2.5">
-											<span class="mt-[3px] text-[#d56f97]">✓</span>
-											<span class="leading-6">{item}</span>
-										</li>
-									{/each}
-								</ul>
-							</div>
-
-							{#if appliedOptions.length > 0}
-								<div class="mt-5 border-t border-[#f0dde5] pt-5">
-									<div class="text-xs font-semibold tracking-wide text-[#8d6f79]">追加オプション</div>
-									<div class="mt-3 space-y-3">
-										{#each appliedOptions as opt}
-											<div class="rounded-xl bg-[#fff7fa] p-4">
-												<div class="flex items-center justify-between gap-3">
-													<span class="text-sm font-semibold text-[#2e1d24]">{opt.name}</span>
-													<span class="shrink-0 text-sm font-semibold text-[#c15582]">{opt.priceLabel}</span>
-												</div>
-												<p class="mt-1.5 text-xs leading-6 text-[#65515a]">{opt.description}</p>
-											</div>
-										{/each}
-									</div>
-								</div>
-							{/if}
-						</div>
-
-						<div class="rounded-2xl border border-[#efdbe3] bg-[#fff7fa] p-5">
-							<h3 class="text-xl text-[#2e1d24] sm:text-2xl">ご注文内容の確認</h3>
-
-							<div class="mt-5 rounded-2xl bg-[#2c1d25] p-5 text-white">
-								<div class="text-sm text-white/70">初回のお支払い</div>
-								<div class="mt-2 text-4xl font-bold">{formatCurrency(totalFirst)}</div>
-								{#if planDiscount > 0}
-									<div class="mt-4 space-y-1.5 text-sm text-white/80">
-										<div>キャンペーン適用で<span class="font-semibold text-white">ずっと月額 {formatCurrency(totalMonthly)}</span></div>
-									</div>
-								{:else if currentPlan.commitmentMonths}
-									<div class="mt-4 space-y-1.5 text-sm text-white/80">
-										<div>今は<span class="font-semibold text-white">月額 {formatCurrency(totalMonthly)}</span>（{currentPlan.commitmentMonths}ヶ月間）</div>
-										<div>{currentPlan.commitmentMonths + 1}ヶ月目以降は<span class="font-semibold text-white">月額 {formatCurrency(currentPlan.ongoingPrice ?? currentPlan.price)}</span></div>
-									</div>
-								{:else}
-									<div class="mt-4 text-sm text-white/80">翌月以降 <span class="font-semibold text-white">月額 {formatCurrency(totalMonthly)}</span></div>
-								{/if}
-								{#if appliedOptions.some((opt) => opt.kind === 'one_time')}
-									<div class="mt-3 text-xs text-white/55">※モバイルバッテリーは初回のみのお支払いです。</div>
-								{/if}
-							</div>
-
-							<div class="mt-5 space-y-3 text-sm text-[#4d3b43]">
-								<div class="rounded-xl bg-white p-4">
-									<div class="flex items-center justify-between">
-										<span>選択プラン</span>
-										{#if planDiscount > 0}
-											<span class="flex items-baseline gap-2">
-												<span class="text-xs text-[#b8a3ac] line-through">{formatCurrency(currentPlan.price)}</span>
-												<span class="font-semibold text-[#c15582]">月額 {formatCurrency(currentPlan.price - planDiscount)}</span>
-											</span>
-										{:else}
-											<span class="font-semibold">月額 {formatCurrency(currentPlan.price)}</span>
-										{/if}
-									</div>
-									<div class="mt-1.5 text-xs leading-6 text-[#7a626c]">{currentPlan.name}{#if planDiscount > 0}（キャンペーン適用）{/if}</div>
-								</div>
-
-								{#if appliedOptions.length > 0}
-									<div class="rounded-xl bg-white p-4">
-										<div class="mb-2 text-xs font-semibold tracking-wide text-[#8d6f79]">追加オプション</div>
-										{#each appliedOptions as opt}
-											<div class="flex items-center justify-between py-1 text-sm text-[#6f5861]">
-												<span>{opt.name}</span>
-												<span>{formatCurrency(opt.amount)}</span>
-											</div>
-										{/each}
-									</div>
-								{/if}
-
-								{#if planDiscount > 0}
-									<div class="rounded-xl border border-dashed border-[#dfb2c3] p-4 text-xs leading-6 text-[#7a626c]">
-										キャンペーン適用中につき、顔マスク代が割引され、ご契約中はずっと月額{formatCurrency(currentPlan.price - planDiscount)}（税込）です。顔マスクは{currentPlan.commitmentMonths}ヶ月後にそのままお客様のものになります。
-									</div>
-								{:else if currentPlan.commitmentMonths}
-									<div class="rounded-xl border border-dashed border-[#dfb2c3] p-4 text-xs leading-6 text-[#7a626c]">
-										顔マスク付きプランは「振動器 月額3,300円 ＋ 顔マスク代」の構成です。顔マスク代のお支払いは{currentPlan.commitmentMonths}ヶ月で完了し、その後は顔マスクをそのままお使いいただきながら、月額{formatCurrency(currentPlan.ongoingPrice ?? currentPlan.price)}になります。
-									</div>
-								{/if}
-							</div>
-
-							<!-- 無料期間と解約条件も確認画面でひと目でわかるようにする -->
-							<div class="mt-5 rounded-xl border border-dashed border-[#dfb2c3] bg-white p-4 text-xs leading-6 text-[#7a626c]">
-								<div class="mb-1 font-semibold tracking-wide text-[#8d6f79]">無料期間と解約について</div>
-								商品到着後7日間、無料でお試しいただけます。無料期間中に解約いただいた場合、月額料金はかかりません。解約は、このホームページ下部の「解約・お支払い情報の確認」から、いつでもお手続きいただけます。※商品のご返送時の送料のみ、お客様のご負担となります。
-							</div>
-
-							<div class="mt-6 flex flex-col gap-3">
-								<button class="w-full rounded-full bg-[#d45588] px-5 py-3.5 text-sm font-semibold text-white transition hover:bg-[#be3d72]" on:click={goToTerms}>
-									利用規約の確認へ進む
-								</button>
-								<button class="w-full rounded-full border border-[#d7b0c1] px-5 py-3 text-sm text-[#5f4b53] transition hover:bg-white" on:click={back}>
-									プラン選択に戻る
-								</button>
-							</div>
-						</div>
-					</div>
-			{/if}
+		<div class="apply-links">
+			<button type="button" aria-expanded={petLeadOpen} on:click={() => (petLeadOpen = !petLeadOpen)}>
+				🐾 ペットと一緒に使いたい方はこちら
+			</button>
+		</div>
+		{#if petLeadOpen}
+			<div class="apply-pet"><PetLeadPanel {petPageUrl} /></div>
 		{/if}
 	</div>
 
 	{#if isProcessing}
 		<!-- 決済セッション生成〜遷移までの待ち時間に、処理中であることを明示し再クリックを物理的に塞ぐ -->
-		<div class="absolute inset-0 z-30 flex items-center justify-center bg-[#1a1016]/55 backdrop-blur-sm">
-			<div class="flex flex-col items-center rounded-2xl bg-white px-8 py-7 text-center shadow-[0_20px_50px_rgba(38,16,31,0.35)]">
-				<span class="h-9 w-9 animate-spin rounded-full border-[3px] border-[#f0d6df] border-t-[#d45588]" aria-hidden="true"></span>
-				<p class="mt-4 text-sm leading-6 text-[#5f4b53]">決済ページへ移動しています。<br />そのままお待ちください…</p>
+		<div class="apply-processing">
+			<div class="apply-processing__box">
+				<span class="apply-processing__spinner" aria-hidden="true"></span>
+				<p>決済ページへ移動しています。<br />そのままお待ちください…</p>
 			</div>
 		</div>
 	{/if}
 </div>
+
+<style>
+	/* ===== デザイントークン（addict/design_lp.png のモーダル指示） =====
+	   ピンク: #FF7C7C / 淡ピンク背景・枠: #FFEEEE / ボタン: #332932
+	   文字サイズ 見出し16・プラン名12・値段24・本文8（カード幅 368px 基準）
+
+	   --u は「デザイン上の 1px」。368px が入らない端末（iPhone 12〜15 の 390px など）では
+	   折り返して縦に伸びてしまうため、画面幅に比例して全体を縮める。 */
+	.apply-overlay {
+		position: fixed;
+		inset: 0;
+		z-index: 20;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding: 12px;
+		background: radial-gradient(circle at top, rgba(255, 205, 224, 0.42), rgba(19, 12, 18, 0.88));
+		backdrop-filter: blur(2px);
+		font-family: 'Hiragino Mincho Pro', 'Hiragino Mincho ProN', 'hiragino-mincho-pro', 'Yu Mincho',
+			serif;
+		color: #000;
+	}
+
+	.apply-modal {
+		--u: min(1px, calc((100vw - 24px) / 368));
+		width: 100%;
+		max-width: 368px;
+		max-height: 92vh;
+		overflow-y: auto;
+		padding: calc(15 * var(--u)) calc(16 * var(--u)) calc(18 * var(--u));
+		border-radius: 16px;
+		background-color: #fff;
+		box-shadow: 0 24px 60px rgba(38, 16, 31, 0.22);
+		text-align: left;
+	}
+
+	.apply-head {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: calc(12 * var(--u));
+		padding-bottom: calc(4 * var(--u));
+		border-bottom: 1px solid #a7a7a7;
+	}
+
+	.apply-title {
+		font-size: calc(16 * var(--u));
+		font-weight: 400;
+		line-height: 1.2;
+		letter-spacing: 0.02em;
+	}
+
+	.apply-close {
+		flex: none;
+		font-family: inherit;
+		font-size: calc(10 * var(--u));
+		letter-spacing: 0.04em;
+		color: #7a626c;
+	}
+
+	.apply-close:hover {
+		color: #000;
+	}
+
+	/* ===== 7日間無料 ===== */
+	.trial {
+		margin-top: calc(16 * var(--u));
+		padding: calc(10 * var(--u)) calc(4 * var(--u)) calc(14 * var(--u));
+		border-radius: calc(10 * var(--u));
+		background-color: #ffeeee;
+		text-align: center;
+	}
+
+	.trial-lead {
+		font-size: calc(12 * var(--u));
+		line-height: 1.5;
+	}
+
+	.trial-lead em {
+		font-style: normal;
+		color: #ff7c7c;
+	}
+
+	.trial-lead__from {
+		font-size: calc(16 * var(--u));
+	}
+
+	.trial-lead__days {
+		font-size: calc(24 * var(--u));
+	}
+
+	.trial-note {
+		margin-top: calc(7 * var(--u));
+		font-size: calc(8 * var(--u));
+		line-height: 1.5;
+	}
+
+	/* ===== 見出し ===== */
+	.apply-section {
+		margin-top: calc(16 * var(--u));
+		font-size: calc(16 * var(--u));
+		font-weight: 400;
+		line-height: 1.2;
+		letter-spacing: 0.02em;
+	}
+
+	.apply-section small {
+		font-size: calc(12 * var(--u));
+	}
+
+	.apply-alert {
+		margin-top: calc(8 * var(--u));
+		font-size: calc(9 * var(--u));
+		line-height: 1.6;
+		color: #c0395f;
+	}
+
+	/* ===== プラン ===== */
+	.plans {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: calc(5 * var(--u));
+		margin-top: calc(11 * var(--u));
+	}
+
+	.plans--single {
+		grid-template-columns: 1fr;
+	}
+
+	.plan-card {
+		display: block;
+		padding: calc(9 * var(--u)) calc(9 * var(--u)) calc(13 * var(--u));
+		border: 1px solid #ffeeee;
+		border-radius: calc(10 * var(--u));
+		cursor: pointer;
+		transition: border-color 0.2s ease;
+	}
+
+	.plan-card--on {
+		border-color: #ff7c7c;
+	}
+
+	.plan-head {
+		position: relative;
+		display: flex;
+		align-items: center;
+		gap: calc(7 * var(--u));
+	}
+
+	/* ラジオ／チェックボックスは見た目を .plan-mark に任せ、操作と読み上げだけ本体に残す */
+	.plan-radio {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		opacity: 0;
+		pointer-events: none;
+	}
+
+	.plan-mark {
+		flex: none;
+		width: calc(17 * var(--u));
+		height: calc(17 * var(--u));
+		border: 1px solid #ff7c7c;
+		border-radius: 50%;
+	}
+
+	.plan-radio:checked + .plan-mark {
+		background-color: #ff7c7c;
+	}
+
+	.plan-radio:focus-visible + .plan-mark {
+		outline: 2px solid #ff7c7c;
+		outline-offset: 2px;
+	}
+
+	.plan-name {
+		font-size: calc(12 * var(--u));
+		letter-spacing: 0.02em;
+	}
+
+	.plan-body {
+		display: flex;
+		align-items: center;
+		gap: calc(2 * var(--u));
+		margin-top: calc(7 * var(--u));
+	}
+
+	.plan-lead {
+		flex: 1 1 auto;
+		font-size: calc(8 * var(--u));
+		line-height: 1.5;
+	}
+
+	.plan-img {
+		flex: none;
+		height: calc(61 * var(--u));
+		width: auto;
+	}
+
+	.plan-price {
+		display: block;
+		margin-top: calc(7 * var(--u));
+		color: #ff7c7c;
+		line-height: 1;
+		white-space: nowrap;
+	}
+
+	.plan-price em {
+		font-style: normal;
+	}
+
+	/* キャンペーン適用時の元値。値段の行に並べるとカード幅に入らないので上に置く */
+	.plan-price__was {
+		display: block;
+		font-size: calc(10 * var(--u));
+		color: #b8a3ac;
+	}
+
+	.plan-price__unit {
+		font-size: calc(12 * var(--u));
+	}
+
+	.plan-price__value {
+		margin-left: calc(2 * var(--u));
+		font-size: calc(24 * var(--u));
+	}
+
+	.plan-price__tax {
+		margin-left: calc(2 * var(--u));
+		font-size: calc(10 * var(--u));
+	}
+
+	.plan-note {
+		display: block;
+		margin-top: calc(4 * var(--u));
+		font-size: calc(8 * var(--u));
+		line-height: 1.5;
+	}
+
+	/* ===== オプション ===== */
+	.opt-card {
+		display: block;
+		margin-top: calc(14 * var(--u));
+		padding: calc(9 * var(--u)) calc(11 * var(--u)) calc(13 * var(--u));
+		border: 1px solid #ffeeee;
+		border-radius: calc(10 * var(--u));
+		cursor: pointer;
+	}
+
+	.opt-head {
+		position: relative;
+		display: flex;
+		align-items: center;
+		gap: calc(7 * var(--u));
+	}
+
+	.opt-name {
+		font-size: calc(12 * var(--u));
+		letter-spacing: 0.02em;
+		white-space: nowrap;
+	}
+
+	.opt-badge {
+		flex: none;
+		padding: calc(3 * var(--u)) calc(7 * var(--u));
+		border-radius: 9999px;
+		background-color: #ffeeee;
+		font-size: calc(8 * var(--u));
+		letter-spacing: 0.02em;
+		white-space: nowrap;
+	}
+
+	.opt-price {
+		margin-left: auto;
+		color: #ff7c7c;
+		line-height: 1;
+		white-space: nowrap;
+	}
+
+	.opt-price em {
+		font-style: normal;
+	}
+
+	.opt-price__sign {
+		font-size: calc(10 * var(--u));
+	}
+
+	.opt-price__value {
+		margin: 0 calc(1 * var(--u)) 0 calc(2 * var(--u));
+		font-size: calc(20 * var(--u));
+	}
+
+	.opt-price__tax {
+		margin-left: calc(2 * var(--u));
+		font-size: calc(8 * var(--u));
+	}
+
+	.opt-body {
+		display: flex;
+		align-items: flex-start;
+		gap: calc(8 * var(--u));
+		margin-top: calc(6 * var(--u));
+	}
+
+	.opt-desc {
+		flex: 1 1 auto;
+		font-size: calc(8 * var(--u));
+		line-height: 1.5;
+	}
+
+	.opt-images {
+		flex: none;
+		display: flex;
+		align-items: flex-end;
+		gap: calc(6 * var(--u));
+	}
+
+	.opt-images img {
+		height: calc(45 * var(--u));
+		width: auto;
+	}
+
+	/* ===== 規約同意 =====
+	   デザインには無いが同意取得は必須。ボタン直前に小さな1行として置く。 */
+	.agree {
+		position: relative;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: calc(6 * var(--u));
+		margin-top: calc(13 * var(--u));
+		font-size: calc(10 * var(--u));
+		cursor: pointer;
+	}
+
+	.agree-mark {
+		flex: none;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: calc(13 * var(--u));
+		height: calc(13 * var(--u));
+		border: 1px solid #ff7c7c;
+		border-radius: calc(3 * var(--u));
+		color: #fff;
+		font-size: calc(9 * var(--u));
+		line-height: 1;
+	}
+
+	.plan-radio:checked + .agree-mark {
+		background-color: #ff7c7c;
+	}
+
+	.plan-radio:checked + .agree-mark::after {
+		content: '✓';
+	}
+
+	.plan-radio:focus-visible + .agree-mark {
+		outline: 2px solid #ff7c7c;
+		outline-offset: 2px;
+	}
+
+	.agree a {
+		text-decoration: underline;
+		text-underline-offset: 2px;
+	}
+
+	/* ===== 申込ボタン ===== */
+	.apply-submit {
+		display: block;
+		width: 100%;
+		margin-top: calc(9 * var(--u));
+		padding: calc(10 * var(--u)) 0;
+		border-radius: 9999px;
+		background-color: #332932;
+		color: #fff;
+		font-family: inherit;
+		font-size: calc(12 * var(--u));
+		line-height: 1.2;
+		letter-spacing: 0.08em;
+		transition: opacity 0.2s ease;
+	}
+
+	.apply-submit:hover {
+		opacity: 0.9;
+	}
+
+	.apply-submit:disabled {
+		opacity: 0.45;
+		cursor: not-allowed;
+	}
+
+	.apply-caption {
+		margin-top: calc(7 * var(--u));
+		font-size: calc(8 * var(--u));
+		text-align: center;
+	}
+
+	/* デザイン外。規約の確認先とペット導線は、短さを損なわないよう小さな1行に畳んでおく */
+	.apply-links {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		gap: calc(6 * var(--u)) calc(14 * var(--u));
+		margin-top: calc(12 * var(--u));
+		font-size: calc(9 * var(--u));
+		letter-spacing: 0.04em;
+		color: #7a626c;
+	}
+
+	.apply-links button {
+		font-family: inherit;
+		font-size: inherit;
+		color: inherit;
+		text-decoration: underline;
+		text-underline-offset: 2px;
+	}
+
+	.apply-links button:hover {
+		color: #000;
+	}
+
+	.apply-pet {
+		margin-top: 10px;
+	}
+
+	/* ===== 処理中 ===== */
+	.apply-processing {
+		position: absolute;
+		inset: 0;
+		z-index: 30;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background-color: rgba(26, 16, 22, 0.55);
+		backdrop-filter: blur(2px);
+	}
+
+	.apply-processing__box {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		padding: 28px 32px;
+		border-radius: 16px;
+		background-color: #fff;
+		text-align: center;
+		box-shadow: 0 20px 50px rgba(38, 16, 31, 0.35);
+	}
+
+	.apply-processing__box p {
+		margin-top: 16px;
+		font-size: 13px;
+		line-height: 1.7;
+		color: #5f4b53;
+	}
+
+	.apply-processing__spinner {
+		width: 36px;
+		height: 36px;
+		border: 3px solid #f0d6df;
+		border-top-color: #ff7c7c;
+		border-radius: 50%;
+		animation: apply-spin 0.9s linear infinite;
+	}
+
+	@keyframes apply-spin {
+		to {
+			transform: rotate(360deg);
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.apply-processing__spinner {
+			animation-duration: 3s;
+		}
+	}
+</style>
