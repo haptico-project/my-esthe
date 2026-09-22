@@ -639,9 +639,10 @@
 		line-height: 1;
 	}
 
+	/* 顔マスク・顔タオルは素材が 213px 幅の等倍。実寸どおりに置く */
 	.set-contents__img--extra {
-		width: 58.6%;
-		max-width: 207px;
+		width: 60.3%;
+		max-width: 213px;
 		margin-top: 2px;
 	}
 
