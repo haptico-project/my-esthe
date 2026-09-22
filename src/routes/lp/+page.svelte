@@ -54,17 +54,20 @@
 		<div class="hero-frame">
 			<img class="hero-img" src={`${base}/images/lp/hero.png`} alt="" />
 			<img class="hero-badge" src={`${base}/images/logo.png`} alt="わたしのエステ" />
+			<div class="hero-awards">
+				<img src={`${base}/images/awards/kyoto-univ.png`} alt="京都大学総長賞" />
+				<img src={`${base}/images/awards/health20.png`} alt="health2.0受賞" />
+			</div>
 
 			<div class="hero-caption">
+				<!-- 約3/4がほとんどスクロールせず離脱していたため、ファーストビューだけで
+				     「何の商品か」が分かる一行を見出しの上に置く（2026-09 デザイン更新） -->
+				<p class="hero-tagline">エステの手技を再現した振動ケア</p>
 				<h1 class="hero-title">
 					顔に載せるだけ<br />
-					月々<em>3,300</em>円で<br />
+					月々<em>3,300円〜</em>で<br />
 					自宅が<em>エステ</em>になる
 				</h1>
-				<div class="hero-awards">
-					<img src={`${base}/images/awards/kyoto-univ.png`} alt="京都大学総長賞" />
-					<img src={`${base}/images/awards/health20.png`} alt="health2.0受賞" />
-				</div>
 			</div>
 		</div>
 
@@ -131,26 +134,62 @@
 		</ol>
 	</section>
 
-	<!-- ================= セット内容 ================= -->
+	<!-- ================= 選べる2つのプラン =================
+	     申込モーダルにしかなかった「何が届くのか」をここに出す（モーダルを短くするため・2026-09） -->
 	<section class="sets" data-ga-section="sets">
-		<h2 class="heading">セット内容</h2>
+		<h2 class="heading">選べる2つのプラン</h2>
 
-		<div class="set">
-			<div class="set-head">
-				<h3 class="set-name">基本セット</h3>
-				<p class="set-price"><span>3,300</span><small>円/月</small></p>
+		<div class="plan">
+			<div class="set">
+				<div class="set-head">
+					<h3 class="set-name">通常プラン</h3>
+					<p class="set-price"><span>3,300</span><small>円/月</small></p>
+				</div>
+				<p class="set-desc">気になる部分に振動を当ててアプローチ</p>
+				<img class="set-img" src={`${base}/images/lp/sets/basic.png`} alt="通常プランの振動器を頬にあてる様子" loading="lazy" />
 			</div>
-			<p class="set-desc">気になる部分に振動を当ててアプローチ</p>
-			<img class="set-img" src={`${base}/images/lp/sets/basic.png`} alt="基本セットの振動器を頬にあてる様子" loading="lazy" />
+
+			<div class="set-contents">
+				<h4 class="set-contents__title">&lt;セット内容&gt;</h4>
+				<img
+					class="set-contents__img"
+					src={`${base}/images/lp/sets/contents-basic.png`}
+					alt="USB電源アダプター・USBケーブル・振動機本体・振動パッド・サラシ・振動機接続コード"
+					loading="lazy"
+				/>
+			</div>
 		</div>
 
-		<div class="set">
-			<div class="set-head">
-				<h3 class="set-name">顔マスク<br />付きセット</h3>
-				<p class="set-price"><span>5,500</span><small>円/月</small></p>
+		<div class="plan">
+			<div class="set">
+				<div class="set-head">
+					<h3 class="set-name">顔マスク付<br />プラン</h3>
+					<p class="set-price"><span>5,500</span><small>円/月</small></p>
+				</div>
+				<p class="set-desc">透明の顔マスク付き<br />お顔の集中ケアがしたい方に</p>
+				<img class="set-img" src={`${base}/images/lp/sets/face-mask.png`} alt="顔マスク付プランを装着した様子" loading="lazy" />
 			</div>
-			<p class="set-desc">透明の顔マスク付き<br />お顔の集中ケアがしたい方に</p>
-			<img class="set-img" src={`${base}/images/lp/sets/face-mask.png`} alt="顔マスク付きセットを装着した様子" loading="lazy" />
+
+			<div class="set-contents">
+				<h4 class="set-contents__title">&lt;セット内容&gt;</h4>
+				<div class="set-contents__base">
+					<img
+						class="set-contents__img"
+						src={`${base}/images/lp/sets/contents-basic.png`}
+						alt="USB電源アダプター・USBケーブル・振動機本体・振動パッド・サラシ・振動機接続コード"
+						loading="lazy"
+					/>
+					<span class="set-contents__badge">通常プラン<br />セット</span>
+				</div>
+				<p class="set-contents__plus" aria-hidden="true">＋</p>
+				<img
+					class="set-contents__img set-contents__img--extra"
+					src={`${base}/images/lp/sets/contents-facemask.png`}
+					alt="顔マスク・顔タオル"
+					loading="lazy"
+				/>
+				<p class="set-contents__note">※顔マスク、顔タオルは<b>12ヶ月買い切り</b>です。</p>
+			</div>
 		</div>
 	</section>
 
@@ -290,13 +329,33 @@
 		object-fit: cover;
 	}
 
-	/* 右上のロゴバッジ（トップのヘッダーロゴと同じ画像） */
+	/* 左上のロゴバッジ（トップのヘッダーロゴと同じ画像）。右上は受賞マークに譲る */
 	.hero-badge {
 		position: absolute;
-		top: 4.6cqw;
-		right: 4.7cqw;
-		width: 15.5cqw;
+		top: 2.5cqw;
+		left: 1.5cqw;
+		width: 15.8cqw;
 		height: auto;
+	}
+
+	/* 受賞マークは見出しの下から右上へ移動（デザイン更新・2026-09）。
+	   PNG は上下に余白を持つため、2枚目を少し引き上げて見た目の間隔をデザインに合わせる。 */
+	.hero-awards {
+		position: absolute;
+		top: 3.2cqw;
+		right: 0.2cqw;
+		display: flex;
+		flex-direction: column;
+		align-items: flex-end;
+	}
+
+	.hero-awards img {
+		width: 32.5cqw;
+		height: auto;
+	}
+
+	.hero-awards img + img {
+		margin-top: -3.1cqw;
 	}
 
 	.hero-caption {
@@ -305,6 +364,18 @@
 		bottom: 16cqw;
 		text-align: right;
 		color: #fff;
+	}
+
+	/* 見出しの上に置く一行（デザイン: 16px・背景 #EEB5B5・角 20px） */
+	.hero-tagline {
+		display: inline-block;
+		margin-bottom: 2.8cqw;
+		padding: 1.3cqw 2.3cqw;
+		border-radius: 5.1cqw;
+		background-color: #eeb5b5;
+		font-size: 4.1cqw;
+		line-height: 1.1;
+		white-space: nowrap;
 	}
 
 	/* 見出し 35px（ピンク部分 45px）・行間 60px */
@@ -321,18 +392,6 @@
 		font-style: normal;
 		font-size: 1.286em;
 		color: var(--pink-soft);
-	}
-
-	.hero-awards {
-		display: flex;
-		justify-content: flex-end;
-		gap: 4cqw;
-		margin-top: 1.5cqw;
-	}
-
-	.hero-awards img {
-		height: 22.4cqw;
-		width: auto;
 	}
 
 	/* 352×92px のピル。中心がヒーロー画像の下端に来るよう半分だけ引き上げる */
@@ -461,9 +520,13 @@
 		color: var(--pink-soft);
 	}
 
-	/* ===== セット内容 ===== */
+	/* ===== 選べる2つのプラン ===== */
 	.sets {
 		padding: 49px 20px 0;
+	}
+
+	.plan + .plan {
+		margin-top: 58px;
 	}
 
 	/* 393px で幅 279px。狭い端末ではセット名と価格が折り返さないよう 280px を下限にする */
@@ -472,10 +535,6 @@
 		min-width: min(100%, 280px);
 		max-width: 300px;
 		margin: 15px auto 0;
-	}
-
-	.set + .set {
-		margin-top: 42px;
 	}
 
 	.set-head {
@@ -520,6 +579,81 @@
 		width: 100%;
 		height: auto;
 		margin-top: 10px;
+	}
+
+	/* ===== セット内容（プランごとの同梱品） =====
+	   カード（279px）より広い 320px の一覧画像を使うため .set の外に出している */
+	.set-contents {
+		margin-top: 22px;
+	}
+
+	.set-contents__title {
+		font-size: min(24px, 6.1vw);
+		font-weight: 400;
+		line-height: 1.4;
+		letter-spacing: 0.02em;
+	}
+
+	.set-contents__img {
+		display: block;
+		width: 90.7%;
+		max-width: 322px;
+		height: auto;
+		margin: 10px auto 0;
+	}
+
+	/* 顔マスク付プランは「通常プランセット ＋ 顔マスク・顔タオル」であることを枠で示す */
+	.set-contents__base {
+		position: relative;
+		width: 93.8%;
+		max-width: 333px;
+		margin: 8px auto 0;
+		padding: 4px 5px 7px;
+		border: 1px solid var(--pink);
+		border-radius: 20px;
+	}
+
+	.set-contents__base .set-contents__img {
+		width: 100%;
+		margin-top: 0;
+	}
+
+	/* 枠の左下の角にまたがるラベル */
+	.set-contents__badge {
+		position: absolute;
+		left: 8px;
+		bottom: -20px;
+		padding: 10px 15px;
+		border-radius: 14px;
+		background-color: var(--pink);
+		color: #fff;
+		font-size: 13px;
+		line-height: 1.25;
+		letter-spacing: 0;
+	}
+
+	.set-contents__plus {
+		margin-top: 8px;
+		color: var(--pink);
+		font-size: 24px;
+		line-height: 1;
+	}
+
+	.set-contents__img--extra {
+		width: 58.6%;
+		max-width: 207px;
+		margin-top: 2px;
+	}
+
+	.set-contents__note {
+		margin-top: 20px;
+		font-size: min(16px, 4.1vw);
+		line-height: 1.5;
+		letter-spacing: 0;
+	}
+
+	.set-contents__note b {
+		font-weight: 700;
 	}
 
 	/* ===== ご利用の流れ ===== */
