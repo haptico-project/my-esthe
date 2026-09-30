@@ -50,7 +50,7 @@
 
 <div class="lp">
 	<!-- ================= HERO ================= -->
-	<section class="hero" data-ga-section="hero">
+	<section id="hero" class="hero" data-ga-section="hero">
 		<div class="hero-frame">
 			<img class="hero-img" src={`${base}/images/lp/hero.png`} alt="" />
 			<img class="hero-badge" src={`${base}/images/logo.png`} alt="わたしのエステ" />
@@ -78,7 +78,7 @@
 	</section>
 
 	<!-- ================= 使い方 ================= -->
-	<section class="usage" data-ga-section="usage">
+	<section id="usage" class="usage" data-ga-section="usage">
 		<h2 class="heading">使い方は簡単、<br />顔に乗せるだけ。</h2>
 		<ol class="usage-steps">
 			<li>1.ご希望の方はフェイスパックをつける</li>
@@ -99,7 +99,7 @@
 	</section>
 
 	<!-- ================= 導入事例 ================= -->
-	<section class="clients" data-ga-section="clients">
+	<section id="clients" class="clients" data-ga-section="clients">
 		<h2 class="heading">
 			<em>企業の福利厚生、介護施設</em>で<br />
 			「わたしのエステ」を<br />
@@ -118,7 +118,7 @@
 	</section>
 
 	<!-- ================= 手技を振動に ================= -->
-	<section class="technique" data-ga-section="technique">
+	<section id="technique" class="technique" data-ga-section="technique">
 		<h2 class="heading">エステティシャンの手技を<br />振動にしました。</h2>
 		<img
 			class="technique-img"
@@ -136,7 +136,7 @@
 
 	<!-- ================= 選べる2つのプラン =================
 	     申込モーダルにしかなかった「何が届くのか」をここに出す（モーダルを短くするため・2026-09） -->
-	<section class="sets" data-ga-section="sets">
+	<section id="sets" class="sets" data-ga-section="sets">
 		<h2 class="heading">選べる2つのプラン</h2>
 
 		<div class="plan">
@@ -194,7 +194,7 @@
 	</section>
 
 	<!-- ================= ご利用の流れ ================= -->
-	<section class="flow" data-ga-section="flow">
+	<section id="flow" class="flow" data-ga-section="flow">
 		<h2 class="heading">ご利用の流れ</h2>
 		<ol class="flow-steps">
 			<li class="flow-step">
@@ -231,7 +231,7 @@
 	</section>
 
 	<!-- ================= エステのサブスク ================= -->
-	<section class="subsc" data-ga-section="subsc">
+	<section id="subsc" class="subsc" data-ga-section="subsc">
 		<img class="subsc-bg" src={`${base}/images/subscription/pond.png`} alt="" aria-hidden="true" loading="lazy" />
 		<div class="subsc-content">
 			<h2 class="heading">エステのサブスク</h2>
@@ -253,7 +253,7 @@
 	</section>
 
 	<!-- ================= 解約（デザイン外・トップと同じ機能） ================= -->
-	<section class="cancel" data-ga-section="cancel">
+	<section id="cancel" class="cancel" data-ga-section="cancel">
 		<CancelPortal />
 	</section>
 
@@ -783,7 +783,8 @@
 		padding: 56px 24px 32px;
 	}
 
-	/* 「解約手続き」リンクで飛んだとき、固定ヘッダーの下に見出しが隠れないようにする */
+	/* #セクション名 や「解約手続き」リンクで飛んだとき、固定ヘッダーの下に見出しが隠れないようにする */
+	section[id],
 	.cancel :global(#cancel-portal) {
 		scroll-margin-top: 72px;
 	}

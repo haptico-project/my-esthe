@@ -27,7 +27,7 @@
 <div class="lp">
 
 	<!-- ================= HERO ================= -->
-	<div class="hero" data-ga-section="hero">
+	<div id="hero" class="hero" data-ga-section="hero">
 		<div class="hero-frame">
 			<img class="hero-img" src={`${base}/images/hero/main.png`} alt="" />
 
@@ -48,7 +48,7 @@
 	</div>
 
 	<!-- ================= ミスト振動 ================= -->
-	<section class="mist" data-ga-section="mist">
+	<section id="mist" class="mist" data-ga-section="mist">
 		<img class="mist-bg" src={`${base}/images/mist/ripple.png`} alt="" aria-hidden="true" />
 		<div class="mist-content">
 			<h2 class="heading">
@@ -74,7 +74,7 @@
 	</section>
 
 	<!-- ================= コラーゲン ================= -->
-	<section class="collagen" data-ga-section="collagen">
+	<section id="collagen" class="collagen" data-ga-section="collagen">
 		<h2 class="heading align-right">
 			肌のたるみ、くすみに<br />
 			素早くアプローチ
@@ -94,7 +94,7 @@
 	</section>
 
 	<!-- ================= 使い方 ================= -->
-	<section class="usage" data-ga-section="usage">
+	<section id="usage" class="usage" data-ga-section="usage">
 		<div class="usage-block">
 			<h2 class="heading align-left">
 				使い方は簡単、<br />
@@ -138,7 +138,7 @@
 	<!-- ================= ブランドストーリー（30年の歩み） ================= -->
 	<!-- 申込セクション直前に「30年・卒業生700名・大学共同研究」の信頼材料を置く。
 	     年表はサブスク（2023年〜）まで繋がる構成（addict/ のデザイン準拠）。 -->
-	<section class="story" data-ga-section="story">
+	<section id="story" class="story" data-ga-section="story">
 		<div class="story-head">
 			<h2 class="story-title">30年間、<br />手を研究してきました。</h2>
 			<ol class="story-milestones">
@@ -210,7 +210,7 @@
 	</section>
 
 	<!-- ================= エステのサブスク ================= -->
-	<section class="subsc" data-ga-section="subsc">
+	<section id="subsc" class="subsc" data-ga-section="subsc">
 		<img class="subsc-bg" src={`${base}/images/subscription/pond.png`} alt="" aria-hidden="true" />
 		<div class="subsc-content">
 			<!-- 30年の歩み（story）からの年表の続き -->
@@ -238,7 +238,7 @@
 
 	<!-- ================= 付帯導線（ペット / 解約） ================= -->
 	<section class="extras" data-ga-section="extras">
-		<div class="pet-link-row">
+		<div id="pet" class="pet-link-row">
 			<button
 				type="button"
 				class="pet-link"
@@ -259,7 +259,7 @@
 		{/if}
 
 		<!-- 解約導線はトップと Instagram LP で共通（$lib/CancelPortal） -->
-		<div class="cancel-wrap">
+		<div id="cancel" class="cancel-wrap">
 			<CancelPortal />
 		</div>
 	</section>
@@ -759,5 +759,10 @@
 
 	.cancel-wrap {
 		margin-top: 48px;
+	}
+
+	/* #セクション名 で飛んだとき、固定ヘッダー（ペット導線バー＋ヘッダー行）の下に隠れないようにする */
+	.lp [id] {
+		scroll-margin-top: calc(var(--header-h, 56px) + 48px);
 	}
 </style>
