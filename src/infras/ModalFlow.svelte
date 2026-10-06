@@ -1,5 +1,6 @@
 <!-- src/infras/ModalFlow.svelte … 申込モーダル（トップ / LP 共通）
-     デザイン: addict/design_lp.png の「モーダル」フレーム（393px 基準・字体 ヒラギノ明朝Pro）
+     デザイン: addict/design_lp.png の「モーダル」フレーム（字体 ヒラギノ明朝Pro）
+     2026-10 の修正指示でプランを縦積みのカード（左に説明・右に写真・右下に値段）にし、文字を大きくした。
 
      LP の計測で「モーダルまで来た6人が全員そこで離脱」していたため、2026-09 に
      ①説明＋プラン選択 → ②内容確認 → ③規約同意 の3ステップをやめ、1画面に畳んだ。
@@ -24,7 +25,7 @@
 	type Plan = {
 		id: string;
 		name: string;
-		/** カードに出す一言（何を基準に選ぶかを伝える） */
+		/** カードに出す一言（何を基準に選ぶかを伝える）。\n はデザインどおりの改行位置 */
 		lead: string;
 		price: number;
 		img: string;
@@ -54,7 +55,7 @@
 		{
 			id: 'face-mask-plan',
 			name: '顔マスク付プラン',
-			lead: '顔に載せるだけで、気軽にセルフエステを楽しみたい方へ。',
+			lead: '顔に載せるだけで、\n気軽にセルフエステを\n楽しみたい方へ。',
 			price: 5500,
 			img: `${base}/images/plans/face-mask.png`,
 			imageAlt: '顔マスク付プランの顔マスク',
@@ -62,14 +63,14 @@
 				{ productId: 'price_1SUdstPo9yD7PttV1EclsBsi', quantity: 1 },
 				{ productId: 'price_1T94CTPo9yD7PttVbiyOrzT2', quantity: 1 }
 			],
-			notes: ['12ヶ月後、顔マスクはお客様のものに。', '13ヶ月目以降は月額3,300円（税込）'],
+			notes: ['12ヶ月で買い切り', '13ヶ月目以降は月額3,300円'],
 			commitmentMonths: 12,
 			ongoingPrice: 3300
 		},
 		{
 			id: 'standard-plan',
 			name: '通常プラン',
-			lead: '手に持って、顔や身体の気になるところにお使いいただけるシンプルなプランです。',
+			lead: '手に持って、顔や身体\nの気になるところに\nお使いいただける\nシンプルなプランです。',
 			price: 3300,
 			img: `${base}/images/plans/standard.png`,
 			imageAlt: '通常プランの振動器',
@@ -82,7 +83,7 @@
 		id: 'mobile-battery',
 		name: 'モバイルバッテリー',
 		badge: '買い切り',
-		description: '外出先でも使いやすいモバイルバッテリーを追加できます。',
+		description: '外出先でも使いやすい\nモバイルバッテリーを追加\nできます。',
 		amount: 3300,
 		checkoutPriceId: 'price_1T94LZPo9yD7PttVjccfOWqk',
 		images: [
@@ -266,18 +267,15 @@
 
 		<!-- 「すぐ課金されるのでは」「簡単にやめられるのか」を申込み前に解消する（鈴木さん要望・2026-08） -->
 		<div class="trial">
-			<p class="trial-lead">
-				<em class="trial-lead__from">商品到着後</em><em class="trial-lead__days">7日間無料</em
-				>でお試しいただけます。
-			</p>
+			<p class="trial-lead">商品到着後7日間無料</p>
 			<p class="trial-note">
 				無料期間中にご解約いただいた場合、月額料金はかかりません。<br />
-				※商品のご返送時の送料のみ、お客さまご負担となります。
+				※商品のご返送時の送料はお客さまご負担となります。
 			</p>
 		</div>
 
 		<h3 class="apply-section">プランを選ぶ</h3>
-		<div class="plans" class:plans--single={visiblePlans.length === 1}>
+		<div class="plans">
 			{#each visiblePlans as plan (plan.id)}
 				{@const discount = campaignDiscount(plan)}
 				<label class="plan-card" class:plan-card--on={plan.id === selectedPlanId}>
@@ -294,10 +292,16 @@
 						<span class="plan-name">{plan.name}</span>
 					</span>
 
-					<span class="plan-body">
-						<span class="plan-lead">{plan.lead}</span>
-						<img class="plan-img" src={plan.img} alt={plan.imageAlt} />
-					</span>
+					<span class="plan-lead">{plan.lead}</span>
+					<img class="plan-img" src={plan.img} alt={plan.imageAlt} />
+
+					{#if discount > 0}
+						<span class="plan-note">キャンペーン適用中。<br />ご契約中はずっとこの月額です。</span>
+					{:else if plan.notes.length > 0}
+						<span class="plan-note">
+							{#each plan.notes as note (note)}{note}<br />{/each}
+						</span>
+					{/if}
 
 					<span class="plan-price">
 						{#if discount > 0}
@@ -305,16 +309,8 @@
 						{/if}
 						<em class="plan-price__unit">月額</em><em class="plan-price__value"
 							>{(plan.price - discount).toLocaleString()}</em
-						><em class="plan-price__unit">円</em><em class="plan-price__tax">（税込）</em>
+						><em class="plan-price__unit">円</em><em class="plan-price__tax">(税込)</em>
 					</span>
-
-					{#if discount > 0}
-						<span class="plan-note">キャンペーン適用中。ご契約中はずっとこの月額です。</span>
-					{:else if plan.notes.length > 0}
-						<span class="plan-note">
-							{#each plan.notes as note (note)}{note}<br />{/each}
-						</span>
-					{/if}
 				</label>
 			{/each}
 		</div>
@@ -325,8 +321,8 @@
 
 		<h3 class="apply-section">オプションを選ぶ <small>(任意)</small></h3>
 		{#each options as option (option.id)}
-			<label class="opt-card">
-				<span class="opt-head">
+			<label class="opt-card" class:opt-card--on={selectedOptions[option.id]}>
+				<span class="plan-head">
 					<input
 						class="plan-radio"
 						type="checkbox"
@@ -334,21 +330,19 @@
 						on:change={() => toggleOption(option.id)}
 					/>
 					<span class="plan-mark" aria-hidden="true"></span>
-					<span class="opt-name">{option.name}</span>
+					<span class="plan-name">{option.name}</span>
 					<span class="opt-badge">{option.badge}</span>
-					<span class="opt-price">
-						<em class="opt-price__sign">＋</em><em class="opt-price__value"
-							>{option.amount.toLocaleString()}</em
-						><em class="opt-price__sign">円</em><em class="opt-price__tax">（税込）</em>
-					</span>
 				</span>
-				<span class="opt-body">
-					<span class="opt-desc">{option.description}</span>
-					<span class="opt-images">
-						{#each option.images as image (image.src)}
-							<img src={image.src} alt={image.alt} />
-						{/each}
-					</span>
+				<span class="plan-lead">{option.description}</span>
+				<span class="opt-images">
+					{#each option.images as image (image.src)}
+						<img src={image.src} alt={image.alt} />
+					{/each}
+				</span>
+				<span class="plan-price">
+					<em class="plan-price__value">{option.amount.toLocaleString()}</em><em
+						class="plan-price__unit">円</em
+					><em class="plan-price__tax">(税込)</em>
 				</span>
 			</label>
 		{/each}
@@ -393,11 +387,12 @@
 </div>
 
 <style>
-	/* ===== デザイントークン（addict/design_lp.png のモーダル指示） =====
+	/* ===== デザイントークン（2026-10 のモーダル修正指示） =====
 	   ピンク: #FF7C7C / 淡ピンク背景・枠: #FFEEEE / ボタン: #332932
-	   文字サイズ 見出し16・プラン名12・値段24・本文8（カード幅 368px 基準）
+	   文字サイズ 見出し20・「商品到着後7日間無料」24・プラン名16・値段24・
+	   月額/円 12・税込 10・本文 12・ボタン 16（モーダル幅 380px 基準）
 
-	   --u は「デザイン上の 1px」。368px が入らない端末（iPhone 12〜15 の 390px など）では
+	   --u は「デザイン上の 1px」。380px が入らない端末（iPhone 12〜15 の 390px など）では
 	   折り返して縦に伸びてしまうため、画面幅に比例して全体を縮める。 */
 	.apply-overlay {
 		position: fixed;
@@ -415,12 +410,12 @@
 	}
 
 	.apply-modal {
-		--u: min(1px, calc((100vw - 24px) / 368));
+		--u: min(1px, calc((100vw - 24px) / 380));
 		width: 100%;
-		max-width: 368px;
+		max-width: 380px;
 		max-height: 92vh;
 		overflow-y: auto;
-		padding: calc(15 * var(--u)) calc(16 * var(--u)) calc(18 * var(--u));
+		padding: calc(20 * var(--u)) calc(16 * var(--u)) calc(20 * var(--u));
 		border-radius: 16px;
 		background-color: #fff;
 		box-shadow: 0 24px 60px rgba(38, 16, 31, 0.22);
@@ -432,21 +427,21 @@
 		align-items: baseline;
 		justify-content: space-between;
 		gap: calc(12 * var(--u));
-		padding-bottom: calc(4 * var(--u));
+		padding-bottom: calc(6 * var(--u));
 		border-bottom: 1px solid #a7a7a7;
 	}
 
 	.apply-title {
-		font-size: calc(16 * var(--u));
+		font-size: calc(20 * var(--u));
 		font-weight: 400;
 		line-height: 1.2;
-		letter-spacing: 0.02em;
+		letter-spacing: 0.04em;
 	}
 
 	.apply-close {
 		flex: none;
 		font-family: inherit;
-		font-size: calc(10 * var(--u));
+		font-size: calc(12 * var(--u));
 		letter-spacing: 0.04em;
 		color: #7a626c;
 	}
@@ -457,87 +452,92 @@
 
 	/* ===== 7日間無料 ===== */
 	.trial {
-		margin-top: calc(16 * var(--u));
-		padding: calc(10 * var(--u)) calc(4 * var(--u)) calc(14 * var(--u));
+		margin-top: calc(18 * var(--u));
+		padding: calc(16 * var(--u)) calc(14 * var(--u)) calc(16 * var(--u));
 		border-radius: calc(10 * var(--u));
 		background-color: #ffeeee;
-		text-align: center;
 	}
 
 	.trial-lead {
-		font-size: calc(12 * var(--u));
-		line-height: 1.5;
-	}
-
-	.trial-lead em {
-		font-style: normal;
-		color: #ff7c7c;
-	}
-
-	.trial-lead__from {
-		font-size: calc(16 * var(--u));
-	}
-
-	.trial-lead__days {
 		font-size: calc(24 * var(--u));
+		line-height: 1.3;
+		letter-spacing: 0.02em;
+		color: #ff7c7c;
+		text-align: center;
+		white-space: nowrap;
 	}
 
 	.trial-note {
-		margin-top: calc(7 * var(--u));
-		font-size: calc(8 * var(--u));
-		line-height: 1.5;
+		margin-top: calc(12 * var(--u));
+		font-size: calc(12 * var(--u));
+		line-height: 1.6;
 	}
 
 	/* ===== 見出し ===== */
 	.apply-section {
-		margin-top: calc(16 * var(--u));
-		font-size: calc(16 * var(--u));
+		margin-top: calc(26 * var(--u));
+		font-size: calc(20 * var(--u));
 		font-weight: 400;
 		line-height: 1.2;
-		letter-spacing: 0.02em;
+		letter-spacing: 0.04em;
 	}
 
 	.apply-section small {
-		font-size: calc(12 * var(--u));
+		font-size: calc(14 * var(--u));
+		letter-spacing: 0;
 	}
 
 	.apply-alert {
 		margin-top: calc(8 * var(--u));
-		font-size: calc(9 * var(--u));
+		font-size: calc(12 * var(--u));
 		line-height: 1.6;
 		color: #c0395f;
 	}
 
-	/* ===== プラン ===== */
+	/* ===== プラン・オプション共通のカード =====
+	   左に説明、右に写真、右下に値段（顔マスク付プランは左下に支払い条件）。 */
 	.plans {
 		display: grid;
-		grid-template-columns: 1fr 1fr;
-		gap: calc(5 * var(--u));
-		margin-top: calc(11 * var(--u));
+		gap: calc(10 * var(--u));
+		margin-top: calc(10 * var(--u));
 	}
 
-	.plans--single {
-		grid-template-columns: 1fr;
-	}
-
-	.plan-card {
-		display: block;
-		padding: calc(9 * var(--u)) calc(9 * var(--u)) calc(13 * var(--u));
+	.plan-card,
+	.opt-card {
+		display: grid;
+		grid-template-columns: 1fr auto;
+		grid-template-areas:
+			'head img'
+			'lead img'
+			'note price';
+		align-items: start;
+		column-gap: calc(6 * var(--u));
+		padding: calc(12 * var(--u)) calc(10 * var(--u)) calc(12 * var(--u)) calc(10 * var(--u));
 		border: 1px solid #ffeeee;
 		border-radius: calc(10 * var(--u));
 		cursor: pointer;
 		transition: border-color 0.2s ease;
 	}
 
-	.plan-card--on {
+	.opt-card {
+		grid-template-areas:
+			'head head'
+			'lead img'
+			'note price';
+		margin-top: calc(10 * var(--u));
+	}
+
+	.plan-card--on,
+	.opt-card--on {
 		border-color: #ff7c7c;
 	}
 
 	.plan-head {
+		grid-area: head;
 		position: relative;
 		display: flex;
 		align-items: center;
-		gap: calc(7 * var(--u));
+		gap: calc(6 * var(--u));
 	}
 
 	/* ラジオ／チェックボックスは見た目を .plan-mark に任せ、操作と読み上げだけ本体に残す */
@@ -551,14 +551,15 @@
 
 	.plan-mark {
 		flex: none;
-		width: calc(17 * var(--u));
-		height: calc(17 * var(--u));
+		width: calc(18 * var(--u));
+		height: calc(18 * var(--u));
 		border: 1px solid #ff7c7c;
 		border-radius: 50%;
 	}
 
 	.plan-radio:checked + .plan-mark {
 		background-color: #ff7c7c;
+		box-shadow: inset 0 0 0 calc(2 * var(--u)) #fff;
 	}
 
 	.plan-radio:focus-visible + .plan-mark {
@@ -567,45 +568,57 @@
 	}
 
 	.plan-name {
-		font-size: calc(12 * var(--u));
-		letter-spacing: 0.02em;
+		font-size: calc(16 * var(--u));
+		letter-spacing: 0.06em;
+		white-space: nowrap;
 	}
 
-	.plan-body {
-		display: flex;
-		align-items: center;
-		gap: calc(2 * var(--u));
-		margin-top: calc(7 * var(--u));
-	}
-
+	/* 改行位置はデータ側の \n でデザインに合わせる（写真の横で 10 文字前後） */
 	.plan-lead {
-		flex: 1 1 auto;
-		font-size: calc(8 * var(--u));
-		line-height: 1.5;
+		grid-area: lead;
+		white-space: pre-line;
+		margin-top: calc(10 * var(--u));
+		font-size: calc(12 * var(--u));
+		line-height: 1.7;
 	}
 
 	.plan-img {
-		flex: none;
-		height: calc(61 * var(--u));
+		grid-area: img;
+		align-self: center;
+		height: calc(88 * var(--u));
 		width: auto;
+		margin-right: calc(6 * var(--u));
+	}
+
+	.plan-note {
+		grid-area: note;
+		align-self: end;
+		margin-top: calc(10 * var(--u));
+		font-size: calc(12 * var(--u));
+		line-height: 1.5;
+		letter-spacing: 0;
 	}
 
 	.plan-price {
-		display: block;
-		margin-top: calc(7 * var(--u));
+		grid-area: price;
+		align-self: end;
+		justify-self: end;
+		margin-top: calc(8 * var(--u));
 		color: #ff7c7c;
 		line-height: 1;
 		white-space: nowrap;
+		text-align: right;
 	}
 
 	.plan-price em {
 		font-style: normal;
 	}
 
-	/* キャンペーン適用時の元値。値段の行に並べるとカード幅に入らないので上に置く */
+	/* キャンペーン適用時の元値。値段の行に並べると幅に入らないので上に置く */
 	.plan-price__was {
 		display: block;
-		font-size: calc(10 * var(--u));
+		margin-bottom: calc(2 * var(--u));
+		font-size: calc(12 * var(--u));
 		color: #b8a3ac;
 	}
 
@@ -614,102 +627,40 @@
 	}
 
 	.plan-price__value {
-		margin-left: calc(2 * var(--u));
+		margin: 0 calc(1 * var(--u)) 0 calc(4 * var(--u));
 		font-size: calc(24 * var(--u));
 	}
 
+	.opt-card .plan-price__value {
+		margin-left: 0;
+	}
+
 	.plan-price__tax {
-		margin-left: calc(2 * var(--u));
 		font-size: calc(10 * var(--u));
 	}
 
-	.plan-note {
-		display: block;
-		margin-top: calc(4 * var(--u));
-		font-size: calc(8 * var(--u));
-		line-height: 1.5;
-	}
-
 	/* ===== オプション ===== */
-	.opt-card {
-		display: block;
-		margin-top: calc(14 * var(--u));
-		padding: calc(9 * var(--u)) calc(11 * var(--u)) calc(13 * var(--u));
-		border: 1px solid #ffeeee;
-		border-radius: calc(10 * var(--u));
-		cursor: pointer;
-	}
-
-	.opt-head {
-		position: relative;
-		display: flex;
-		align-items: center;
-		gap: calc(7 * var(--u));
-	}
-
-	.opt-name {
+	.opt-badge {
+		flex: none;
+		padding: calc(2 * var(--u)) calc(8 * var(--u));
+		border-radius: 9999px;
+		background-color: #ffeeee;
 		font-size: calc(12 * var(--u));
 		letter-spacing: 0.02em;
 		white-space: nowrap;
 	}
 
-	.opt-badge {
-		flex: none;
-		padding: calc(3 * var(--u)) calc(7 * var(--u));
-		border-radius: 9999px;
-		background-color: #ffeeee;
-		font-size: calc(8 * var(--u));
-		letter-spacing: 0.02em;
-		white-space: nowrap;
-	}
-
-	.opt-price {
-		margin-left: auto;
-		color: #ff7c7c;
-		line-height: 1;
-		white-space: nowrap;
-	}
-
-	.opt-price em {
-		font-style: normal;
-	}
-
-	.opt-price__sign {
-		font-size: calc(10 * var(--u));
-	}
-
-	.opt-price__value {
-		margin: 0 calc(1 * var(--u)) 0 calc(2 * var(--u));
-		font-size: calc(20 * var(--u));
-	}
-
-	.opt-price__tax {
-		margin-left: calc(2 * var(--u));
-		font-size: calc(8 * var(--u));
-	}
-
-	.opt-body {
-		display: flex;
-		align-items: flex-start;
-		gap: calc(8 * var(--u));
-		margin-top: calc(6 * var(--u));
-	}
-
-	.opt-desc {
-		flex: 1 1 auto;
-		font-size: calc(8 * var(--u));
-		line-height: 1.5;
-	}
-
 	.opt-images {
-		flex: none;
+		grid-area: img;
+		align-self: center;
 		display: flex;
 		align-items: flex-end;
 		gap: calc(6 * var(--u));
+		margin: calc(8 * var(--u)) calc(14 * var(--u)) 0 0;
 	}
 
 	.opt-images img {
-		height: calc(45 * var(--u));
+		height: calc(54 * var(--u));
 		width: auto;
 	}
 
@@ -721,8 +672,8 @@
 		align-items: center;
 		justify-content: center;
 		gap: calc(6 * var(--u));
-		margin-top: calc(13 * var(--u));
-		font-size: calc(10 * var(--u));
+		margin-top: calc(22 * var(--u));
+		font-size: calc(12 * var(--u));
 		cursor: pointer;
 	}
 
@@ -731,8 +682,8 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		width: calc(13 * var(--u));
-		height: calc(13 * var(--u));
+		width: calc(15 * var(--u));
+		height: calc(15 * var(--u));
 		border: 1px solid #ff7c7c;
 		border-radius: calc(3 * var(--u));
 		color: #fff;
@@ -762,13 +713,13 @@
 	.apply-submit {
 		display: block;
 		width: 100%;
-		margin-top: calc(9 * var(--u));
+		margin-top: calc(10 * var(--u));
 		padding: calc(10 * var(--u)) 0;
 		border-radius: 9999px;
 		background-color: #332932;
 		color: #fff;
 		font-family: inherit;
-		font-size: calc(12 * var(--u));
+		font-size: calc(16 * var(--u));
 		line-height: 1.2;
 		letter-spacing: 0.08em;
 		transition: opacity 0.2s ease;
@@ -784,8 +735,10 @@
 	}
 
 	.apply-caption {
-		margin-top: calc(7 * var(--u));
-		font-size: calc(8 * var(--u));
+		margin-top: calc(10 * var(--u));
+		font-size: calc(12 * var(--u));
+		letter-spacing: -0.01em;
+		white-space: nowrap;
 		text-align: center;
 	}
 
@@ -795,8 +748,8 @@
 		flex-wrap: wrap;
 		justify-content: center;
 		gap: calc(6 * var(--u)) calc(14 * var(--u));
-		margin-top: calc(12 * var(--u));
-		font-size: calc(9 * var(--u));
+		margin-top: calc(14 * var(--u));
+		font-size: calc(11 * var(--u));
 		letter-spacing: 0.04em;
 		color: #7a626c;
 	}

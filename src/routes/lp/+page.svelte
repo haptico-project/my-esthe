@@ -318,7 +318,7 @@
 
 	.hero-frame {
 		position: relative;
-		aspect-ratio: 393 / 657;
+		aspect-ratio: 393 / 610;
 	}
 
 	.hero-img {
