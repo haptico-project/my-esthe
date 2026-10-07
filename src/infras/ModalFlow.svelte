@@ -14,6 +14,7 @@
 	import { coupon, clearCoupon } from '$lib/coupon';
 	import PetLeadPanel from '$lib/PetLeadPanel.svelte';
 	import { referrer } from '$lib/referrer';
+	import { getTrafficSource } from '$lib/trafficSource';
 	import { postCheckout } from '$lib/checkoutAccessor';
 	import { track, rememberCheckout } from '$lib/analytics';
 
@@ -180,6 +181,7 @@
 		const code = get(agencyCode);
 		const couponId = get(coupon);
 		const referredBy = get(referrer);
+		const trafficSource = getTrafficSource();
 
 		if (!agreed) {
 			alert('利用規約に同意のうえ、お進みください。');
@@ -234,7 +236,9 @@
 				// 通常プランに渡すと 3,300→1,100 と誤割引になる。対象プラン限定で防ぐ。
 				...(couponId && currentPlan.id === CAMPAIGN_PLAN_ID ? { couponId } : {}),
 				// 紹介者（?ref で入力済みの場合）。Stripe metadata referred_by として保持される。
-				...(referredBy ? { referredBy } : {})
+				...(referredBy ? { referredBy } : {}),
+				// 流入元（初回来訪時に記録）。Stripe metadata traffic_source として保持され、内部通知メールに出る。
+				...(trafficSource ? { trafficSource } : {})
 			});
 
 			if (res) {
