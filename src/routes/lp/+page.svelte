@@ -54,10 +54,6 @@
 		<div class="hero-frame">
 			<img class="hero-img" src={`${base}/images/lp/hero.png`} alt="" />
 			<img class="hero-badge" src={`${base}/images/logo.png`} alt="わたしのエステ" />
-			<div class="hero-awards">
-				<img src={`${base}/images/awards/kyoto-univ.png`} alt="京都大学総長賞" />
-				<img src={`${base}/images/awards/health20.png`} alt="health2.0受賞" />
-			</div>
 
 			<div class="hero-caption">
 				<!-- 約3/4がほとんどスクロールせず離脱していたため、ファーストビューだけで
@@ -334,33 +330,14 @@
 		object-fit: cover;
 	}
 
-	/* 左上のロゴバッジ（トップのヘッダーロゴと同じ画像）。右上は受賞マークに譲る */
+	/* 左上のロゴバッジ（トップのヘッダーロゴと同じ画像）。
+	   受賞マークは 2026-10 のデザイン更新でヒーローから外した（Figma ではフレーム外に退避） */
 	.hero-badge {
 		position: absolute;
 		top: 2.5cqw;
 		left: 1.5cqw;
 		width: 15.8cqw;
 		height: auto;
-	}
-
-	/* 受賞マークは見出しの下から右上へ移動（デザイン更新・2026-09）。
-	   PNG は上下に余白を持つため、2枚目を少し引き上げて見た目の間隔をデザインに合わせる。 */
-	.hero-awards {
-		position: absolute;
-		top: 3.2cqw;
-		right: 0.2cqw;
-		display: flex;
-		flex-direction: column;
-		align-items: flex-end;
-	}
-
-	.hero-awards img {
-		width: 32.5cqw;
-		height: auto;
-	}
-
-	.hero-awards img + img {
-		margin-top: -3.1cqw;
 	}
 
 	.hero-caption {
