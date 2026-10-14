@@ -15,6 +15,7 @@
 	};
 	import PetLeadPanel from '$lib/PetLeadPanel.svelte';
 	import RelatedLinksFooter from '$lib/RelatedLinksFooter.svelte';
+	import CompanyInfoFooter from '$lib/CompanyInfoFooter.svelte';
 
 	// ヘッダー行（ロゴ・SNS・申込ボタン）の高さ。トップページがヒーローを
 	// この分だけ引き上げ、半透明ヘッダーがヒーロー画像に重なるようにする。
@@ -108,7 +109,7 @@
 			<slot />
 
 
-			<footer class="mt-40 pb-6 border-t border-gray-200">
+			<footer class="mt-40 border-t border-gray-200">
 				<div class="w-full px-5 py-6 text-sm text-gray-600 text-center">
 
 					<!-- リンク集 -->
@@ -128,6 +129,9 @@
 					</div>
 
 				</div>
+
+				<!-- 運営会社・所在地 -->
+				<CompanyInfoFooter />
 			</footer>
 		</main>
 

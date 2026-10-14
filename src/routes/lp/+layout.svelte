@@ -5,6 +5,7 @@
 <script lang="ts">
 	import { base } from '$app/paths';
 	import { agencyCode } from '$lib/agency/agencyCode';
+	import CompanyInfoFooter from '$lib/CompanyInfoFooter.svelte';
 </script>
 
 <div class="lp-shell">
@@ -19,6 +20,9 @@
 			</nav>
 			<p class="lp-footer__copy">{$agencyCode} | Facetherapie, Inc.</p>
 		</footer>
+
+		<!-- 運営会社・所在地 -->
+		<CompanyInfoFooter />
 	</main>
 </div>
 
