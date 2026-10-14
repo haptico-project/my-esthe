@@ -124,7 +124,7 @@
 				<!-- playsinline=1: iPhone Safari でページ内再生させる（未指定だと全画面再生になる）。
 				     rel=0: 停止後の関連動画を自チャンネルに限定する。 -->
 				<iframe
-					src="https://www.youtube.com/embed/irmZgfw1CzQ?si=ok31EkunFMwryn__&playsinline=1&rel=0"
+					src="https://www.youtube.com/embed/ub9Tioc4RMo?playsinline=1&rel=0"
 					title="わたしのエステ 使い方動画"
 					frameborder="0"
 					allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"

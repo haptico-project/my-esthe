@@ -41,7 +41,7 @@
 </script>
 
 <svelte:head>
-	<title>わたしのエステ｜顔に載せるだけ、月々3,300円で自宅がエステになる</title>
+	<title>わたしのエステ｜顔に当てるだけ、月々3,300円で自宅がエステになる</title>
 	<meta
 		name="description"
 		content="エステティシャンの手技を振動にした美顔器「わたしのエステ」。月々3,300円のサブスクで、商品到着後7日間は無料でお試しいただけます。"
@@ -64,8 +64,8 @@
 				     「何の商品か」が分かる一行を見出しの上に置く（2026-09 デザイン更新） -->
 				<p class="hero-tagline">エステの手技を再現した振動ケア</p>
 				<h1 class="hero-title">
-					顔に載せるだけ<br />
-					月々<em>3,300円〜</em>で<br />
+					顔に当てるだけ<br />
+					月々<em>3,300</em><span class="pink">円〜</span>で<br />
 					自宅が<em>エステ</em>になる
 				</h1>
 			</div>
@@ -79,16 +79,16 @@
 
 	<!-- ================= 使い方 ================= -->
 	<section id="usage" class="usage" data-ga-section="usage">
-		<h2 class="heading">使い方は簡単、<br />顔に乗せるだけ。</h2>
+		<h2 class="heading">使い方は簡単、<br />顔に当てるだけ。</h2>
 		<ol class="usage-steps">
-			<li>1.ご希望の方はフェイスパックをつける</li>
-			<li>2.「私のエステ」を顔にのせる</li>
-			<li>3.3〜10分、そのままリラックス</li>
+			<li><span>1.</span>「わたしのエステ」を気になる部分に当てる</li>
+			<li><span>2.</span>3〜10分、そのままリラックス</li>
+			<li><span>3.</span>全顔をケアしたい方は、<br />専用フェイスマスク(オプション)にセット</li>
 		</ol>
 		<div class="usage-video">
 			<!-- playsinline=1: iPhone Safari でページ内再生させる。rel=0: 停止後の関連動画を自チャンネルに限定する。 -->
 			<iframe
-				src="https://www.youtube.com/embed/irmZgfw1CzQ?si=ok31EkunFMwryn__&playsinline=1&rel=0"
+				src="https://www.youtube.com/embed/ub9Tioc4RMo?playsinline=1&rel=0"
 				title="わたしのエステ 使い方動画"
 				frameborder="0"
 				allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
@@ -316,9 +316,14 @@
 		container-type: inline-size;
 	}
 
+	/* 背の低い画面（Instagram 内ブラウザ等）でも申込ボタンが最初の画面に収まるよう、
+	   ヒーローの高さを「画面の高さ − ボタンのはみ出し分(11.7cqw) − 余白 12px」までに抑える。
+	   縮んだ分は写真の上下が切れ、見出しは下端基準なのでボタンとの位置関係は変わらない。 */
 	.hero-frame {
 		position: relative;
 		aspect-ratio: 393 / 610;
+		max-height: calc(100vh - 11.7cqw - 12px);
+		max-height: calc(100svh - 11.7cqw - 12px);
 	}
 
 	.hero-img {
@@ -378,20 +383,23 @@
 		white-space: nowrap;
 	}
 
-	/* 見出し 35px（ピンク部分 45px）・行間 60px */
+	/* 見出し 35px（ピンク部分 45px）・行間 55px（2026-10 デザイン更新。旧 60px では写真の振動器に重なった）。
+	   行間は長さ（cqw）で指定し、em（3,300 / エステ）の大きい行も含め3行とも同じ 55px 送りにそろえる。 */
 	.hero-title {
 		font-size: 8.9cqw;
 		font-weight: 400;
-		/* 行間は em（3,300 / エステ）が 1.286em と大きいぶん実質の余白が狭まる。
-		   1.714 は読点のない3行コピーには空きすぎて視線が途切れるため詰めた。
-		   さらに 1.45 では見出しが写真の振動器に重なったため 1.2 に詰め、機器が見えるようにした（2026-10）。 */
-		line-height: 1.2;
+		line-height: 14cqw;
 		letter-spacing: 0.04em;
 	}
 
 	.hero-title em {
 		font-style: normal;
 		font-size: 1.286em;
+		color: var(--pink-soft);
+	}
+
+	/* 「円〜」はピンクだが本文と同じ大きさ */
+	.hero-title .pink {
 		color: var(--pink-soft);
 	}
 
@@ -434,6 +442,18 @@
 		padding: 0;
 		list-style: none;
 		text-align: left;
+	}
+
+	/* 番号を左に固定し、2行目（3. の「専用フェイスマスク…」）を本文の頭にそろえる。
+	   最長の手順1（20文字）がデザインどおり1行に収まるよう、字送りは 0 にする */
+	.usage-steps li {
+		display: flex;
+		letter-spacing: 0;
+	}
+
+	.usage-steps li span {
+		flex: none;
+		width: 1.2em;
 	}
 
 	/* スマホで小さすぎるとプレーヤー上部のチャンネル名帯を誤タップして
