@@ -313,13 +313,15 @@
 	}
 
 	/* 背の低い画面（Instagram 内ブラウザ等）でも申込ボタンが最初の画面に収まるよう、
-	   ヒーローの高さを「画面の高さ − ボタンのはみ出し分(11.7cqw) − 余白 12px」までに抑える。
+	   ヒーローの高さを「画面の高さ − ボタンのはみ出し分(14.2cqw = 56px) − 余白 12px」までに抑える。
 	   縮んだ分は写真の上下が切れ、見出しは下端基準なのでボタンとの位置関係は変わらない。 */
+	/* width を明示しないと、max-height が効いたとき aspect-ratio に引っぱられて幅まで縮む */
 	.hero-frame {
 		position: relative;
+		width: 100%;
 		aspect-ratio: 393 / 610;
-		max-height: calc(100vh - 11.7cqw - 12px);
-		max-height: calc(100svh - 11.7cqw - 12px);
+		max-height: calc(100vh - 14.2cqw - 12px);
+		max-height: calc(100svh - 14.2cqw - 12px);
 	}
 
 	.hero-img {
@@ -328,6 +330,8 @@
 		width: 100%;
 		height: 100%;
 		object-fit: cover;
+		/* 高さが抑えられたときは上側（髪）だけを切る。下端基準の見出しと振動器の位置関係を保ち、重ならないようにする */
+		object-position: center bottom;
 	}
 
 	/* 左上のロゴバッジ（トップのヘッダーロゴと同じ画像）。
@@ -343,7 +347,9 @@
 	.hero-caption {
 		position: absolute;
 		right: 3.6cqw;
-		bottom: 16cqw;
+		/* デザイン実測（393px 基準）: ピル上端 378px・見出し下端 570px（ヒーロー下端 610px から 40px）。
+		   これより上に置くと写真の振動器に見出しが重なる */
+		bottom: 10.2cqw;
 		text-align: right;
 		color: #fff;
 	}
@@ -351,7 +357,7 @@
 	/* 見出しの上に置く一行（デザイン: 16px・背景 #EEB5B5・角 20px） */
 	.hero-tagline {
 		display: inline-block;
-		margin-bottom: 2.8cqw;
+		margin-bottom: 0;
 		padding: 1.3cqw 2.3cqw;
 		border-radius: 5.1cqw;
 		background-color: #eeb5b5;
@@ -369,9 +375,11 @@
 		letter-spacing: 0.04em;
 	}
 
+	/* line-height: 1 … 大きい文字が行の高さを押し広げないようにし、3行を 55px×3 = 165px に収める */
 	.hero-title em {
 		font-style: normal;
 		font-size: 1.286em;
+		line-height: 1;
 		color: var(--pink-soft);
 	}
 
@@ -380,14 +388,14 @@
 		color: var(--pink-soft);
 	}
 
-	/* 352×92px のピル。中心がヒーロー画像の下端に来るよう半分だけ引き上げる */
+	/* 352×92px のピル。デザインどおり上 36px をヒーロー画像に重ねる */
 	.hero-cta {
 		position: relative;
 		z-index: 1;
 		display: block;
 		width: 89.6cqw;
 		height: 23.4cqw;
-		margin: -11.7cqw auto 0;
+		margin: -9.2cqw auto 0;
 		border-radius: 9999px;
 		background-color: var(--dark);
 		color: #fff;
