@@ -11,7 +11,14 @@
 	import { createEventDispatcher } from 'svelte';
 	import { get } from 'svelte/store';
 	import { agencyCode } from '$lib/agency/agencyCode';
-	import { coupon, clearCoupon } from '$lib/coupon';
+	import {
+		coupon,
+		couponCheck,
+		invalidateCoupon,
+		discountedPrice,
+		CAMPAIGN_PLAN_ID,
+		CAMPAIGN_PLAN_PRODUCTS
+	} from '$lib/coupon';
 	import PetLeadPanel from '$lib/PetLeadPanel.svelte';
 	import { referrer } from '$lib/referrer';
 	import { campaign } from '$lib/campaign';
@@ -61,10 +68,7 @@
 			price: 5500,
 			img: `${base}/images/plans/face-mask.png`,
 			imageAlt: '顔マスク付プランの顔マスク',
-			orderProducts: [
-				{ productId: 'price_1SUdstPo9yD7PttV1EclsBsi', quantity: 1 },
-				{ productId: 'price_1T94CTPo9yD7PttVbiyOrzT2', quantity: 1 }
-			],
+			orderProducts: CAMPAIGN_PLAN_PRODUCTS,
 			notes: ['12ヶ月で買い切り', '13ヶ月目以降は月額3,300円'],
 			commitmentMonths: 12,
 			ongoingPrice: 3300
@@ -132,43 +136,11 @@
 		dispatch('close');
 	};
 
-	// キャンペーンクーポン（特定URL ?coupon=）適用時、顔マスク付プランの顔マスク代(2,200円)が
-	// 毎月割引される＝実質ずっと月3,300円。Stripeクーポンは顔マスク商品限定なので通常プランには効かない。
-	const CAMPAIGN_PLAN_ID = 'face-mask-plan';
-	const CAMPAIGN_MONTHLY_DISCOUNT = 2200;
-	// クーポンの有効性（バックエンドで判定）。null=未確認/判定中, true=有効, false=無効。
-	let couponValid: boolean | null = null;
+	// キャンペーンクーポン（特定URL ?coupon=）適用時の顔マスク付プランの割引額。
+	// 有効性と割引額は +layout で Stripe に問い合わせ済みの couponCheck を使う（表示と請求を一致させる）。
+	// クーポンは全体割引なので、対象外の通常プランには割引を出さない（checkout でも渡さない）。
 	const campaignDiscount = (plan: Plan) =>
-		$coupon && couponValid === true && plan.id === CAMPAIGN_PLAN_ID ? CAMPAIGN_MONTHLY_DISCOUNT : 0;
-
-	// クーポンが指定されていれば、バックエンドで有効性を事前判定する（割引表示の前提）。
-	let couponChecked = false;
-	$: if ($coupon && !couponChecked) {
-		couponChecked = true;
-		void checkCoupon($coupon);
-	}
-	const checkCoupon = async (code: string) => {
-		try {
-			const campaignPlan = plans.find((plan) => plan.id === CAMPAIGN_PLAN_ID);
-			const res = await postCheckout<
-				{ couponId: string; orderProducts: CheckoutProduct[] },
-				{ valid: boolean; reason: string }
-			>('/api/v1/checkout/coupon-validate', {
-				couponId: code,
-				orderProducts: campaignPlan?.orderProducts ?? []
-			});
-			if (res && res.valid) {
-				couponValid = true;
-			} else {
-				// 無効と確定 → 割引を出さず、保管場所からも破棄する。
-				couponValid = false;
-				clearCoupon();
-			}
-		} catch (e) {
-			// 判定不能（ネットワーク等）は割引を出さない（安全側）。クーポンは破棄しない。
-			couponValid = null;
-		}
-	};
+		$coupon && plan.id === CAMPAIGN_PLAN_ID ? plan.price - discountedPrice($couponCheck, plan.price) : 0;
 
 	// ペット向けページへの導線（店舗コードを引き継ぐ）。リンク直行ではなく、まず説明パネルを開く。
 	$: petPageUrl = `https://pet.wellbeingroom.tokyo/${$agencyCode ?? ''}`;
@@ -254,8 +226,7 @@
 			console.error(err);
 			if (err?.code === 'INVALID_COUPON') {
 				// 無効クーポンは保管場所から破棄し、割引表示も解除。通常価格で再度お試しいただく。
-				clearCoupon();
-				couponValid = false;
+				invalidateCoupon();
 				alert('クーポンが無効なため、割引を解除しました。通常価格でもう一度お試しください。');
 			} else {
 				alert('決済処理中にエラーが発生しました。');
@@ -323,7 +294,7 @@
 			{/each}
 		</div>
 
-		{#if couponValid === false}
+		{#if $couponCheck.valid === false}
 			<p class="apply-alert">無効なクーポンコードが指定されました。通常価格でのご案内となります。</p>
 		{/if}
 

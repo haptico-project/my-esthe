@@ -9,6 +9,11 @@
 	import { openApplyModal } from '$lib/applyModal';
 	import CancelPortal from '$lib/CancelPortal.svelte';
 	import { initPageTracking, track } from '$lib/analytics';
+	import { coupon, couponCheck, discountedPrice } from '$lib/coupon';
+
+	// キャンペーンURL（?coupon=）で来て有効と確認できたら、顔マスク付プランの価格を割引後で見せる。
+	const FACE_MASK_PRICE = 5500;
+	$: faceMaskPrice = $coupon ? discountedPrice($couponCheck, FACE_MASK_PRICE) : FACE_MASK_PRICE;
 
 	// 申込ボタンは3箇所ある。どこから申し込まれたか / どこが押されないかを見るため、
 	// クリック位置を付けて計測してから同じモーダルを開く。
@@ -160,7 +165,11 @@
 			<div class="set">
 				<div class="set-head">
 					<h3 class="set-name">顔マスク付<br />プラン</h3>
-					<p class="set-price"><span>5,500</span><small>円/月</small></p>
+					<p class="set-price">
+						{#if faceMaskPrice < FACE_MASK_PRICE}<s class="set-price__was">{FACE_MASK_PRICE.toLocaleString()}円</s>{/if}<span
+							>{faceMaskPrice.toLocaleString()}</span
+						><small>円/月</small>
+					</p>
 				</div>
 				<p class="set-desc">透明の顔マスク付き<br />お顔の集中ケアがしたい方に</p>
 				<img class="set-img" src={`${base}/images/lp/sets/face-mask.png`} alt="顔マスク付プランを装着した様子" loading="lazy" />
@@ -571,6 +580,15 @@
 
 	.set-price small {
 		font-size: min(16px, 4.1vw);
+	}
+
+	/* キャンペーン適用時の定価（取り消し線）。申込モーダルの .plan-price__was と同じ色味 */
+	.set-price__was {
+		display: block;
+		margin-bottom: 4px;
+		font-size: min(14px, 3.6vw);
+		color: #b8a3ac;
+		text-align: right;
 	}
 
 	/* デザイン実測（393px で 18 文字が幅 279px に収まる＝約 15.4px・字送りなし）に合わせる */

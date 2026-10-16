@@ -9,7 +9,7 @@
 	import '../app.css';
 	import { onMount } from 'svelte';
 	import { initAgencyCode } from '$lib/agency/agencyCode';
-	import { initCoupon } from '$lib/coupon';
+	import { initCoupon, validateCoupon } from '$lib/coupon';
 	import { initCampaign } from '$lib/campaign';
 	import { initReferrer } from '$lib/referrer';
 	import { initTrafficSource } from '$lib/trafficSource';
@@ -25,6 +25,8 @@
 	onMount(() => {
 		initAgencyCode();
 		initCoupon();
+		// 割引表示（LP の価格・申込モーダル）の前提として、クーポンの有効性と割引額を 1 回だけ問い合わせる。
+		void validateCoupon();
 		initCampaign();
 		initReferrer();
 		initTrafficSource();
