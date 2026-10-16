@@ -14,6 +14,7 @@
 	import { coupon, clearCoupon } from '$lib/coupon';
 	import PetLeadPanel from '$lib/PetLeadPanel.svelte';
 	import { referrer } from '$lib/referrer';
+	import { campaign } from '$lib/campaign';
 	import { getTrafficSource } from '$lib/trafficSource';
 	import { postCheckout } from '$lib/checkoutAccessor';
 	import { track, rememberCheckout } from '$lib/analytics';
@@ -181,6 +182,7 @@
 		const code = get(agencyCode);
 		const couponId = get(coupon);
 		const referredBy = get(referrer);
+		const campaignId = get(campaign);
 		const trafficSource = getTrafficSource();
 
 		if (!agreed) {
@@ -237,6 +239,8 @@
 				...(couponId && currentPlan.id === CAMPAIGN_PLAN_ID ? { couponId } : {}),
 				// 紹介者（?ref で入力済みの場合）。Stripe metadata referred_by として保持される。
 				...(referredBy ? { referredBy } : {}),
+				// キャンペーン（?campaign= 経由）。Stripe metadata campaign として保持される。
+				...(campaignId ? { campaign: campaignId } : {}),
 				// 流入元（初回来訪時に記録）。Stripe metadata traffic_source として保持され、内部通知メールに出る。
 				...(trafficSource ? { trafficSource } : {})
 			});
