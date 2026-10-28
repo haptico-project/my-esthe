@@ -79,6 +79,9 @@
 			class="cancel-input"
 		/>
 	</label>
+	<p class="cancel-note">
+		商品のご返送先につきましては、解約のお申し込みをいただきましたら、ご契約メールアドレス宛てにご連絡いたします。お手数ですが、メールの内容をご確認のうえご返送くださいますようお願い申し上げます。
+	</p>
 
 	{#if cancelError}
 		<p class="cancel-error">{cancelError}</p>
@@ -159,6 +162,13 @@
 
 	.cancel-input::placeholder {
 		color: rgba(65, 83, 86, 0.4);
+	}
+
+	.cancel-note {
+		margin-top: 10px;
+		font-size: 12px;
+		line-height: 1.8;
+		color: rgba(0, 0, 0, 0.6);
 	}
 
 	.cancel-error {
