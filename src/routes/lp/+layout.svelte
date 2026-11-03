@@ -6,6 +6,7 @@
 	import { base } from '$app/paths';
 	import { agencyCode } from '$lib/agency/agencyCode';
 	import CompanyInfoFooter from '$lib/CompanyInfoFooter.svelte';
+	import LineContactCard from '$lib/LineContactCard.svelte';
 </script>
 
 <div class="lp-shell">
@@ -20,6 +21,9 @@
 			</nav>
 			<p class="lp-footer__copy">{$agencyCode} | Facetherapie, Inc.</p>
 		</footer>
+
+		<!-- 公式LINE の案内（問い合わせ窓口） -->
+		<LineContactCard />
 
 		<!-- 運営会社・所在地 -->
 		<CompanyInfoFooter />

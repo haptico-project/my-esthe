@@ -16,6 +16,7 @@
 	import PetLeadPanel from '$lib/PetLeadPanel.svelte';
 	import RelatedLinksFooter from '$lib/RelatedLinksFooter.svelte';
 	import CompanyInfoFooter from '$lib/CompanyInfoFooter.svelte';
+	import LineContactCard from '$lib/LineContactCard.svelte';
 
 	// ヘッダー行（ロゴ・SNS・申込ボタン）の高さ。トップページがヒーローを
 	// この分だけ引き上げ、半透明ヘッダーがヒーロー画像に重なるようにする。
@@ -129,6 +130,9 @@
 					</div>
 
 				</div>
+
+				<!-- 公式LINE の案内（問い合わせ窓口） -->
+				<LineContactCard />
 
 				<!-- 運営会社・所在地 -->
 				<CompanyInfoFooter />
