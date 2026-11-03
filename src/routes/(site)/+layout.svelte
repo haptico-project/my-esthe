@@ -7,6 +7,7 @@
 	import { agencyCode } from '$lib/agency/agencyCode';
 	import { openApplyModal } from '$lib/applyModal';
 	import { track } from '$lib/analytics';
+	import { lineUrl } from '$lib/line';
 
 	// 固定ヘッダーの申込ボタン。ページ内の申込ボタンと区別して計測する。
 	const applyFromHeader = () => {
@@ -98,6 +99,8 @@
 					<div class="flex items-center gap-3">
 						<!-- Instagram: 公式ブランドキットのロゴ（Instagram_Glyph_Gradient。元データは images/ に保管） -->
 						<a href="https://www.instagram.com/facetherapie" target="_blank" rel="noopener noreferrer" aria-label="Instagram" class="transition-opacity hover:opacity-80"><img src={`${base}/images/sns/instagram.png`} alt="" class="w-6 h-6" /></a>
+						<!-- 公式LINE: 公式配布アイコン（line.me/ja/logo の LINE_APP_iOS）。リンクはフッターの案内カードと同じ（店舗コード付き LIFF） -->
+						<a href={$lineUrl} target="_blank" rel="noopener" aria-label="公式LINE" class="transition-opacity hover:opacity-80" on:click={() => track('line_click', { cta_location: 'header' })}><img src={`${base}/images/sns/line.png`} alt="" class="w-6 h-6" /></a>
 						<!-- 申込ボタン。旧 request.png（ピンクのピル #ffadd0・白の明朝）をHTML化し、
 						     「商品到着後7日間無料」を常時見える位置（固定ヘッダー）で訴求する。 -->
 						<button class="apply-btn" on:click={applyFromHeader}>

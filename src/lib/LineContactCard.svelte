@@ -11,16 +11,12 @@
 <script lang="ts">
 	import { base } from '$app/paths';
 	import QRCode from 'qrcode';
-	import { agencyCode } from '$lib/agency/agencyCode';
+	import { lineUrl } from '$lib/line';
 	import { track } from '$lib/analytics';
-
-	const LIFF_URL = 'https://liff.line.me/2007233135-vxLAjokB';
-
-	$: lineUrl = $agencyCode ? `${LIFF_URL}?shopCode=${encodeURIComponent($agencyCode)}` : LIFF_URL;
 
 	// 中央に LINE アイコンを重ねるので、欠けても読める誤り訂正 H で作る。
 	let qrSvg = '';
-	$: QRCode.toString(lineUrl, { type: 'svg', errorCorrectionLevel: 'H', margin: 0 })
+	$: QRCode.toString($lineUrl, { type: 'svg', errorCorrectionLevel: 'H', margin: 0 })
 		.then((svg) => (qrSvg = svg))
 		.catch(() => (qrSvg = ''));
 
@@ -38,7 +34,7 @@
 		</p>
 
 		<div class="line-card__row">
-			<a class="line-card__btn" href={lineUrl} target="_blank" rel="noopener" on:click={onClick}>
+			<a class="line-card__btn" href={$lineUrl} target="_blank" rel="noopener" on:click={onClick}>
 				<img class="line-card__icon" src="{base}/images/sns/line.png" alt="LINE" />
 				<span class="line-card__btn-text">
 					<span class="line-card__btn-sub">QRで友達登録</span>
@@ -63,14 +59,13 @@
 </section>
 
 <style>
+	/* デザインどおり、表示幅いっぱいに左右 12px だけ余白を取ってカードを敷く */
 	.line-card {
-		padding: 12px 6px;
+		padding: 20px 12px 28px;
 		background-color: #fff;
 	}
 
 	.line-card__inner {
-		max-width: 368px;
-		margin: 0 auto;
 		padding: 24px 12px 20px;
 		border-radius: 10px;
 		background-color: #ffe8e8;
@@ -97,6 +92,14 @@
 	.line-card__accent {
 		color: #ff7c7c;
 		font-size: 24px;
+	}
+
+	/* 中身はスマホ幅（約 344px）の組みを保ち、広い画面ではカードの中央に寄せる */
+	.line-card__row,
+	.line-card__topics {
+		max-width: 360px;
+		margin-right: auto;
+		margin-left: auto;
 	}
 
 	.line-card__row {
@@ -183,6 +186,7 @@
 		justify-content: flex-start;
 		gap: 0 4px;
 		margin-top: 24px;
+		margin-bottom: 0;
 		padding: 0;
 		list-style: none;
 		text-align: left;
